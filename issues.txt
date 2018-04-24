@@ -1,0 +1,34 @@
+/* Issues:
+- you can make a relative link to the file for a class but not the content.  The difference is 
+	that, when you link the file, the file will load in the iframe but the rest of the page 
+	will still reflect the original content.  So, hyperlinks to the content will break if taken 
+	out of context.
+- hideEmptyTables needs to check both the primary and secondary pages for content -- right
+	now it is just checking primary (I think - not tested)
+- change [pre] in code only if it does not have its own class already
+
+- instructors still have to put in hash tag hyperlinks in HTML
+  -- set an ID and do in JS
+- change absolute links in D2L back to relative links
+- D2L autogenerates figcaptions
+- test script and css in header: does the link change in file or just when loaded by D2L?
+- D2L <span> does allow for classes inside
+- black <address> lines do not show in the editor
+- get rid of JQuery in this script
+- sk to save changes in D2L Editor
+- set width of table to content
+- float tables and code in print
+- insert lessons 
+
+Change styles for:
+1) an inline section <span>
+2) a single block item <p>
+3) several block items <p>...<p>
+4) a whole section
+
+Why <br> should not be used (including <pre>)
+
+- check if in D2L before doing previous and next links
+
+Change figcaption to a <p> with class "caption" -- could have JS change into a <figcaption>
+*/

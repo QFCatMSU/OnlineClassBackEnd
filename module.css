@@ -1,0 +1,439 @@
+/*
+module.css fix:
+user can select the number before code lines in all but Firefox
+- add all variation of user-select: none; to ::before
+
+needed to use !important to force style changes
+- because editor.css came after and was overridding module.css
+- SOLN: moved editor.css before module.css 
+
+borders do not work if there is no predefined width and height
+- use outline instead (for Code Blocks)
+*/
+body
+{
+	background-color: rgb(0,60,60);
+	font-size: 14px;
+	font-family: arial;
+	line-height: 135%;
+}
+figure
+{
+	margin: 0;
+	padding: 0;
+}
+a:link,a:visited
+{
+	text-decoration: none;
+	color: rgb(125,64,0);
+}
+a:hover
+{
+	text-decoration: underline;
+}
+a[href^="#"],a.linkback,.linkTo   /* href that begin with '#' */
+{
+	color: rgb(255,0,0);
+	cursor: pointer;
+} 
+h1
+{
+	/* h1 is essentially the title of the lesson */
+	font-size: 24px;
+	color: rgb(0,0,100);
+}
+h2
+{
+	font-weight: 700;
+	color: rgb(100,0,0);
+	font-size: 20px;
+	text-align: left;
+	margin-left: -12px;
+	margin-top: 0px; /*!important;  override editor style -- no longer need -- moved editor.css before this file*/ 
+	margin-bottom: 10px;
+	margin-right: 0px;
+	background-color: transparent; /*!important; override editor style */ 
+}
+h3
+{
+	color: rgb(0,0,100);
+	font-size: 18px;
+	margin: 0px; /*!important;  override editor style */
+	padding-top: 0px;
+	padding-bottom: 10px;
+	margin-left: -8px;
+	background-color: transparent; /*!important; override editor style */ 
+}
+h4
+{
+	color: rgb(90,20,20);
+	font-size: 16px;
+	margin: 0px;			
+	padding-top: 10px;
+	padding-bottom: 10px;
+	margin-left: -6px;
+}
+h6
+{
+	/* editor.css sets a colot for h6 but I want this overridden
+		in the module and replace by the parent (which is a DIV) */
+	color: inherit;
+}
+p
+{
+	margin: 0em;
+	min-height: 1.25em;
+}
+ul
+{
+	list-style-type: disc;
+}
+ol
+{
+	list-style-type: none;
+}
+ol>li
+{
+	counter-increment: section;
+}
+ol>li:before
+{
+	content: counter(section, decimal) ") ";
+	margin-left: -16px;
+}
+ol,ul
+{
+	margin-left: 18px;
+	margin-right: 0px;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	padding: 0px;
+}
+table 
+{
+	border-collapse: collapse;
+}
+td
+{
+	border: solid 1px rgb(100,100,100);
+	padding: 3px;
+}
+.codeBlock
+{
+	cursor: pointer;
+	position: relative;
+	color: rgb(100,255,255);
+	left: -10px;
+}
+.codeBlock:hover
+{
+	/* instead of a border -- cannot use border becuase there
+	   is no height set on the code-blocks so the border automatically
+		changes the size of the box (so the box-sizing property does not work */
+	outline: 2px solid rgb(150,250,50);
+}
+.contentDiv
+{
+	padding-left: 25px;
+	padding-right: 13px;
+	padding-top: 15px;
+	padding-bottom: 15px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	overflow: auto;	
+}
+.h2Div
+{
+	background-color: rgb(220,220,220);
+	border-top-right-radius: 10px;
+	border-top-left-radius: 10px;
+}
+.h3Div
+{
+	background-color: rgb(220,220,220);	
+	border-top-right-radius: 0px;
+	border-top-left-radius: 0px;
+}
+.h2NextDiv
+{
+	border-bottom-right-radius: 10px;
+	border-bottom-left-radius: 10px;
+}
+.h3NextDiv
+{
+	border-bottom-right-radius: 0px;
+	border-bottom-left-radius: 0px;
+}
+.nonlinear
+{
+	background-color: rgb(210,210,220);	
+}
+
+
+/*** Code typesettings ****/
+.code
+{	
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	/*padding-bottom: 0px;*/
+	
+	display: block;
+	line-height: 1.7em;	
+	font-style: normal;	
+	font-weight: normal;	
+	font-size: 14px;
+	margin: 0;
+	padding-left: 4.5em;
+	text-indent: -4.5em;
+	background: none; /* gets rid of background from editor.css */
+	background-color: rgb(33,33,33);
+	font-family: "Lucida Console", Menlo, "Courier New", Courier, Monaco, Monospace;
+}
+.hl,.highlight
+{
+	color: darkred;
+	font-style: italic;
+}
+.code .hl,.code .highlight,.code.h1, .code.highlight
+{
+	color: yellow;
+}
+.code:before
+{	
+	counter-increment: codeLines;
+	content: counter(codeLines);
+	display: inline-block;
+	border-right: 1px solid rgb(200,200,100);
+	padding-right: 6px; /* space between line number and horizontal line */
+	margin-right: 2px;  /* space between horizontal line and code */
+	color: rgb(200,200,100);
+	min-width: 25px;
+	text-align: right;
+	user-select: none;
+	-webkit-user-select: none; /* Chrome/Safari */        
+	-moz-user-select: none; /* Firefox */
+	-ms-user-select: none; /* IE10+ */
+}
+.overflowArrow
+{
+	color: yellow;
+	position: absolute;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+.caption, .figureRef, .c, .fr
+{
+	color: rgb(0,100,0);
+	font-style: italic;
+}
+.firstLine, .fl
+{
+	padding-top: 0px;
+}
+.lastLine, .ll
+{
+	padding-bottom: 0px;
+}
+.partial>.code, .p>.code
+{
+	color: rgb(180,255,180);	
+}
+.text
+{
+	color: rgb(255,255,255);	
+}
+/* if the class list does not contain 'code' then we reset the counter */
+:not([class*='code'])
+{
+	counter-reset: codeLines;
+}
+/* if an element does not contain class="code" but the next element does */
+:not([class*='code']) + .code
+{
+	/* these styles will be applied to the next element (class="code") */
+	padding-top: 7px;  
+}
+/*** end of code typesettings ****/
+.menu
+{
+	display: none;
+	position: absolute;
+	padding: 10px;
+	background-color: rgba(130,130,130,.9);
+	z-index: 100;
+}
+.linkback
+{
+	padding: 10px;
+	display: block;
+}
+.resize
+{
+	position: fixed; /* the trouble is that the lesson is in an iframe so this really does nothing */
+	bottom: 10px; 
+	right: 10px; 
+	height: 20px; 
+	z-index:100; 
+	background-color: rgb(0,0,0); 
+	color: rgb(150,255,150);
+}
+.resize:hover
+{	
+	color: rgb(150,150,255);
+}
+.flexSize, .fs
+{
+	border-color: red;
+	border-width: 1px;
+	border-style: dotted;
+	cursor: pointer;
+}
+.lessonLink
+{
+	font-size: 14px;
+	width: 325px;
+	background-color: #cccccc;
+	display: inline-block;
+	/* if you change the padding, need to change in print mode, too */
+	padding-left: 9px;
+	padding-right: 9px;
+	padding-bottom: 3px;
+	padding-top: 3px;
+	border-radius: 10px;
+	margin-top: 0px;
+	margin-bottom: 5px;
+}
+.previousLesson
+{
+	float: left;
+	text-align: left;
+}
+.nextLesson
+{
+	float: right;
+	text-align: right;
+}
+.homePage
+{
+	width: 80px;
+	text-align: center;
+	display: block;
+	margin: auto;
+}
+.title
+{
+	font-size: 24px;
+	width: 100%;
+	text-align: center;
+	padding: 0;
+	background-color: rgb(220,220,220);
+	border-radius: 10px;
+}
+.figureRef, .fr
+{
+	text-decoration: none;
+}
+.screenNote
+{
+	font-family: garamond;
+	color: rgb(100,0,0);
+}
+@media only screen and (max-width: 820px) 
+{
+	.lessonLink
+	{
+		/* 18px is padding-left (9px) + padding-right (9px) -- 
+			would like to use variables instead */
+		width: calc(100% - 18px); 
+		display: block;
+	}
+	
+	.nextLesson, .previousLesson 
+	{
+	  float: none;
+	}
+	
+	.nextLesson
+	{
+		text-align: left;
+	}
+	
+	.homePage
+	{
+		text-align: left;
+		display: inline-block;
+		margin: 0;
+	}
+}
+@media only print
+{
+	a
+	{
+		text-decoration: underline !important;  /* why?? what is superceding this? */
+	}
+	.lessonLink, .concept, .resize, iframe
+	{
+		display: none; margin: 0; padding: 0; height: 0; width: 0;
+	}
+	img
+	{
+		page-break-inside: avoid; /* Images naturally do this? */
+		max-width: 100%;
+		/* not sure why "!important" is needed here -- 
+			I thought this should override all other heights automatically */
+		height: auto !important; 
+	}
+	.code .hl,.code .highlight,.code.h1, .code.highlight
+	{
+		/*font-weight: bold !important;
+		font-style: italic !important;*/
+		color: rgb(100,0,0);
+		/* Lucida Console does not do bold or italics well in print mode 
+		   -- instead going to do a light underline */
+		text-decoration: underline;
+		/* for some reason, light gray turn to black in print ?!? */
+		text-decoration-color: aqua;  	
+	}
+	.code
+	{
+
+      /* Get rid of the background-color when printing */
+		background-color: transparent;	
+		color: rgb(0,0,153);
+		margin-left: -25px;
+		margin-right: -15px;
+		font-size: 13px;
+		
+		/* adjust the font color for a white background 
+		   -- it was designed for a black background */
+	}
+	.partial>.code, .p>.code
+	{
+		color: rgb(0,105,0);	
+	}
+	.code:before
+	{
+		color: rgb(102,0,0);
+	}
+	.caption, .figureRef, .c, .fr
+	{
+		color: rgb(90,90,0);
+		font-style: italic;
+	}
+	pre
+	{
+		border-color: grey;
+		border-width: 1px;
+		border-style: solid;
+		border-radius: 5px;
+	}
+	.rightClickDiv
+	{
+		display: none;
+	}
+}

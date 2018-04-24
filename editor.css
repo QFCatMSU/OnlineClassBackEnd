@@ -1,0 +1,155 @@
+/* D2L editor styles */
+
+/* These styles are repeated in the stylesheet but the D2L editor
+	does not read the stylesheet so these are used to make the
+	editor more user-friendly */
+	
+/* Some editor changes only take place when "Save" is hit in the 
+   HTML editor window and only last for the session!
+	
+	h6>h6::first-child (currently unused) is the only example I know of so far 
+	
+	but h6>h6 works */
+			
+h1  
+{ 
+	color: rgb(0,0,100); 
+	width: 100%; 
+} 
+h2
+{ 
+	margin-top: 15px; 
+	color: rgb(100,0,0); 
+	text-align: left; 
+	background-color: rgb(220,220,220); 
+}
+h3
+{ 
+	margin-top: 15px; 
+	color: rgb(0,0,100); 
+	background-color: rgb(220,220,220); 
+}
+h4
+{ 	
+	margin-top: 15px; 
+	color: rgb(0,70,0); 
+}
+h5, .caption, .figureRef
+{ 
+	font-style: italic; 
+	color: rgb(0,100,0); 
+	margin: 0; 
+	padding: 0; 
+	font-weight: normal; 
+	font-size: 14px; 
+}
+p
+{ 
+	margin:0px; 
+}
+ul,ol
+{ 
+	margin-left: -20px; /* unsure what in D2L editor is indenting ol, ul by 20px */
+	margin-top: 0px; 
+	padding-top: 0px; 
+	margin-bottom:0px; 
+	padding-bottom: 0px; 
+}
+ul
+{	
+	list-style-type: disc; 
+}
+ol
+{
+	list-style-type: none;
+}
+ol>li
+{
+	counter-increment: section;
+}
+ol>li:before
+{
+	content: counter(section, decimal) ") ";
+	margin-left: -16px;
+}
+.hl,.highlight
+{
+	color: darkred;
+	font-style: italic;
+}
+h6 .hl,h6 .highlight, h6.hl, h6.highlight
+{
+	color: yellow;
+}
+body
+{ 
+	font-size: 14px; 
+}
+.flexSize, .fs
+{ 
+	height: 100px; 
+}
+.flexSize:hover, .fs:hover
+{ 
+	height: 400px; 
+}
+.linkTo
+{	
+	color: rgb(0,0,200);	
+}
+h6
+{
+	/* white-space caused the no spaces added error in editor */
+	/* white-space: pre-wrap; */
+	word-wrap: break-word;
+	/*padding-bottom: 0px;*/
+
+	display: block;
+	line-height: 1.7em;	
+	font-style: normal;	
+	font-weight: normal;	
+	margin: 0;
+	padding: 0;
+	font-size: 14px;
+	color: rgb(100,255,255);
+	background: linear-gradient(90deg, rgb(33,33,33) 663px, rgb(100,100,100) 0, rgb(100,100,100) 100%);
+	/*background-color: rgb(33,33,33);*/
+	font-family: monospace;
+}
+h6:empty
+{
+	min-height: 1.7em;
+	background-color: red; /* just to warn user that something is wrong */
+}
+/* there should never be an [h6] within an [h6],
+   if there is, the text in the section will turn red as a warning.
+	At this point, the person should hit undo on the editor */
+h6>br,h6>h6
+{
+	color: red;
+}
+.figureRef, .fr
+{
+	text-decoration: line-through;
+}
+		
+/****** deprecated styles
+		table 
+		{ margin-bottom: 10px; width: 100%; } 
+		td 
+		{ height: 18px; }
+		.title
+		{ text-align: center; }
+		div
+		{
+			padding-left: 25px;
+			padding-right: 10px;
+			padding-top: 15px;
+			padding-bottom: 15px;
+			margin-top: 5px;
+			margin-bottom: 5px;
+			background-color: rgb(220,220,220);
+			border-radius: 10px;
+			overflow: auto;
+		}
+******* end of deprecated styles */
