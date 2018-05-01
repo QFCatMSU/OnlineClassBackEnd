@@ -22,7 +22,7 @@
 	xmlhttp=new XMLHttpRequest();
 	xmlhttp.open("GET","https://rawgit.com/QFCatMSU/OnlineClassBackEnd/master/header.xml",false);
 	//xmlhttp.timeout = 2000; // time in milliseconds
-
+		var xmlDoc = this.responseXML;
 	xmlhttp.onload = function()
 	{
 		alert(1);
