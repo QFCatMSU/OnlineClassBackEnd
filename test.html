@@ -3,35 +3,12 @@
 <head>
 <meta charset="utf-8">
 <title>Untitled Document</title>
-	
+	<script src="header.js"></script>
 </head>
 
 <body>
-	hi
 	<script>
-		newDiv = document.createElement("div");
-	newDiv.innerHTML = "sdfsadfsaf";
-	newDiv.style.top = 0;
-	newDiv.style.left = 0;
-	newDiv.style.width = "500px";
-	newDiv.style.height = "300px";
-	newDiv.style.position = "absolute";
-	newDiv.style.backgroundColor = "red";
-	document.body.appendChild(newDiv);
-	
-	xmlhttp=new XMLHttpRequest();
-	xmlhttp.open("GET","https://rawgit.com/QFCatMSU/OnlineClassBackEnd/master/header.xml",false);
-	//xmlhttp.timeout = 2000; // time in milliseconds
-		var xmlDoc = this.responseXML;
-	xmlhttp.onload = function()
-	{
-		alert(1);
-		 var xmlDoc = this.responseXML;
-	};
-	
-xmlhttp.ontimeout = function (e) {
-  alert(2);// XMLHttpRequest timed out. Do something here.
-}
+		document.body.innerHTML += lessonLinks.length;
 	</script>
 </body>
 </html>
