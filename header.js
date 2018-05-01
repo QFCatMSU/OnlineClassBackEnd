@@ -8,7 +8,7 @@ lessonNames[3] = "dddd";
 lessonNames[4] = "eeee";
 
 lessonLinks[0] = "http://aaaa.com";
-lessonLinks[1] = "http://bbbb.com"";
-lessonLinks[2] = "http://cccc.com"";
-lessonLinks[3] = "http://dddd.com"";
-lessonLinks[4] = "http://eeee.com"";
+lessonLinks[1] = "http://bbbb.com";
+lessonLinks[2] = "http://cccc.com";
+lessonLinks[3] = "http://dddd.com";
+lessonLinks[4] = "http://eeee.com";
