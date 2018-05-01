@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<header>
+<topic>
+	<name>Lessons</name>
+	<lesson>
+		<number>01-01</number>
+		<name>Stuff about stuff</name>
+		<link>http://...</link>
+	</lesson>
+	<lesson>
+		<number>01-2</number>
+		<name>Stuff about stuff</name>
+		<link>http://...</link>
+	</lesson>
+	<lesson>
+		<number>01-03</number>
+		<name>Stuff about stuff</name>
+		<link>http://...</link>
+	</lesson>
+</topic>
+	
+<topic>
+	<name>Home</name>
+	<link>http://</link>
+</topic>
+
+<topic>
+	<name>Syllabus</name>
+	<link>http://</link>
+</topic>	
+	
+<topic>
+	<name>Links</name>
+	<links>
+		<name>Project info</name>
+		<link>http://....</link>
+	</links>
+	<links>
+		<name>Data sets</name>
+		<link>http://....</link>
+	</links>
+</topic>	
+	
+</header>

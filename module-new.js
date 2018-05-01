@@ -1,3 +1,33 @@
+function createHeader()
+{
+	newDiv = document.createElement("div");
+	newDiv.innerHTML = "sdfsadfsaf";
+	newDiv.style.top = 0;
+	newDiv.style.left = 0;
+	newDiv.style.width = "500px";
+	newDiv.style.height = "300px";
+	newDiv.style.position = "absolute";
+	newDiv.style.backgroundColor = "red";
+	document.body.appendChild(newDiv);
+	
+	xmlhttp=new XMLHttpRequest();
+	xmlhttp.open("GET","header.xml",true);
+	xmlhttp.timeout = 2000; // time in milliseconds
+
+	xmlhttp.onload = function()
+	{
+		alert(1);
+		 var xmlDoc = this.responseXML;
+	};
+	
+xmlhttp.ontimeout = function (e) {
+  alert(2);// XMLHttpRequest timed out. Do something here.
+};
+	//xmlhttp.send();
+	//xmlDoc=xmlhttp.responseXML; 
+	//alert(xmlDoc);
+	//x=xmlDoc.getElementsByTagName("topic");
+}
 /* New Issues (May 2017) 
 - replacing images in D2L causes D2L to get stuck in a loop
   -- need to delte image first and then add new image (replace does not work)
@@ -129,7 +159,7 @@ window.parent.addEventListener("resize", function()
 // don't do anything until the parent frame (d2L) loads 
 // this still seems to work if there is no parent -- probably should check for this, though
 parent.window.onload = function()
-{		
+{		createHeader();
 	// remove the header in the D2L page
 	p = parent.document.getElementsByClassName("d2l-page-header");
 	for(i=0; i<p.length; i++)
@@ -186,7 +216,7 @@ parent.window.onload = function()
 	addDivs("H3");
 	
 	// add outline to the divs
-	addOutline()
+	addOutline();
 	
 	// Create a right-click menu
 	makeContextMenu("create");  // needs to happen after divs are created
@@ -227,7 +257,7 @@ function removeDivs()
 			of the remaining [div], hence [0] is always used (unintuitive, I know -- its JavaScript) */
 			
 		// get information inside the div and save it to a temp variable
-		divContent = divElements[0].innerHTML
+		divContent = divElements[0].innerHTML;
 		
 		// copy the content of the [div] before the [div] 
 		divElements[0].insertAdjacentHTML("beforebegin", divContent);
@@ -279,7 +309,7 @@ function createFlexImages()
 		imageWidth[i] = flexImage[i].naturalWidth;
 		
 		// initalize the flex image to the small size
-		changeSize(flexImage[i], "minimize")
+		changeSize(flexImage[i], "minimize");
 	}
 }
 
@@ -354,7 +384,7 @@ function addDivs(elementType)
 		// use data-title instead of title because title will create a tooltip popup (which I don't want)
 		if(elements[i].title != "")
 		{
-			newDiv.dataTitle = elements[i].title
+			newDiv.dataTitle = elements[i].title;
 		}
 		else  // no title -- use text from header
 		{
@@ -560,7 +590,7 @@ function createInPageLinks()
 function addStyleSheet()
 {
 	var CSSFile = document.createElement("link");
-	CSSFile.href = "https://rawgit.com/QFCatMSU/OnlineClassBackEnd/master/module.css";
+	CSSFile.href = "../../Programming/module.css";
 	CSSFile.type = "text/css";
 	CSSFile.rel = "stylesheet";
 	CSSFile.media = "screen,print";
