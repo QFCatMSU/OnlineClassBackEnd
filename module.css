@@ -75,7 +75,7 @@ h4
 }
 h6
 {
-	/* editor.css sets a colot for h6 but I want this overridden
+	/* editor.css sets a color for h6 but I want this overridden
 		in the module and replace by the parent (which is a DIV) */
 	color: inherit;
 }

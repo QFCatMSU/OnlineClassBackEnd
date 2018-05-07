@@ -529,7 +529,7 @@ function createInPageLinks()
 		// get id of figure you are refering to (this.id - "fig-")
 		if(linkElements[i].title == "")
 		{	
-			linkToId = linkElements[i].id.slice(5);  // this line remove the "link-" part of the id (which is 5 characters)
+			linkToId = linkElements[i].id.slice(2);  // this line remove the "l-" part of the id (which is 5 characters)
 		}
 		else
 		{
@@ -698,10 +698,21 @@ function addCaption(elementType)
 	// find all elements of elementType (initially it is H5)
 	var captionLines = document.getElementsByTagName(elementType);
 
+	// this is deprecated in DreamWeaver
 	for(i=0; i<captionLines.length; i++)
 	{
 		captionLines[i].classList.add("caption");	
-		captionLines[i].innerHTML = "Fig " + (i+1) + ": " + captionLines[i].innerHTML;	
+	}
+	
+	// In D2L, H5 was used to signify a caption;
+	// In DW: the class .caption is an option
+	captionLines = document.getElementsByClassName("caption");
+	for(i=0; i<captionLines.length; i++)
+	{
+		if(captionLines[i].innerText.trim() != "")  // there is text in the caption
+		{
+			captionLines[i].innerHTML = "Fig " + (i+1) + ": " + captionLines[i].innerHTML;
+		}	
 	}
 }
 
@@ -710,13 +721,14 @@ function addCaption(elementType)
 function addCodeTags(elementType)
 {
 	/* this part works if we are using <h6> with class="code" */
-	var codeLines = document.getElementsByTagName(elementType);
+	var codeLines = document.getElementsByTagName(elementType);  
+	//var codeLines = document.querySelectorAll(elementType);
 
 	/* count the number of H6 tags
 	   note: if you use codeLines.length in the for loop, the length will change
 		as you add [h6] tags -- creating an infinite loop */
 	numCodeTags = codeLines.length;
-	
+
 	// first go through [H6] elements and check for [br] tag -- switch to [H6]
 	for(i=0; i<numCodeTags; i++)
 	{
@@ -825,7 +837,7 @@ function addCodeTags(elementType)
 			}
 			firstLine = false;
 		}
-		
+
 		// add a space to empty lines for copying/pasting purposes (deprecated somewhat)
 		if(codeLines[i].innerText == "")
 		{
@@ -1085,7 +1097,7 @@ function makeContextMenu(funct, param = null)
 		menuItem.onclick = function(){ changeAllPicSize('minimize') };
 		contextMenu.appendChild(menuItem);
 
-		// add an edit page button to the context menu
+		/* add an edit page button to the context menu
 		menuItem = document.createElement("menuitem");
 		menuItem.label = "Edit Page";
 		menuItem.onclick = function(){  
@@ -1095,7 +1107,7 @@ function makeContextMenu(funct, param = null)
 				newURL = newURL.replace("View", "EditFile?fm=0"); 	// replace View with EditFile?fm=0
 				window.open(newURL, "_blank")
 		};		
-		contextMenu.appendChild(menuItem);
+		contextMenu.appendChild(menuItem);*/
 
 		// add an map of the lesson to the context menu
 		submenu = document.createElement("menu");
@@ -1103,7 +1115,7 @@ function makeContextMenu(funct, param = null)
 
 			divsInPage = document.getElementsByTagName("div");
 			divID = new Array();
-			for(i=0; i<divsInPage.length; i++)
+			for(i=1; i<divsInPage.length; i++)  // skip the title
 			{
 				if(divsInPage[i].id == "")
 				{
@@ -1225,7 +1237,10 @@ function scrollToElement(elementID)
 	return function() 
 	{
 		var element = document.getElementById(elementID);
+		returnLink.style.display = "none";  // make sure the return link is gone
 		scrollTopPosition = window.parent.scrollY;  // save the value of the scroll position
+		
+ 
 		
 		if (window.self !== window.top)  // we are in an iframe
 		{
@@ -1307,8 +1322,16 @@ function figureReferences()
 	for(i=0; i<figRefInPage.length; i++)
 	{
 		// the id of figure you are refering to is the title on the figureRef
-		figureID = figRefInPage[i].title;
-
+		if(figRefInPage[i].title)
+		{
+			// D2L -- uses title
+			figureID = figRefInPage[i].title;
+		}
+		else 
+		{
+			// DW: uses id with extra characters (f-) at beginning
+			figureID = figRefInPage[i].id.slice(2);
+		}
 		// check if the title refers to a legitimate ID for a caption in the page
 		/*if(figRefInPage[i].innerText.trim() != "" &&
 			document.getElementById(figureID) && 
