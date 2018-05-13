@@ -452,14 +452,14 @@ function addOutline()
 	for(i=0; i<divElement.length; i++)
 	{
 		// find what the first element in the div is
-		if(divElement[i].firstChild.tagName == "H2")
+		if(divElement[i].firstChild && divElement[i].firstChild.tagName == "H2")
 		{
 			level1++;			
 			level2=0;
 			divElement[i].firstChild.innerHTML = level1+" - " + divElement[i].firstChild.innerHTML;
 			divElement[i].dataTitle = divElement[i].firstChild.textContent;
 		}
-		else if(divElement[i].firstChild.tagName == "H3")
+		else if(divElement[i].firstChild && divElement[i].firstChild.tagName == "H3")
 		{
 			level2++;
 			divElement[i].firstChild.innerHTML = level1+"."+level2+" - " + divElement[i].firstChild.innerHTML;
