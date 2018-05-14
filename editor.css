@@ -73,7 +73,7 @@ ol > li::before {
   font-style: italic;
 }
 
-h6 .highlight {
+h6 .highlight, .fullcode .highlight {
   color: yellow;
 }
 
@@ -113,12 +113,12 @@ h6, .fullcode {
   font-family: monospace;
 }
 
-h6:empty, fullcode:empty {
+h6:empty, .fullcode:empty {
   min-height: 1.7em;
   background-color: red;
 }
 
-h6 > br, h6 > h6, fullcode > br, fullcode > fullcode {
+h6 > br, h6 > h6, .fullcode > br, .fullcode > .fullcode {
   color: red;
 }
 
