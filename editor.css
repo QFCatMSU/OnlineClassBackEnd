@@ -138,3 +138,23 @@ h6 > br, h6 > h6, .fullcode > br, .fullcode > .fullcode {
   color: #990000;
 }
 
+
+/* Shortcut class names only used in the D2L editor --
+   don't want these to appear in editors that have a
+	dropdown menu of classes */
+.hl {
+  color: darkred;
+  font-style: italic;
+}
+ 
+h6 .hl, .fullcode .hl {
+  color: yellow;
+}
+
+.fs {
+  height: 100px;
+}
+
+.fs:hover {
+  height: 400px;
+}
