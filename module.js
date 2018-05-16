@@ -168,8 +168,7 @@ parent.window.onload = function()
 	// allow users to resize images from small to full-size
 	createFlexImages();
 	
-	/* editModeStyles(); -- was trying to hide object in editor but D2L editor does not look at JavaScript */
-	/* hideEmptyTables(); -- hide empty elements on the page -- not needed with new template */
+	/* editModeStyles(); -- was trying to hide objects in editor but D2L editor does not look at JavaScript */
 	
 	// adds the caption class to all H5 elements
 	addCaption("H5");
@@ -565,132 +564,6 @@ function addStyleSheet()
 	CSSFile.rel = "stylesheet";
 	CSSFile.media = "screen,print";
 	document.getElementsByTagName("head")[0].appendChild(CSSFile);
-}
-
-/* the following code will conflict with the populate function-- change this later 
-	also, need to make sure the style sheet is loaded before this function is called */
-function hideEmptyTables()
-{
-	// create a list of all the tables
-	var tables = document.getElementsByTagName("table");
-
-	// for each table
-	for(var i = 0; i < tables.length; i++)
-	{
-		// create a list of the cells in the table
-		tableCells = tables[i].getElementsByTagName('td')
-		
-		// if the number of cells is zero or one with no content in it then make table invisible 
-		if (tableCells.length == 0 || (tableCells.length == 1 && tableCells[0].innerHTML.trim() == ""))
-		{
-			tables[i].style.display = "none";
-		}
-	}
-	
-	// create a list of all the divs
-	var div = document.getElementsByTagName("div");
-		
-	// for each div
-	for(var i = 0; i < div.length; i++)
-	{
-		if(div[i].childElementCount <= 2)  // only check div with 0,1, or 2 child elements
-		{	
-			divIsEmpty = true;	// assume empty until something is found
-			
-			// 0 elements
-			if(div[i].childElementCount == 0 && div[i].innerHTML.trim() != "")
-			{
-				divIsEmpty = false
-			}
-			
-			// 1 element
-			else if (div[i].childElementCount == 1 && 
-						div[i].children[0].innerHTML.trim() != "")
-			{
-				divIsEmpty = false
-			}
-			
-			// 2 elements
-			else if (div[i].childElementCount == 2 && 
-						 ( div[i].children[0].innerHTML.trim() != ""  || 
-							div[i].children[1].innerHTML.trim() != ""))
-			{
-				divIsEmpty = false
-			}			
-
-			// if no content was found then hide the div
-			if(divIsEmpty == true)
-			{
-				div[i].style.display = "none";
-			}
-		}
-	}
-}
-	
-function populate(primaryFile)
-{	
-	/*************************
-	If the table in the secondary has content, then use that instead of the table from primary 
-	In the future, the table IDs will be collected from the files 
-	*****************************/
-
-	var numSections = 11;	// have program count the number of sections instead?? Or jst go through each section??
-	// path from secondary to primary file- this will probably be deprecated because the primaryFile argument will contain the path
-	var pathToFile = "./";	
-	var secondaryId = "s";
-	var primaryId = "p";
-	
-	$(document).ready(function() 
-	{
-		$.ajax(
-		{
-			url: pathToFile + primaryFile,
-			type:'GET',
-			
-			// source file was found and retrieved
-			success: function(data)		
-			{
-				for(i=1; i<=numSections; i++)	// for each possible div in the destination file
-				{
-					// check if the desination div exists
-					if (!($("#" + secondaryId + i).length))  // div has no length -- does not exist
-					{							
-						// create a new div, give it an ID, and add it to the beginning (prepend) of the body
-						jQuery('<div/>',{"id": secondaryId + i}).prependTo('body');
-
-						// move newly created div after the previous div if it is not the first div
-						if(i != 1)
-						{
-							$("#" + secondaryId + i).insertAfter($("#" + secondaryId + (i-1))); 
-						}
-					}
-					// check if the destination div has info in it already
-						//  - somewhat redundant if I just created it
-					if($("#" + secondaryId + i).is(':empty'))
-					{
-						// get data from the source 
-						var sourceData = $(data).find(" #" + primaryId + i);
-						
-						// checks if source data exists (length) and if it contains anything
-						if(sourceData.length  && !(sourceData.is(':empty'))) 
-						{
-							$("#" + secondaryId + i).html(sourceData.html());	// using Get
-						}
-						else 
-						{
-							$("#" + secondaryId + i).html("No Data " + i);
-						}
-					}
-				}
-			},
-			
-			// source file was not found
-			error: function(data)
-			{ 
-				alert("Failed to open source file.");
-			}
-		});
-	})
 }
 
 function addCaption(elementType)
