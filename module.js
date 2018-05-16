@@ -552,13 +552,15 @@ function createInPageLinks()
 function addStyleSheet()
 {
 	var CSSFile = document.createElement("link");
-	CSSFile.href = "../module.css"; // https://rawgit.com/QFCatMSU/OnlineClassBackEnd/master/module.css";
+	CSSFile.href = "https://rawgit.com/QFCatMSU/OnlineClassBackEnd/master/module.css";
 	CSSFile.type = "text/css";
 	CSSFile.rel = "stylesheet";
 	CSSFile.media = "screen,print";
 	document.getElementsByTagName("head")[0].appendChild(CSSFile);
 }
 
+
+/* adds the class "caption" to all H5 lines */
 function addCaption(elementType)
 {
 	// find all elements of elementType (initially it is H5)
@@ -1194,7 +1196,7 @@ function figureReferences()
 		}
 		else 
 		{
-			// DW: uses id with extra characters (f-) at beginning
+			// Outside of D2L: uses id with extra characters (c-) at beginning
 			figureID = figRefInPage[i].id.slice(2);
 		}
 		// check if the title refers to a legitimate ID for a caption in the page
@@ -1204,11 +1206,11 @@ function figureReferences()
 			document.getElementById(figureID).nextElementSibling.tagName == "FIGCAPTION")	
 			
 		Check if:
-1) there is text in the figureRef
-2) title of figureRef is an id 
-3) the id is of class caption (or a parent -- this is the D2L issue where [span] can turn up where not wanted --
-   -- not going to implement this yet.
-4) the caption has text 		
+		1) there is text in the figureRef
+		2) title of figureRef is an id 
+		3) the id is of class caption (or a parent -- this is the D2L issue where [span] can turn up where not wanted --
+			-- not going to implement this yet.
+		4) the caption has text 		
 		*/
 		if(figRefInPage[i].innerText.trim() != "" &&
 			document.getElementById(figureID) && 
