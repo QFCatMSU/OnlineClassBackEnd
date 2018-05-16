@@ -438,3 +438,27 @@ td
 		display: none;
 	}
 }
+
+
+
+
+/* Shortcut class names only used in the D2L editor --
+   don't want these to appear in editors that have a
+	dropdown menu of classes but D2L's editor will only read CSS
+	from a file called editor.css */
+.hl {
+  color: darkred;
+  font-style: italic;
+}
+ 
+h6 .hl, .fullcode .hl {
+  color: yellow;
+}
+
+.fs {
+  height: 100px;
+}
+
+.fs:hover {
+  height: 400px;
+}
