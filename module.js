@@ -104,10 +104,6 @@ minImageWidth = 700;				// minimum width for a flexSize image in expanded mode
 scrollTopPosition = 0; 			// value saved for links-return-links within a page
 returnLink = null;				// element on page that contains the return link
 
-
-
-//alert(l1+ "  " + l2);
-
 addStyleSheet();  // can be done before page load since this is called in the [head]
 	
 // resize the iframe in the parent window when the page gets resized
@@ -123,7 +119,6 @@ window.parent.addEventListener("resize", function()
 	// would like a better way to do this...
 	document.body.getElementsByTagName("DIV")[0].innerHTML += " ";
 	overflowCodeLines();
-
 });
 
 // don't do anything until the parent frame (d2L) loads 
@@ -199,9 +194,7 @@ parent.window.onload = function()
 	// adds code tags to all content within an [h6] tag
 	// need to add the divs before doing the code tags becuase this includes the div codeblocks
 	addCodeTags("H6");
-
-
-		
+	
 	overflowCodeLines();
 	
 	// convert "download" class to a download hyperlink (because D2L does not allow you to specify this trait)
@@ -970,17 +963,20 @@ function makeContextMenu(funct, param = null)
 		menuItem.onclick = function(){ changeAllPicSize('minimize') };
 		contextMenu.appendChild(menuItem);
 
-		/* add an edit page button to the context menu
-		menuItem = document.createElement("menuitem");
-		menuItem.label = "Edit Page";
-		menuItem.onclick = function(){  
-				oldURL = String(window.parent.location); 
-				newURL = oldURL.split('?')[0];  // get rid of parameters (designated by "?")
-				newURL = newURL.replace("viewContent", "contentFile"); // replace viewContent with contentFile
-				newURL = newURL.replace("View", "EditFile?fm=0"); 	// replace View with EditFile?fm=0
-				window.open(newURL, "_blank")
-		};		
-		contextMenu.appendChild(menuItem);*/
+		/* add an edit page button to the context menu if you are in D2L */
+		if(window.location.hostname == "d2l.msu.edu")
+		{
+			menuItem = document.createElement("menuitem");
+			menuItem.label = "Edit Page";
+			menuItem.onclick = function(){  
+					oldURL = String(window.parent.location); 
+					newURL = oldURL.split('?')[0];  // get rid of parameters (designated by "?")
+					newURL = newURL.replace("viewContent", "contentFile"); // replace viewContent with contentFile
+					newURL = newURL.replace("View", "EditFile?fm=0"); 	// replace View with EditFile?fm=0
+					window.open(newURL, "_blank")
+			};		
+			contextMenu.appendChild(menuItem);
+		}
 
 		// add an map of the lesson to the context menu
 		submenu = document.createElement("menu");
