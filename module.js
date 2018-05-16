@@ -552,7 +552,7 @@ function createInPageLinks()
 function addStyleSheet()
 {
 	var CSSFile = document.createElement("link");
-	CSSFile.href = "https://rawgit.com/QFCatMSU/OnlineClassBackEnd/master/module.css";
+	CSSFile.href = "../module.css"; // https://rawgit.com/QFCatMSU/OnlineClassBackEnd/master/module.css";
 	CSSFile.type = "text/css";
 	CSSFile.rel = "stylesheet";
 	CSSFile.media = "screen,print";
@@ -638,7 +638,7 @@ function addCodeTags(elementType)
 	}
 
 	firstLine = true;
-	
+
 	// now, go through all H6 including new ones generated from above
 	for(i=0; i<codeLines.length; i++)
 	{
@@ -704,7 +704,7 @@ function addCodeTags(elementType)
 			firstLine = false;
 		}
 
-		// add a space to empty lines for copying/pasting purposes (deprecated somewhat)
+		// add a space to empty lines -- when copying/pasting it can treat an empty line as not a line (deprecated somewhat)
 		if(codeLines[i].innerText == "")
 		{
 			codeLines[i].innerText = " ";
@@ -716,7 +716,7 @@ function addCodeTags(elementType)
 			codeLines[i].style.counterReset = "codeLines " + (codeLines[i].title -1);
 		}
 		
-		// check if the next element after this codeLine is an [H6] -- if not than this is the last line
+		//check if the next element after this codeLine is an [H6] -- if not than this is the last line
 		if(codeLines[i].nextElementSibling == null || codeLines[i].nextElementSibling.tagName != elementType)
 		{
 			// check if this is a partial codeblock or a full codeblock
@@ -724,7 +724,7 @@ function addCodeTags(elementType)
 				!codeBlockDiv.classList.contains("text"))
 			{
 				codeBlockDiv.appendChild(codeLines[i]);
-				/**** added formatting to put in {} **********/
+				/**** added formatting to put in curly brackets {} **********/
 				// create a line that just has a start curly bracket ( { )
 				lastCodeLine = document.createElement(elementType);
 				lastCodeLine.innerText = "}";
@@ -943,11 +943,7 @@ function makeContextMenu(funct, param = null)
 		menuItem.label = "Print";
 		menuItem.onclick = function()
 		{ 
-			//	width = document.body.clientWidth;
-			//	document.body.clientWidth = 300; 
 			window.print(); 
-			//	document.body.clientWidth = width;
-			//	alert("after"); 
 		};
 		contextMenu.appendChild(menuItem);
 

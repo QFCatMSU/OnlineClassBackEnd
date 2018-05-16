@@ -173,8 +173,9 @@ td
 /*** Code typesettings ****/
 .code
 {	
-	white-space: pre-wrap;
+	
 	word-wrap: break-word;
+	white-space: normal;
 	/*padding-bottom: 0px;*/
 	
 	display: block;
