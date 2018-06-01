@@ -103,6 +103,7 @@ imageWidth = new Array();		// the widths of all flex-sized images in a page
 minImageWidth = 700;				// minimum width for a flexSize image in expanded mode
 scrollTopPosition = 0; 			// value saved for links-return-links within a page
 returnLink = null;				// element on page that contains the return link
+overflowCalled = false;   		// check to see if there is a current check of code lines
 
 addStyleSheet();  // can be done before page load since this is called in the [head]
 	
@@ -118,7 +119,17 @@ window.parent.addEventListener("resize", function()
 	// add a space to the first DIV -- this visually does nothing -- but it could strip any javascript commands within
 	// would like a better way to do this...
 	document.body.getElementsByTagName("DIV")[0].innerHTML += " ";
-	overflowCodeLines();
+	
+	if(overflowCalled == false)
+	{
+		overFlowTimer = setTimeout(function() { overflowCodeLines(); }, 500);
+		overflowCalled = true;
+	}
+	else
+	{
+		clearTimeout(overFlowTimer);
+		overFlowTimer = setTimeout(function() { overflowCodeLines(); }, 500);	
+	}
 });
 
 // don't do anything until the parent frame (d2L) loads 
@@ -180,14 +191,14 @@ parent.window.onload = function()
 	}
 		
 	// add class name
-	p = document.getElementsByClassName("p");
+	p = encapObject.getElementsByClassName("p");
 	for(i=0; i<p.length; i++)
 	{
 		p[i].classList.add("partial");
 	}
 
 	// set title on webpage
-	window.document.title = document.getElementById("title").textContent;
+	window.document.title = encapObject.querySelector("#title").textContent;
 	
 	// there should be no [div] elements in the page -- [div] can be copied/pasted in
 	removeDivs();
@@ -289,7 +300,7 @@ the size of the image.  Called on page load.
 function createFlexImages()
 {
 	// find all elements that have the class name "flexSize" or "fs"
-	var flexImage = document.querySelectorAll('.flexSize, .fs');
+	var flexImage = encapObject.querySelectorAll('.flexSize, .fs');
 
 	// switch to while (there are flexImages)??
 	for(i=0; i<flexImage.length; i++)	// for each flexSize element
@@ -510,7 +521,7 @@ function addOutline()
 	all the flex-sized images in the page */
 function changeAllPicSize(param)
 {
-	var flexImage = document.querySelectorAll('.flexSize, .fs');
+	var flexImage = encapObject.querySelectorAll('.flexSize, .fs');
 	for(i=0; i<flexImage.length; i++)
 	{
 		/* calll changeSize passing each flexSize object in an array */
@@ -538,7 +549,7 @@ using classes
 */ 
 function createInPageLinks()
 {
-	linkElements = document.getElementsByClassName("linkTo");
+	linkElements = encapObject.getElementsByClassName("linkTo");
 	
 	/*
 		Essentially we are going 
@@ -564,7 +575,7 @@ function createInPageLinks()
 		}
 		
 		// find the element to link to
-		linkToElement = document.getElementById(linkToId);
+		linkToElement = encapObject.querySelector("#" + linkToId); // getElementById(linkToId);
 	
 		if(linkToElement) // if there is an element to link to
 		{
@@ -599,7 +610,7 @@ function addStyleSheet()
 function addCaption(elementType)
 {
 	// find all elements of elementType (initially it is H5)
-	var captionLines = document.getElementsByTagName(elementType);
+	var captionLines = encapObject.getElementsByTagName(elementType);
 
 	// this is deprecated in DreamWeaver
 	for(i=0; i<captionLines.length; i++)
@@ -609,7 +620,7 @@ function addCaption(elementType)
 	
 	// In D2L, H5 was used to signify a caption;
 	// In DW: the class .caption is an option
-	captionLines = document.getElementsByClassName("caption");
+	captionLines = encapObject.getElementsByClassName("caption");
 	for(i=0; i<captionLines.length; i++)
 	{
 		if(captionLines[i].innerText.trim() != "")  // there is text in the caption
@@ -624,7 +635,7 @@ function addCaption(elementType)
 function addCodeTags(elementType)
 {
 	/* this part works if we are using <h6> with class="code" */
-	var codeLines = document.getElementsByTagName(elementType);  
+	var codeLines = encapObject.getElementsByTagName(elementType);  
 	//var codeLines = document.querySelectorAll(elementType);
 
 	/* count the number of H6 tags
@@ -789,50 +800,44 @@ function addCodeTags(elementType)
 function overflowCodeLines()
 {
 	// find all code elements (<p> with class = "code")
+	/*** Tried to use encapObject but the bounded rectangle function did
+		not work the second time -- don't know why ***/
 	codeLines = document.getElementsByClassName("code");	
-	
+
 	if(codeLines.length > 0)
 	{
-		// initialize all line height multipliers to one (meaning there is no overflow on code lines)
-		oldLineHeightMult = [];
-		
-		for(i=0; i<codeLines.length; i++)
-		{
-			oldLineHeightMult[i] = 1;
-		}
-		  
 		// get original height of code-line	-- only need to do this once in code
-		elem = document.querySelector('.code');
+		elem = encapObject.querySelector('.code');
 		style = getComputedStyle(elem);
 		lineHeight = parseInt(style.lineHeight);
 
-
 		lineHeightMult = [];
 		changeInMult = false;
+
+		// delete all previous arrows (can I do something more elegant than this??)
+		arrows = document.getElementsByClassName("overflowArrow");
+
+		/** future-- delete arrows of codeblocks that have changed -- not whole page **/
+
+		// while there are any instances of arrows, delete the first instance
+		while(arrows[0])
+		{
+			arrows[0].parentNode.removeChild(arrows[0]);
+		}
+			
 		// find code elements with height not equal to actual
 		for(i=0; i<codeLines.length; i++)
 		{
 			boundedRect = codeLines[i].getBoundingClientRect();
 			lineHeightMult[i] = Math.round(boundedRect.height/lineHeight);	 
-			if(lineHeightMult[i] != oldLineHeightMult[i])
+			if(lineHeightMult[i] != 1) // oldLineHeightMult[i])
 			{
 				changeInMult = true;
-			}
+			}		
 		}
-		
+		//alert( codeLines[0].getBoundingClientRect().height); 
 		if( changeInMult ) // a line height multiplier has changed  
 		{		
-			// delete all previous arrows (can I do something more elegant than this??)
-			arrows = document.getElementsByClassName("overflowArrow");
-			
-			/** future-- delete arrows of codeblocks that have changed -- not whole page **/
-		
-			// while there are any instances of arrows, delete the first instance
-			while(arrows[0])
-			{
-				arrows[0].parentNode.removeChild(arrows[0]);
-			}
-			
 			// Go through the length of each codeline
 			for(i=0; i<codeLines.length; i++)
 			{
@@ -840,7 +845,7 @@ function overflowCodeLines()
 				{
 					for(j=1; j<lineHeightMult[i]; j++)	// for each overflow line, add an arrow
 					{
-						arrowObj = document.createElement("span");  // create a new arrow onject
+						arrowObj = document.createElement("span");  // create a new arrow object
 						arrowObj.classList.add("overflowArrow");	// add overflowArrow class
 						arrowObj.innerHTML = "&#x2937;";			// add arrow character
 						
@@ -852,21 +857,9 @@ function overflowCodeLines()
 				}
 			}
 		}
-		else  /* There should be no arrows but sometimes there is -- need to fix */
-		{
-			// delete all previous arrows (can I do something more elegant than this??)
-			arrows = document.getElementsByClassName("overflowArrow");
-			
-			/** future-- delete arrows of codeblocks that have changed -- not whole page **/
-		
-			// while there are any instances of arrows, delete the first instance
-			while(arrows[0])
-			{
-				arrows[0].parentNode.removeChild(arrows[0]);
-			}
-		}
-		oldLineHeightMult = lineHeightMult;
+		// oldLineHeightMult = lineHeightMult;
 	}
+	overFlowTimer = false;
 }
 
 /* Selects all text within the HTML element */
@@ -1131,7 +1124,7 @@ function copySelectedText()
 
 function addDownloadLinks()
 {
-	downloadLinks = document.getElementsByClassName("download");
+	downloadLinks = encapObject.getElementsByClassName("download");
 
 	for(i=0; i<downloadLinks.length; i++)
 	{
@@ -1143,7 +1136,7 @@ function addDownloadLinks()
 /* finds all figure references in the page and add the correct numerical reference */
 function figureReferences()
 {
-	var figRefInPage = document.getElementsByClassName("figureRef");
+	var figRefInPage = encapObject.getElementsByClassName("figureRef");
 
 	for(i=0; i<figRefInPage.length; i++)
 	{
@@ -1172,10 +1165,10 @@ function figureReferences()
 		4) the caption has text 		
 		*/
 		if(figRefInPage[i].innerText.trim() != "" &&
-			document.getElementById(figureID) && 
-			document.getElementById(figureID).innerText != "")
+			encapObject.querySelector("#" + figureID) &&   // getElementById(figureID) && 
+			encapObject.querySelector("#" + figureID).innerText != "")
 		{
-			caption = document.getElementById(figureID).innerText;
+			caption = encapObject.querySelector("#" + figureID).innerText;
 			strIndex = caption.indexOf(":");  // find the location of the first semicolon
 			
 			figRef = caption.slice(0, strIndex); // get "Fig. #"
@@ -1255,7 +1248,7 @@ function checkURLForPos()
    I am not sure how to make a function both a return and a normal function ****/
 function scrollToElement(elementID)
 {		
-	var element = document.getElementById(elementID);
+	var element = encapObject.querySelector("#" + elementID); //.getElementById(elementID);
 	scrollTopPosition = window.parent.scrollY;  // save the value of the scroll position
 
 	if (window.self !== window.top)  // we are in an iframe
