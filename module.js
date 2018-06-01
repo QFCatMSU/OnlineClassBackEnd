@@ -125,7 +125,7 @@ window.parent.addEventListener("resize", function()
 // this still seems to work if there is no parent -- probably should check for this, though
 parent.window.onload = function()
 {	
-	encapObject = document;  
+	encapObject = document.body;  
 	editURL = "";
 
 		// check if we are in Joomla or D2L
