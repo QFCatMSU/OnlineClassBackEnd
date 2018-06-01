@@ -130,25 +130,29 @@ parent.window.onload = function()
 
 		// check if we are in Joomla or D2L
 	
-	// Joomla uses these itemprprops -- need a better way to check for Joomla...
-	itemPropDiv = document.querySelectorAll("div[itemprop]");
-	if(itemPropDiv.length == 1)
+   // check if any meta content starts with "Joomla"
+	if(document.querySelectorAll('meta[content^="Joomla"]').length > 0)  // we are in Joomla
 	{
-		// the lesson is encapsulated in the div with the itemprop
-		encapObject = itemPropDiv[0];	
+		// Joomla uses these itemprprops -- need a better way to check for Joomla...
+		itemPropDiv = document.querySelectorAll("div[itemprop]");
+		if(itemPropDiv.length == 1)
+		{
+			// the lesson is encapsulated in the div with the itemprop
+			encapObject = itemPropDiv[0];	
+			
+			// create the editing URL
+			// in Joomla it is: URL of page - last section + "?view=form&layout=edit&a_id=" + the page id
+			theURL = window.location.href; 
+			lastSlashIndex = theURL.lastIndexOf("/");
+			editURL = theURL.substring(0, lastSlashIndex);
+			pageID = theURL.substring((lastSlashIndex +1), theURL.indexOf("-"));
+			editURL = editURL + "?view=form&layout=edit&a_id=" + pageID;
+		}
 		
-		// create the editing URL
-		// in Joomla it is: URL of page - last section + "?view=form&layout=edit&a_id=" + the page id
-		theURL = window.location.href; 
-		lastSlashIndex = theURL.lastIndexOf("/");
-		editURL = theURL.substring(0, lastSlashIndex);
-		pageID = theURL.substring((lastSlashIndex +1), theURL.indexOf("-"));
-		editURL = editURL + "?view=form&layout=edit&a_id=" + pageID;
+		// will need to move this line to make it more general
+		encapObject.style.backgroundColor = "rgb(0,60,60)";	
 	}
-	
-	encapObject.style.backgroundColor = "rgb(0,60,60)";	
-	
-	if(window.location.hostname == "d2l.msu.edu")
+	else if(window.location.hostname == "d2l.msu.edu")  // we are in D2L
 	{
 		oldURL = String(window.parent.location); 
 		editURL = oldURL.split('?')[0];  // get rid of parameters (designated by "?")
@@ -174,7 +178,7 @@ parent.window.onload = function()
 			p[i].style.padding = "0";
 		}
 	}
-	
+		
 	// add class name
 	p = document.getElementsByClassName("p");
 	for(i=0; i<p.length; i++)
@@ -287,6 +291,7 @@ function createFlexImages()
 	// find all elements that have the class name "flexSize" or "fs"
 	var flexImage = document.querySelectorAll('.flexSize, .fs');
 
+	// switch to while (there are flexImages)??
 	for(i=0; i<flexImage.length; i++)	// for each flexSize element
 	{
 		// add an onclick event that calls changeSize() to each flexSize image
@@ -1130,9 +1135,7 @@ function scrollToElement(elementID)
 		var element = document.getElementById(elementID);
 		returnLink.style.display = "none";  // make sure the return link is gone
 		scrollTopPosition = window.parent.scrollY;  // save the value of the scroll position
-		
- 
-		
+			
 		if (window.self !== window.top)  // we are in an iframe
 		{
 			// get iframes from the parent windows:
