@@ -243,7 +243,7 @@ parent.window.onload = function()
    up one level */
 function removeDivs()
 {
-	divElements = document.getElementsByTagName("DIV");
+	divElements = encapObject.getElementsByTagName("DIV");
 
 	// the [div] length changes as [div] are removed -- we need to hold the initial number of [div]
 	initNumOfDivs = divElements.length;
@@ -569,7 +569,7 @@ function createInPageLinks()
 		if(linkToElement) // if there is an element to link to
 		{
 			// go to scrollToElement() function when the anchor is clicked
-			linkElements[i].onclick = scrollToElement(linkToElement.id);
+			linkElements[i].onclick = scrollToElementReturn(linkToElement.id);
 		}
 		else if(linkElements[i].innerText.trim() != "") // there is content but an invalid link -- add warning to text
 		{
@@ -1022,7 +1022,7 @@ function makeContextMenu(funct, param = null)
 
 				mapItem = document.createElement("menuitem");
 				mapItem.label = divsInPage[i].dataTitle;
-				mapItem.onclick = scrollToElement(divID);
+				mapItem.onclick = scrollToElementReturn(divID);
 				submenu.appendChild(mapItem);								
 			}
 
@@ -1078,23 +1078,6 @@ function makeContextMenu(funct, param = null)
 			menuItem7.innerHTML = "Page Map";
 			menuItem7.style.display = "block";
 
-		/*		divsInPage = document.getElementsByTagName("div");
-				divID = new Array();
-				mapItem = new Array();
-				for(i=0; i<divsInPage.length; i++)
-				{
-					if(divsInPage[i].id == "")
-					{
-						divsInPage[i].id = "div" + i;
-					}
-					divID = divsInPage[i].id;		
-
-					mapItem[i] = document.createElement("a");
-					mapItem[i].href = "javascript:scrollToElement(" + divID + ")";					
-					mapItem[i].innerHTML = divsInPage[i].title;
-					menuItem7.appendChild(mapItem[i]);								
-				}*/
-
 			elemDiv.appendChild(menuItem7);
 		
 			encapObject.appendChild(elemDiv);
@@ -1126,64 +1109,13 @@ function makeContextMenu(funct, param = null)
 	}
 }
 
-function scrollToElement(elementID)
+function scrollToElementReturn(elementID)
 {
 	// this resolves the fact that variables are function scoped in JavaScript
 	//   -- not block scoped
 	return function() 
 	{
-		var element = document.getElementById(elementID);
-		returnLink.style.display = "none";  // make sure the return link is gone
-		scrollTopPosition = window.parent.scrollY;  // save the value of the scroll position
-			
-		if (window.self !== window.top)  // we are in an iframe
-		{
-			// get iframes from the parent windows:
-			parentIFrames = window.parent.document.getElementsByTagName("iframe");
-			
-			iframeOffset = 0; // default value if the iframe is not found (should be a debug value)
-			
-			// go through iframe to find which has the same source as this page (i.e., it holds this page)
-			for(i=0; i<parentIFrames.length; i++)
-			{
-				if (window.location.href == parentIFrames[i].src) // this is the iframe that conatins the page
-				{
-					// get the offset of this iFrame in the parent window
-					iframeOffset = parentIFrames[i].offsetTop; 
-					break;  // don't need to check anymore iframes
-				}
-			}
-
-			// get the amount of vertical space the header take -- this is D2L only
-			if(window.parent.document.getElementById("d2l_minibar"))
-			{
-				headerHeight = window.parent.document.getElementById("d2l_minibar").offsetHeight;
-			}
-			else
-			{
-				headerHeight = 0;
-			}
-			
-			// calc the vertical position of the linkTo element in the parent page
-			totalScrollY = element.offsetTop + iframeOffset - headerHeight
-			// scroll the parent to the vertical position of the linkTo element
-			window.parent.scrollTo(element.offsetLeft, totalScrollY);		
-		}
-		else
-		{
-			// no parent frame - scroll to location of linkTo element
-			window.parent.scrollTo(element.offsetLeft, element.offsetTop);
-		}
-
-		// check if element is a div, if not, go to it's parent element (which should be a div)
-		if(element.tagName != "DIV")
-		{
-			element = element.parentElement;
-		}
-		
-		// put anchor at end of div that links back to old position 
-		element.appendChild(returnLink);
-		returnLink.style.display = "block";
+		scrollToElement(elementID);	
 	}
 }
 function copySelectedText()
@@ -1315,13 +1247,13 @@ function checkURLForPos()
 		{
 			divID += "." + l2;
 		}
-		testScroll(divID);
+		scrollToElement(divID);
 	}
 }
 
 /**** This is acopy of scrollToElement(), which required a return
    I am not sure how to make a function both a return and a normal function ****/
-function testScroll(elementID)
+function scrollToElement(elementID)
 {		
 	var element = document.getElementById(elementID);
 	scrollTopPosition = window.parent.scrollY;  // save the value of the scroll position
@@ -1372,9 +1304,9 @@ function testScroll(elementID)
 		element = element.parentElement;
 	}
 	
-	/**** Don't need the return link! 
+	/** Don't need the return link! (huh??) ****/
 	element.appendChild(returnLink);
-	returnLink.style.display = "block";****/
+	returnLink.style.display = "block";
 }
 /* Things to do
 - check if there is content in the source file <done>
