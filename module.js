@@ -124,7 +124,17 @@ window.parent.addEventListener("resize", function()
 // don't do anything until the parent frame (d2L) loads 
 // this still seems to work if there is no parent -- probably should check for this, though
 parent.window.onload = function()
-{		
+{	
+	encapObject = document;  
+		// check if we are in Joomla or D2L
+	
+	// need a better way to check for Joomla...
+	itemPropDiv = document.querySelectorAll("div[itemprop]")
+	if(itemPropDiv.length == 1)
+	{
+		encapObject = itemPropDiv[0];		
+	}
+
 	// remove the header in the D2L page
 	p = parent.document.getElementsByClassName("d2l-page-header");
 	for(i=0; i<p.length; i++)
@@ -330,7 +340,7 @@ function changeSize(element, instruction="none")
 function addDivs(elementType)
 {
 	// find all element of the type asked for (H1, H2, and H3 currently supported)
-	elements = document.getElementsByTagName(elementType);
+	elements = encapObject.getElementsByTagName(elementType);
 	
 	// for each element
 	for(i=0; i<elements.length; i++)
