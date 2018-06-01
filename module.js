@@ -126,32 +126,53 @@ window.parent.addEventListener("resize", function()
 parent.window.onload = function()
 {	
 	encapObject = document;  
+	editURL = "";
+
 		// check if we are in Joomla or D2L
 	
-	// need a better way to check for Joomla...
+	// Joomla uses these itemprprops -- need a better way to check for Joomla...
 	itemPropDiv = document.querySelectorAll("div[itemprop]");
 	if(itemPropDiv.length == 1)
 	{
-		encapObject = itemPropDiv[0];		
-	}
-
-	// remove the header in the D2L page
-	p = parent.document.getElementsByClassName("d2l-page-header");
-	for(i=0; i<p.length; i++)
-	{
-		p[i].style.display = "none";
-	}
-	
-	p = parent.document.getElementsByClassName("d2l-page-collapsepane-container");
-	for(i=0; i<p.length; i++)
-	{
-		p[i].style.display = "none";
+		// the lesson is encapsulated in the div with the itemprop
+		encapObject = itemPropDiv[0];	
+		
+		// create the editing URL
+		// in Joomla it is: URL of page - last section + "?view=form&layout=edit&a_id=" + the page id
+		theURL = window.location.href; 
+		lastSlashIndex = theURL.lastIndexOf("/");
+		editURL = theURL.substring(0, lastSlashIndex);
+		pageID = theURL.substring((lastSlashIndex +1), theURL.indexOf("-"));
+		editURL = editURL + "?view=form&layout=edit&a_id=" + pageID;
 	}
 	
-	p = parent.document.getElementsByClassName("d2l-page-main-padding");
-	for(i=0; i<p.length; i++)
+	encapObject.style.backgroundColor = "rgb(0,60,60)";	
+	
+	if(window.location.hostname == "d2l.msu.edu")
 	{
-		p[i].style.padding = "0";
+		oldURL = String(window.parent.location); 
+		editURL = oldURL.split('?')[0];  // get rid of parameters (designated by "?")
+		editURL = editURL.replace("viewContent", "contentFile"); // replace viewContent with contentFile
+		editURL = editURL.replace("View", "EditFile?fm=0"); 	// replace View with EditFile?fm=0
+					
+		// remove the header in the D2L page
+		p = parent.document.getElementsByClassName("d2l-page-header");
+		for(i=0; i<p.length; i++)
+		{
+			p[i].style.display = "none";
+		}
+		
+		p = parent.document.getElementsByClassName("d2l-page-collapsepane-container");
+		for(i=0; i<p.length; i++)
+		{
+			p[i].style.display = "none";
+		}
+		
+		p = parent.document.getElementsByClassName("d2l-page-main-padding");
+		for(i=0; i<p.length; i++)
+		{
+			p[i].style.padding = "0";
+		}
 	}
 	
 	// add class name
@@ -364,7 +385,6 @@ function addDivs(elementType)
 		}
 		
 		// insert the new div right before the Header element
-		//document.body.insertBefore(newDiv, elements[i]);
 		elements[i].parentNode.insertBefore(newDiv, elements[i]);
 		/*
 			Go from 
@@ -449,7 +469,7 @@ function addOutline()
 {
 	level1 = 0;
 	level2 = 0;
-	divElement = document.getElementsByTagName("div");
+	divElement = encapObject.getElementsByTagName("div");
 	
 	for(i=0; i<divElement.length; i++)
 	{
@@ -943,7 +963,7 @@ function makeContextMenu(funct, param = null)
 	if (navigator.userAgent.indexOf("Firefox") != -1)
 	{
 		// when the user clicks the right button, the rightClickMenu (create in this function) appears
-		document.body.setAttribute("contextmenu", "rightClickMenu");
+		encapObject.setAttribute("contextmenu", "rightClickMenu");
 
 		// creating a right-click context menu
 		contextMenu = document.createElement("menu");
@@ -971,18 +991,12 @@ function makeContextMenu(funct, param = null)
 		menuItem.onclick = function(){ changeAllPicSize('minimize') };
 		contextMenu.appendChild(menuItem);
 
-		/* add an edit page button to the context menu if you are in D2L */
-		if(window.location.hostname == "d2l.msu.edu")
+		// Add an Edit Page option if we are within a CMS environment
+		if(editURL != "")
 		{
 			menuItem = document.createElement("menuitem");
 			menuItem.label = "Edit Page";
-			menuItem.onclick = function(){  
-					oldURL = String(window.parent.location); 
-					newURL = oldURL.split('?')[0];  // get rid of parameters (designated by "?")
-					newURL = newURL.replace("viewContent", "contentFile"); // replace viewContent with contentFile
-					newURL = newURL.replace("View", "EditFile?fm=0"); 	// replace View with EditFile?fm=0
-					window.open(newURL, "_blank")
-			};		
+			menuItem.onclick = function() { window.open(editURL, "blank") };
 			contextMenu.appendChild(menuItem);
 		}
 
@@ -990,7 +1004,7 @@ function makeContextMenu(funct, param = null)
 		submenu = document.createElement("menu");
 		submenu.label = "Page Map";
 
-			divsInPage = document.getElementsByTagName("div");
+			divsInPage = encapObject.getElementsByTagName("div");
 			divID = new Array();
 			for(i=1; i<divsInPage.length; i++)  // skip the title
 			{
@@ -1009,7 +1023,7 @@ function makeContextMenu(funct, param = null)
 
 		contextMenu.appendChild(submenu);
 
-		document.body.appendChild(contextMenu);
+		encapObject.appendChild(contextMenu);
 	}
 	else // for all other browsers -- eventually would like to combine with above code
 	{
@@ -1078,13 +1092,13 @@ function makeContextMenu(funct, param = null)
 
 			elemDiv.appendChild(menuItem7);
 		
-			document.body.appendChild(elemDiv);
+			encapObject.appendChild(elemDiv);
 			
-			document.body.oncontextmenu=function(event)
+			encapObject.oncontextmenu=function(event)
 			{
 				makeContextMenu('show', event); return false;
 			}
-			document.body.onclick=function()
+			encapObject.onclick=function()
 			{
 				makeContextMenu('hide');
 			}
@@ -1097,7 +1111,7 @@ function makeContextMenu(funct, param = null)
 		}
 		else if(funct == "color")
 		{
-			document.body.style.backgroundColor = param;
+			encapObject.style.backgroundColor = param;
 			funct = "hide";
 		}
 		if(funct == "hide")
