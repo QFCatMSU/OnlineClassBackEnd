@@ -354,8 +354,8 @@ function addDivs(elementType)
 		}
 		
 		// insert the new div right before the Header element
-		document.body.insertBefore(newDiv, elements[i]);
-		
+		//document.body.insertBefore(newDiv, elements[i]);
+		elements[i].parentNode.insertBefore(newDiv, elements[i]);
 		/*
 			Go from 
 			<h2> Header title </H2>
