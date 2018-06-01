@@ -122,14 +122,13 @@ window.parent.addEventListener("resize", function()
 	
 	if(overflowCalled == false)
 	{
-		overFlowTimer = setTimeout(function() { overflowCodeLines(); }, 500);
 		overflowCalled = true;
 	}
 	else
 	{
 		clearTimeout(overFlowTimer);
-		overFlowTimer = setTimeout(function() { overflowCodeLines(); }, 500);	
 	}
+	overFlowTimer = setTimeout(function() { overflowCodeLines(); }, 500);
 });
 
 // don't do anything until the parent frame (d2L) loads 
@@ -1248,7 +1247,7 @@ function checkURLForPos()
    I am not sure how to make a function both a return and a normal function ****/
 function scrollToElement(elementID)
 {		
-	var element = encapObject.querySelector("#" + elementID); //.getElementById(elementID);
+	var element = document.getElementById(elementID);  // does not work yet as queryselector -- because of "." in name?
 	scrollTopPosition = window.parent.scrollY;  // save the value of the scroll position
 
 	if (window.self !== window.top)  // we are in an iframe
