@@ -129,7 +129,7 @@ parent.window.onload = function()
 		// check if we are in Joomla or D2L
 	
 	// need a better way to check for Joomla...
-	itemPropDiv = document.querySelectorAll("div[itemprop]")
+	itemPropDiv = document.querySelectorAll("div[itemprop]");
 	if(itemPropDiv.length == 1)
 	{
 		encapObject = itemPropDiv[0];		
@@ -677,12 +677,12 @@ function addCodeTags(elementType)
 			codeBlockDiv = document.createElement("div");
 			
 			// check if the codelines or any of its children (D2L issue) has the class "partial"
-			if(codeLines[i].classList.contains("partial")  || $(codeLines[i]).find('.partial').length !== 0)
+			if(codeLines[i].classList.contains("partial")  || codeLines[i].querySelectorAll(".partial").length != 0)
 			{
 				codeBlockDiv.classList.add("partial");
 			}		
 			// check if the codelines or any of its children (D2L issue) has the class "text"
-			if(codeLines[i].classList.contains("text") || $(codeLines[i]).find('.text').length !== 0)
+			if(codeLines[i].classList.contains("text") || codeLines[i].querySelectorAll(".text").length != 0) 
 			{
 				codeBlockDiv.classList.add("text");
 			}					
