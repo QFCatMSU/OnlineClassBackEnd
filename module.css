@@ -436,9 +436,11 @@ td
 	{
 		display: none;
 	}
+	/* Need to first figure out how to "resize" screen on print */
 	.overflowArrow
         {
                 color: rgb(0,0,153);
-		left: -30px
+		left: -30px;
+		display: none;
         }
 }
