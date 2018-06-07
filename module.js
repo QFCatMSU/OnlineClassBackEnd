@@ -143,6 +143,11 @@ parent.window.onload = function()
    // check if any meta content starts with "Joomla"
 	if(document.querySelectorAll('meta[content^="Joomla"]').length > 0)  // we are in Joomla
 	{
+		// In Joomla, the article is in a div of class "container"
+		containers = document.querySelectorAll("div.container"); 
+		containers[0].style.backgroundColor = "#003c3c";
+		containers[0].style.padding = "9px";
+
 		// Joomla uses these itemprprops -- need a better way to check for Joomla...
 		itemPropDiv = document.querySelectorAll("div[itemprop]");
 		if(itemPropDiv.length == 1)
@@ -258,7 +263,7 @@ function removeDivs()
 	// the [div] length changes as [div] are removed -- we need to hold the initial number of [div]
 	initNumOfDivs = divElements.length;
 	
-	for(i=0; i<initNumOfDivs; i++)
+	for(i=0; i<initNumOfDivs; i++)   // could do while(divElement[0])
 	{
 		/* Since we are always removing the previous [div], we are always dealing with the first [div]
 			of the remaining [div], hence [0] is always used (unintuitive, I know -- its JavaScript) */
@@ -597,7 +602,7 @@ function createInPageLinks()
 function addStyleSheet()
 {
 	var CSSFile = document.createElement("link");
-	CSSFile.href = "https://rawgit.com/QFCatMSU/OnlineClassBackEnd/master/module.css";
+	CSSFile.href = "https://rawgit.com/QFCatMSU/OnlineClassBackEnd/master/module.css";	// location depends on platform
 	CSSFile.type = "text/css";
 	CSSFile.rel = "stylesheet";
 	CSSFile.media = "screen,print";
@@ -802,47 +807,32 @@ function overflowCodeLines()
 	/*** Tried to use encapObject but the bounded rectangle function did
 		not work the second time -- don't know why ***/
 	codeLines = document.getElementsByClassName("code");	
+//	codeLines = encapObject.querySelectorAll(".code");	
 
 	if(codeLines.length > 0)
 	{
-		// get original height of code-line	-- only need to do this once in code
+		// get original height of code-line	-- only need to do this once in code (maybe? what if page is magnified?)
 		elem = encapObject.querySelector('.code');
 		style = getComputedStyle(elem);
 		lineHeight = parseInt(style.lineHeight);
 
-		lineHeightMult = [];
-		changeInMult = false;
-
-		// delete all previous arrows (can I do something more elegant than this??)
-		arrows = document.getElementsByClassName("overflowArrow");
-
-		/** future-- delete arrows of codeblocks that have changed -- not whole page **/
-
-		// while there are any instances of arrows, delete the first instance
-		while(arrows[0])
-		{
-			arrows[0].parentNode.removeChild(arrows[0]);
-		}
-			
 		// find code elements with height not equal to actual
 		for(i=0; i<codeLines.length; i++)
 		{
-			boundedRect = codeLines[i].getBoundingClientRect();
-			lineHeightMult[i] = Math.round(boundedRect.height/lineHeight);	 
-			if(lineHeightMult[i] != 1) // oldLineHeightMult[i])
+			boundedRect = codeLines[i].getBoundingClientRect();  
+			lineHeightMult = Math.round(boundedRect.height/lineHeight);	 
+			numArrows = codeLines[i].querySelectorAll("span.overflowArrow");
+			
+			if(lineHeightMult != (numArrows.length -1)) 
 			{
-				changeInMult = true;
-			}		
-		}
-		//alert( codeLines[0].getBoundingClientRect().height); 
-		if( changeInMult ) // a line height multiplier has changed  
-		{		
-			// Go through the length of each codeline
-			for(i=0; i<codeLines.length; i++)
-			{
-				if(lineHeightMult[i] > 1)	// if the codeline has length >1 (there is overflow)
+				// remove all current overflow arrow (later -- compare to multiplier)
+				for(j=0; j<numArrows.length; j++)
 				{
-					for(j=1; j<lineHeightMult[i]; j++)	// for each overflow line, add an arrow
+					codeLines[i].removeChild(numArrows[j]);
+				}
+				if(lineHeightMult > 1)	// if the codeline has length >1 (there is overflow)
+				{
+					for(j=1; j<lineHeightMult; j++)	// for each overflow line, add an arrow
 					{
 						arrowObj = document.createElement("span");  // create a new arrow object
 						arrowObj.classList.add("overflowArrow");	// add overflowArrow class
@@ -854,9 +844,8 @@ function overflowCodeLines()
 						codeLines[i].appendChild(arrowObj);	
 					}
 				}
-			}
+			}		
 		}
-		// oldLineHeightMult = lineHeightMult;
 	}
 	overFlowTimer = false;
 }
@@ -883,7 +872,7 @@ and converts it to
 function captionImages()
 {
 	// get all the images in the page (can later expand to tables, code-blocks...)
-	var imagesInPage = document.getElementsByTagName("img");
+	var imagesInPage = encapObject.getElementsByTagName("img");
 	
 	/* should have this in D2L:
 		[p]      <-- parent of image
@@ -1028,7 +1017,7 @@ function makeContextMenu(funct, param = null)
 		{
 			var elemDiv = document.createElement('div');
 			elemDiv.id = "rightClickDiv";
-			elemDiv.classList.add("menu");
+			elemDiv.classList.add("rcMenu");
 
 			var menuItem7 = document.createElement('a');	
 			menuItem7.href = "javascript:copySelectedText()"
@@ -1243,11 +1232,9 @@ function checkURLForPos()
 	}
 }
 
-/**** This is acopy of scrollToElement(), which required a return
-   I am not sure how to make a function both a return and a normal function ****/
 function scrollToElement(elementID)
 {		
-	var element = document.getElementById(elementID);  // does not work yet as queryselector -- because of "." in name?
+	var element = encapObject.querySelector("#" + elementID);  
 	scrollTopPosition = window.parent.scrollY;  // save the value of the scroll position
 
 	if (window.self !== window.top)  // we are in an iframe
