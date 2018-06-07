@@ -436,4 +436,7 @@ td
 	{
 		display: none;
 	}
-}
+	.overflowArrow
+        {
+                color: rgb(0,50,50);
+        }
