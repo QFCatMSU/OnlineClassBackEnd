@@ -438,5 +438,7 @@ td
 	}
 	.overflowArrow
         {
-                color: rgb(0,50,50);
+                color: rgb(0,0,153);
+		left: -30px
         }
+}
