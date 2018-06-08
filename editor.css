@@ -109,7 +109,7 @@ h6, .fullcode {
   padding-left: 0px;
   font-size: 14px;
   color: #64ffff;
-  background-color: #212121;
+  background: linear-gradient(90deg, rgb(33,33,33) 663px, rgb(100,100,100) 0, rgb(100,100,100) 100%);
   font-family: monospace;
 }
 
