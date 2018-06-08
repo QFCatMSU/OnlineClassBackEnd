@@ -134,11 +134,6 @@ h6 > br, h6 > h6, .fullcode > br, .fullcode > .fullcode {
   color: brown;
 }
 
-#title {
-  color: #990000;
-}
-
-
 /* Shortcut class names only used in the D2L editor --
    don't want these to appear in editors that have a
 	dropdown menu of classes */
