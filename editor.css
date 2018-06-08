@@ -126,7 +126,7 @@ h6 > br, h6 > h6, .fullcode > br, .fullcode > .fullcode {
   text-decoration: line-through;
 }
 
-.partial {
+.p, .partial {
   color: orange;
 }
 
