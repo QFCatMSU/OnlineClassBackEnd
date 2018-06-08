@@ -17,6 +17,21 @@ body
 	font-family: arial;
 	line-height: 135%;
 }
+h1, h2, h3, h4, h5
+{
+	font-family: arial;
+	line-height: 135%;
+}
+p, ul, ol, li
+{
+	color: rgb(0,0,0);
+	line-height: 135%;
+}
+math  /* Joomla not D2L */
+{
+	font-size: 18px;
+	color: rgb(79,49,9);
+}
 figure
 {
 	margin: 0;
