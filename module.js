@@ -569,7 +569,7 @@ function createInPageLinks()
 	for(i=0; i<linkElements.length; i++)	
 	{
 		// get id of figure you are refering to (this.id - "fig-")
-		if(linkElements[i].title == "")
+		if(linkElements[i].title == "") // old way of doing things -- deprecated
 		{	
 			linkToId = linkElements[i].id.slice(2);  // this line remove the "l-" part of the id (which is 5 characters)
 		}
@@ -578,9 +578,12 @@ function createInPageLinks()
 			linkToId = linkElements[i].title;
 		}
 		
-		// find the element to link to
-		linkToElement = encapObject.querySelector("#" + linkToId); // getElementById(linkToId);
-	
+		// find the element to link to (assumming linkToId is valid)
+		if(linkToId)  // make sure the value exists
+		{
+			linkToElement = encapObject.querySelector("#" + linkToId); // getElementById(linkToId);
+		}
+		
 		if(linkToElement) // if there is an element to link to
 		{
 			// go to scrollToElement() function when the anchor is clicked
