@@ -19,6 +19,7 @@ h3 {
 h4 {
   margin-top: 15px;
   color: #004600;
+  background-color: gainsboro;
 }
 
 h5, .caption, .figureRef {
