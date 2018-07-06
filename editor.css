@@ -82,11 +82,11 @@ body {
   font-size: 14px;
 }
 
-.flexSize {
+img.flexSize {
   height: 100px;
 }
 
-.flexSize:hover {
+img.flexSize:hover {
   height: 400px;
 }
 
@@ -147,10 +147,10 @@ h6 .hl, .fullcode .hl {
   color: yellow;
 }
 
-.fs {
+img.fs {
   height: 100px;
 }
 
-.fs:hover {
+img.fs:hover {
   height: 400px;
 }
