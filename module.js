@@ -192,6 +192,17 @@ parent.window.onload = function()
 		{
 			p[i].style.padding = "0";
 		}
+		
+		// add home page link
+		homePage = encapObject.getElementsByClassName("homePage");
+		if(homePage[0])  // a homePage object exists
+		{
+			url = window.parent.location.href;
+			classNum = url.match(/\/[0-9]{3,}\//); 
+			redNum = classNum[0].substring(1, classNum[0].length-1);
+			homePageLink = homePage[0].getElementsByTagName("a");
+			homePageLink[0].href = "https://d2l.msu.edu/d2l/home/" + redNum;
+		}
 	}
 		
 	// add class name
