@@ -211,7 +211,10 @@ parent.window.onload = function()
 			url = window.parent.document.getElementsByClassName("d2l-iterator-button-prev");
 			prevLink = url[0].href; 
 			prevPageLink = prevPage[0].getElementsByTagName("a");
-			prevPageLink[0].href = prevLink;
+			if(prevPageLink[0])
+			{
+				prevPageLink[0].href = prevLink;
+			}
 		}
 				
 		// add next link
@@ -221,7 +224,10 @@ parent.window.onload = function()
 			url = window.parent.document.getElementsByClassName("d2l-iterator-button-next");
 			nextLink = url[0].href; 
 			nextPageLink = nextPage[0].getElementsByTagName("a");
-			nextPageLink[0].href = nextLink;
+			if(nextPageLink[0])
+			{
+				nextPageLink[0].href = nextLink;
+			}
 		}
 	}
 		
