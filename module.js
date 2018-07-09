@@ -303,8 +303,8 @@ the size of the image.  Called on page load.
 */
 function createFlexImages()
 {
-	// find all elements that have the class name "flexSize" or "fs"
-	var flexImage = encapObject.querySelectorAll('.flexSize, .fs');
+	// find all images that have the class name "flexSize" or "fs"
+	var flexImage = encapObject.querySelectorAll('img.flexSize, img.fs');
 
 	// switch to while (there are flexImages)??
 	for(i=0; i<flexImage.length; i++)	// for each flexSize element
