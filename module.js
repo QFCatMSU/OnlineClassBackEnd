@@ -203,6 +203,26 @@ parent.window.onload = function()
 			homePageLink = homePage[0].getElementsByTagName("a");
 			homePageLink[0].href = "https://d2l.msu.edu/d2l/home/" + redNum;
 		}
+		
+		// add previous link
+		prevPage = encapObject.getElementsByClassName("previousLesson");
+		if(prevPage[0])  // a homePage object exists
+		{
+			url = window.parent.document.getElementsByClassName("d2l-iterator-button-prev");
+			prevLink = url[0].href; 
+			prevPageLink = prevPage[0].getElementsByTagName("a");
+			prevPageLink[0].href = prevLink;
+		}
+				
+		// add next link
+		nextPage = encapObject.getElementsByClassName("nextLesson");
+		if(nextPage[0])  // a homePage object exists
+		{
+			url = window.parent.document.getElementsByClassName("d2l-iterator-button-next");
+			nextLink = url[0].href; 
+			nextPageLink = nextPage[0].getElementsByTagName("a");
+			nextPageLink[0].href = nextLink;
+		}
 	}
 		
 	// add class name
