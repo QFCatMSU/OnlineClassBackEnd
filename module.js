@@ -116,9 +116,12 @@ window.parent.addEventListener("resize", function()
 	
 	// the iframe's height is set to "auto" so we don't need to directly change its size.
 	
-	// add a space to the first DIV -- this visually does nothing -- but it could strip any javascript commands within
-	// would like a better way to do this...
-	document.body.getElementsByTagName("DIV")[0].innerHTML += " ";
+	// get iframes from the parent windows:
+	parentIFrames = window.parent.document.getElementsByTagName("iframe");
+	if (parentIFrames[0])
+	{
+		parentIFrames[0].height = parentIFrames[0].contentWindow.document.body.scrollHeight;
+	}
 	
 	if(overflowCalled == false)
 	{
@@ -214,6 +217,7 @@ parent.window.onload = function()
 			if(prevPageLink[0])
 			{
 				prevPageLink[0].href = prevLink;
+				prevPageLink[0].target = "_parent";
 			}
 		}
 				
@@ -227,9 +231,12 @@ parent.window.onload = function()
 			if(nextPageLink[0])
 			{
 				nextPageLink[0].href = nextLink;
+				nextPageLink[0].target = "_parent";
 			}
 		}
 	}
+		
+
 		
 	// add class name
 	p = encapObject.getElementsByClassName("p");
@@ -237,6 +244,7 @@ parent.window.onload = function()
 	{
 		p[i].classList.add("partial");
 	}
+
 
 	// set title on webpage
 	window.document.title = encapObject.querySelector("#title").textContent;
@@ -642,7 +650,7 @@ function createInPageLinks()
 function addStyleSheet()
 {
 	var CSSFile = document.createElement("link");
-	CSSFile.href = "https://rawgit.com/QFCatMSU/OnlineClassBackEnd/master/module.css";	// location depends on platform
+	CSSFile.href = "../../Programming/module.css";	// location depends on platform
 	CSSFile.type = "text/css";
 	CSSFile.rel = "stylesheet";
 	CSSFile.media = "screen,print";
