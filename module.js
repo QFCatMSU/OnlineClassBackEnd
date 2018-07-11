@@ -858,19 +858,23 @@ function overflowCodeLines()
 
 	if(codeLines.length > 0)
 	{
-		// get original height of code-line	-- only need to do this once in code (maybe? what if page is magnified?)
+		// get original height of codelines -- only need to do this once in code (maybe? what if page is magnified?)
 		elem = encapObject.querySelector('.code');
 		style = getComputedStyle(elem);
 		lineHeight = parseInt(style.lineHeight);
 
-		// find code elements with height not equal to actual
+		// for each line of code in the page
 		for(i=0; i<codeLines.length; i++)
 		{
-			boundedRect = codeLines[i].getBoundingClientRect();  
-			lineHeightMult = Math.round(boundedRect.height/lineHeight);	 
+			// get the actual height the codeline 
+			actualHeight = codeLines[i].getBoundingClientRect().height;  
+			// find how many times bigger the actual height is compared to the original height
+			lineHeightMult = Math.round(actualHeight/lineHeight);	
+			// get the number of arrows attched to the line (last resize's multiple)
 			numArrows = codeLines[i].querySelectorAll("span.overflowArrow");
 			
-			if(lineHeightMult != (numArrows.length -1)) 
+			
+			if(lineHeightMult != (numArrows.length +1)) 
 			{
 				// remove all current overflow arrow (later -- compare to multiplier)
 				for(j=0; j<numArrows.length; j++)
