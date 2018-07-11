@@ -111,8 +111,7 @@ addStyleSheet();  // can be done before page load since this is called in the [h
 window.parent.addEventListener("resize", function()
 {
 	/* When the parent page gets resized, it causes the content in the iframe to get resized.
-		But, the iframe itself only resizes when the content inside the iframe changes.
-		So, we need to force a minor change in content so the iframe resizes */
+		But, the iframe itself only resizes when the content inside the iframe changes (D2L bug).*/
 	
 	// the iframe's height is set to "auto" so we don't need to directly change its size.
 	
