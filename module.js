@@ -200,10 +200,13 @@ parent.window.onload = function()
 		if(homePage[0])  // a homePage object exists
 		{
 			url = window.parent.location.href;
-			classNum = url.match(/\/[0-9]{3,}\//); 
-			redNum = classNum[0].substring(1, classNum[0].length-1);
-			homePageLink = homePage[0].getElementsByTagName("a");
-			homePageLink[0].href = "https://d2l.msu.edu/d2l/home/" + redNum;
+			classNum = url.match(/[0-9]{5,}/);
+			if(classNum[0])
+			{
+				redNum = classNum[0].substring(1, classNum[0].length-1);
+				homePageLink = homePage[0].getElementsByTagName("a");
+				homePageLink[0].href = "https://d2l.msu.edu/d2l/home/" + redNum;
+			}
 		}
 		
 		// add previous link
@@ -211,12 +214,15 @@ parent.window.onload = function()
 		if(prevPage[0])  // a homePage object exists
 		{
 			url = window.parent.document.getElementsByClassName("d2l-iterator-button-prev");
-			prevLink = url[0].href; 
-			prevPageLink = prevPage[0].getElementsByTagName("a");
-			if(prevPageLink[0])
+			if(url[0])
 			{
-				prevPageLink[0].href = prevLink;
-				prevPageLink[0].target = "_parent";
+				prevLink = url[0].href; 
+				prevPageLink = prevPage[0].getElementsByTagName("a");
+				if(prevPageLink[0])
+				{
+					prevPageLink[0].href = prevLink;
+					prevPageLink[0].target = "_parent";
+				}
 			}
 		}
 				
@@ -225,12 +231,15 @@ parent.window.onload = function()
 		if(nextPage[0])  // a homePage object exists
 		{
 			url = window.parent.document.getElementsByClassName("d2l-iterator-button-next");
-			nextLink = url[0].href; 
-			nextPageLink = nextPage[0].getElementsByTagName("a");
-			if(nextPageLink[0])
+			if(url[0])
 			{
-				nextPageLink[0].href = nextLink;
-				nextPageLink[0].target = "_parent";
+				nextLink = url[0].href; 
+				nextPageLink = nextPage[0].getElementsByTagName("a");
+				if(nextPageLink[0])
+				{
+					nextPageLink[0].href = nextLink;
+					nextPageLink[0].target = "_parent";
+				}
 			}
 		}
 	}
@@ -1052,10 +1061,13 @@ function makeContextMenu(funct, param = null)
 				}
 				divID = divsInPage[i].id;		
 
-				mapItem = document.createElement("menuitem");
-				mapItem.label = divsInPage[i].dataTitle;
-				mapItem.onclick = scrollToElementReturn(divID);
-				submenu.appendChild(mapItem);								
+				if(divsInPage[i].dataTitle)
+				{
+					mapItem = document.createElement("menuitem");
+					mapItem.label = divsInPage[i].dataTitle;
+					mapItem.onclick = scrollToElementReturn(divID);
+					submenu.appendChild(mapItem);		
+				}
 			}
 
 		contextMenu.appendChild(submenu);
