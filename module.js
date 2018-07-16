@@ -206,6 +206,12 @@ parent.window.onload = function()
 				redNum = classNum[0].substring(1, classNum[0].length-1);
 				homePageLink = homePage[0].getElementsByTagName("a");
 				homePageLink[0].href = "https://d2l.msu.edu/d2l/home/" + redNum;
+				
+				// set title on webpage
+				titleObj = encapObject.querySelector("#title");
+				
+				// add homepage icon to title
+				//titleObj.innerHTML += " <a href='https://d2l.msu.edu/d2l/home/'>&#x1F3D8;</a>";
 			}
 			
 			// add previous link
@@ -245,9 +251,7 @@ parent.window.onload = function()
 			}
 		}
 	}
-		
 
-		
 	// add class name
 	p = encapObject.getElementsByClassName("p");
 	for(i=0; i<p.length; i++)
@@ -255,13 +259,16 @@ parent.window.onload = function()
 		p[i].classList.add("partial");
 	}
 
-
 	// set title on webpage
 	titleObj = encapObject.querySelector("#title");
 	window.document.title = titleObj.textContent;
 	
 	// add printer icon to title
-	titleObj.innerHTML += " <a href='javascript:window.print()'>&#x1F5B6;</a>";
+	printLink = document.createElement('a');
+	printLink.href = "javascript:window.print()";
+	printLink.style.paddingLeft = "9px";
+	printLink.innerHTML = "&#x1F5B6;";
+	titleObj.appendChild(printLink);
 	
 	// there should be no [div] elements in the page -- [div] can be copied/pasted in
 	removeDivs();
