@@ -198,25 +198,26 @@ parent.window.onload = function()
 		if(self != top)
 		{
 			// add home page link
-			homePage = encapObject.getElementsByClassName("homePage");
-			if(homePage[0])  // a homePage object exists
+			url = window.parent.location.href;
+			classNum = url.match(/\/[0-9]{3,}\//); 
+			redNum = classNum[0].substring(1, classNum[0].length-1); // get number of D2L class
+			homePage = document.createElement("a");
+			homePage.innerHTML = "Home";
+			homePage.href = "https://d2l.msu.edu/d2l/home/" + redNum;
+			homePage.target = "_parent";
+			homePage.classList.add("lessonLink");
+			homePage.classList.add("homePage");
+			
+			titleObj = encapObject.querySelector("#title");
+			
+			if(titleObj)
 			{
-				url = window.parent.location.href;
-				classNum = url.match(/\/[0-9]{3,}\//); 
-				redNum = classNum[0].substring(1, classNum[0].length-1);
-				homePageLink = homePage[0].getElementsByTagName("a");
-				homePageLink[0].href = "https://d2l.msu.edu/d2l/home/" + redNum;
-				
-				// set title on webpage
-				titleObj = encapObject.querySelector("#title");
-				
-				// add homepage icon to title
-				//titleObj.innerHTML += " <a href='https://d2l.msu.edu/d2l/home/'>&#x1F3D8;</a>";
+				encapObject.insertBefore(homePage, titleObj);
 			}
 			
 			// add previous link
 			prevPage = encapObject.getElementsByClassName("previousLesson");
-			if(prevPage[0])  // a homePage object exists
+			if(prevPage[0])  // a prevPage object exists
 			{
 				url = window.parent.document.getElementsByClassName("d2l-iterator-button-prev");
 				prevLink = url[0].href; 
@@ -230,7 +231,7 @@ parent.window.onload = function()
 					
 			// add next link
 			nextPage = encapObject.getElementsByClassName("nextLesson");
-			if(nextPage[0])  // a homePage object exists
+			if(nextPage[0])  // a nextPage object exists
 			{
 				url = window.parent.document.getElementsByClassName("d2l-iterator-button-next");
 				nextLink = url[0].href; 
