@@ -457,7 +457,7 @@ img.flexSize, img.fs
 		border-style: solid;
 		border-radius: 5px;
 	}
-	.rightClickDiv
+	.rightClickDiv, .title>a
 	{
 		display: none;
 	}
