@@ -219,33 +219,38 @@ parent.window.onload = function()
 			prevPage = encapObject.getElementsByClassName("previousLesson");
 			if(prevPage[0])  // a prevPage object exists
 			{
+				text = prevPage[0].innerText;
 				url = window.parent.document.getElementsByClassName("d2l-iterator-button-prev");
-				prevLink = url[0].href; 
-				prevPageLink = prevPage[0].getElementsByTagName("a");
-				if(prevPageLink[0])
-				{
-					prevPageLink[0].href = prevLink;
-					prevPageLink[0].target = "_parent";
-				}
+				newPrevPage = document.createElement("a");
+				newPrevPage.innerHTML = "Previously: " + text;
+				newPrevPage.href = url[0].href;
+				newPrevPage.target = "_parent";
+				newPrevPage.classList.add("lessonLink");
+				newPrevPage.classList.add("previousLesson");
+				encapObject.insertBefore(newPrevPage, homePage);
+				prevPage[0].parentNode.removeChild(prevPage[0]);
 			}
 					
 			// add next link
 			nextPage = encapObject.getElementsByClassName("nextLesson");
 			if(nextPage[0])  // a nextPage object exists
 			{
+				text = nextPage[0].innerText;
 				url = window.parent.document.getElementsByClassName("d2l-iterator-button-next");
-				nextLink = url[0].href; 
-				nextPageLink = nextPage[0].getElementsByTagName("a");
-				if(nextPageLink[0])
-				{
-					nextPageLink[0].href = nextLink;
-					nextPageLink[0].target = "_parent";
-				}
+				newNextPage = document.createElement("a");
+				newNextPage.innerHTML = "Up Next: " + text;
+				newNextPage.href = url[0].href;
+				newNextPage.target = "_parent";
+				newNextPage.classList.add("lessonLink");
+				newNextPage.classList.add("nextLesson");
+				encapObject.insertBefore(newNextPage, homePage);
+				nextPage[0].parentNode.removeChild(nextPage[0]);
 			}
 		}
 		else
 		{
-			lessonLinks = document.getElementsByClassName("lessonLink");
+			//lessonLinks = document.getElementsByClassName("previousLesson nextLesson");
+			lessonLinks = encapObject.querySelectorAll(".previousLesson, .nextLesson");
 			for(i=0; i<lessonLinks.length; i++)
 			{
 				lessonLinks[i].style.display = "none";
