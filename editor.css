@@ -133,6 +133,10 @@ h6>br,h6>h6
 	text-decoration: line-through;
 }
 
+.p, .partial
+{
+	color: orange;
+}
 .previousLesson, .nextLesson
 {
 	background-color: powderblue;
