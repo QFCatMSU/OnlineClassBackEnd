@@ -132,7 +132,11 @@ h6>br,h6>h6
 {
 	text-decoration: line-through;
 }
-
+.note
+{
+	color: rgb(160,64,0);
+	font-style: italic;
+}
 .p, .partial
 {
 	color: orange;
