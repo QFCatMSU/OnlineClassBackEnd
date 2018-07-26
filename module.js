@@ -676,7 +676,7 @@ function createInPageLinks()
 function addStyleSheet()
 {
 	var CSSFile = document.createElement("link");
-	CSSFile.href = "../../Programming/module.css";	// location depends on platform
+	CSSFile.href = "module.css";	// location depends on platform
 	CSSFile.type = "text/css";
 	CSSFile.rel = "stylesheet";
 	CSSFile.media = "screen,print";
