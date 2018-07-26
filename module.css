@@ -333,12 +333,12 @@ img.flexSize, img.fs
 	margin-top: 0px;
 	margin-bottom: 5px;
 }
-.previousLesson
+.previousLesson, .pl
 {
 	float: left;
 	text-align: left;
 }
-.nextLesson
+.nextLesson, .nl
 {
 	float: right;
 	text-align: right;
@@ -378,12 +378,12 @@ img.flexSize, img.fs
 		display: block;
 	}
 	
-	.nextLesson, .previousLesson 
+	.nextLesson, .previousLesson, .nl, .pl 
 	{
 	  float: none;
 	}
 	
-	.nextLesson
+	.nextLesson, .nl
 	{
 		text-align: left;
 	}

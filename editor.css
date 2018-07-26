@@ -137,7 +137,7 @@ h6>br,h6>h6
 {
 	color: orange;
 }
-.previousLesson, .nextLesson
+.previousLesson, .nextLesson, .nl, .pl
 {
 	background-color: powderblue;
 }

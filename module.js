@@ -216,7 +216,7 @@ parent.window.onload = function()
 			}
 			
 			// add previous link
-			prevPage = encapObject.getElementsByClassName("previousLesson");
+			prevPage = encapObject.querySelectorAll(".previousLesson, .pl");
 			if(prevPage[0])  // a prevPage object exists
 			{
 				text = prevPage[0].innerText;
@@ -232,7 +232,7 @@ parent.window.onload = function()
 			}
 					
 			// add next link
-			nextPage = encapObject.getElementsByClassName("nextLesson");
+			nextPage = encapObject.querySelectorAll(".nextLesson, .nl");
 			if(nextPage[0])  // a nextPage object exists
 			{
 				text = nextPage[0].innerText;
@@ -249,8 +249,7 @@ parent.window.onload = function()
 		}
 		else
 		{
-			//lessonLinks = document.getElementsByClassName("previousLesson nextLesson");
-			lessonLinks = encapObject.querySelectorAll(".previousLesson, .nextLesson");
+			lessonLinks = encapObject.querySelectorAll(".previousLesson, .nextLesson, .nl, .pl");
 			for(i=0; i<lessonLinks.length; i++)
 			{
 				lessonLinks[i].style.display = "none";
