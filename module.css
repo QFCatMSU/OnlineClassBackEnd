@@ -229,6 +229,11 @@ td
 	-moz-user-select: none; /* Firefox */
 	-ms-user-select: none; /* IE10+ */
 }
+note
+{
+	color: rgb(160,64,0);
+	font-style: italic;
+}
 .overflowArrow
 {
 	color: yellow;
