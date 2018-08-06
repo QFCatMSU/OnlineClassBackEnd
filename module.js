@@ -267,7 +267,7 @@ parent.window.onload = function()
 	nn = encapObject.getElementsByClassName("nn");
 	for(i=0; i<nn.length; i++)
 	{
-		nn[i].classList.add("nonum");
+		nn[i].classList.add("nonum partial");
 	}
 	
 	// set title on webpage
@@ -808,6 +808,11 @@ function addCodeTags(elementType)
 			if(codeLines[i].classList.contains("partial")  || codeLines[i].querySelectorAll(".partial").length != 0)
 			{
 				codeBlockDiv.classList.add("partial");
+			}		
+			// check if the codelines or any of its children (D2L issue) has the class "nonum"
+			if(codeLines[i].classList.contains("nonum")  || codeLines[i].querySelectorAll(".nonum").length != 0)
+			{
+				codeBlockDiv.classList.add("nonum");
 			}		
 			// check if the codelines or any of its children (D2L issue) has the class "text"
 			if(codeLines[i].classList.contains("text") || codeLines[i].querySelectorAll(".text").length != 0) 
