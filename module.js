@@ -267,7 +267,8 @@ parent.window.onload = function()
 	nn = encapObject.getElementsByClassName("nn");
 	for(i=0; i<nn.length; i++)
 	{
-		nn[i].classList.add("nonum partial");
+		nn[i].classList.add("nonum");
+		nn[i].classList.add("partial");
 	}
 	
 	// set title on webpage
