@@ -213,7 +213,7 @@ td
 {
 	color: yellow;
 }
-.code:before
+.code:not(.nonum):before
 {	
 	counter-increment: codeLines;
 	content: counter(codeLines);

@@ -264,6 +264,12 @@ parent.window.onload = function()
 		p[i].classList.add("partial");
 	}
 
+	nn = encapObject.getElementsByClassName("nn");
+	for(i=0; i<nn.length; i++)
+	{
+		nn[i].classList.add("nonum");
+	}
+	
 	// set title on webpage
 	titleObj = encapObject.querySelector("#title");
 	window.document.title = titleObj.textContent;
