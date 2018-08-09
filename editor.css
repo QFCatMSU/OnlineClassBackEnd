@@ -86,11 +86,11 @@ body
 { 
 	font-size: 14px; 
 }
-.flexSize, .fs
+img.flexSize, img.fs
 { 
 	height: 100px; 
 }
-.flexSize:hover, .fs:hover
+img.flexSize:hover, img.fs:hover
 { 
 	height: 400px; 
 }
