@@ -198,6 +198,7 @@ td
 	font-weight: normal;	
 	font-size: 14px;
 	margin: 0;
+	letter-spacing: -0.3px;
 	padding-left: 4.5em;
 	text-indent: -4.5em;
 	background: none; /* gets rid of background from editor.css */
@@ -429,18 +430,21 @@ img.flexSize, img.fs
 		/* for some reason, light gray turn to black in print ?!? */
 		text-decoration-color: aqua;  	
 	}
-	.code
+	.code 
 	{
 
       /* Get rid of the background-color when printing */
 		background-color: transparent;	
 		color: rgb(0,0,153);
-		margin-left: -25px;
-		margin-right: -15px;
 		font-size: 13px;
-		
+
 		/* adjust the font color for a white background 
 		   -- it was designed for a black background */
+	}
+	.codeBlock:not(.nonum)>.code
+	{
+		margin-left: -25px;
+		margin-right: -15px;
 	}
 	.partial>.code, .p>.code
 	{
@@ -468,9 +472,9 @@ img.flexSize, img.fs
 	}
 	/* Need to first figure out how to "resize" screen on print */
 	.overflowArrow
-        {
-                color: rgb(0,0,153);
+	{
+		color: rgb(0,0,153);
 		left: -30px;
 		display: none;
-        }
+	}
 }
