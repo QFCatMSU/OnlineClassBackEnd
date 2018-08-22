@@ -142,6 +142,10 @@ h6>br,h6>h6
 {
 	color: orange;
 }
+.nn, .nonum
+{
+	color: rgb(255,30,30);
+}
 .previousLesson, .nextLesson, .nl, .pl
 {
 	background-color: powderblue;
