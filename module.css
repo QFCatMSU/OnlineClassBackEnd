@@ -349,6 +349,10 @@ img.flexSize, img.fs
 	float: right;
 	text-align: right;
 }
+.previousLesson:not(.lessonLink), .pl:not(.lessonLink), .nextLesson:not(.lessonLink), .nl:not(.lessonLink)
+{
+	display: none;	
+}
 .homePage
 {
 	width: 80px;
