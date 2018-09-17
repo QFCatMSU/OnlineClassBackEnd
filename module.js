@@ -105,6 +105,13 @@ scrollTopPosition = 0; 			// value saved for links-return-links within a page
 returnLink = null;				// element on page that contains the return link
 overflowCalled = false;   		// check to see if there is a current check of code lines
 
+// remove display="block" from <math> objects -- only Latex equations
+m = document.getElementsByTagName("math");
+for(i=0; i<m.length; i++)
+{
+	m[i].setAttribute("display", "inline");
+}
+
 addStyleSheet();  // can be done before page load since this is called in the [head]
 	
 // resize the iframe in the parent window when the page gets resized
