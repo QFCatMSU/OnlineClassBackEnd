@@ -27,9 +27,8 @@ p, ul, ol, li
 	color: rgb(0,0,0);
 	line-height: 135%;
 }
-math  /* Joomla not D2L */
+math, .MathJax
 {
-	font-size: 18px;
 	color: rgb(79,49,9);
 }
 figure
