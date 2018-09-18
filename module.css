@@ -246,7 +246,7 @@ td
     -o-user-select: none;
     user-select: none;
 }
-.caption, .figureRef, .c, .fr
+.caption, .figureRef, .c, .fr, .eqNum, .eqRef
 {
 	color: rgb(0,100,0);
 	font-style: italic;
@@ -368,7 +368,7 @@ img.flexSize, img.fs
 	background-color: rgb(220,220,220);
 	border-radius: 10px;
 }
-.figureRef, .fr
+.figureRef, .fr, .eqNum, .eqRef
 {
 	text-decoration: none;
 }

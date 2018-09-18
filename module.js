@@ -318,9 +318,11 @@ parent.window.onload = function()
 	// adds the caption class to all H5 elements
 	addCaption("H5");
 	
+	equationNumbering();
+	
 	// find all references to figures in the webpage and add correct figure number
 	figureReferences();	
-	
+	eqReferences();
 	// associate captions and images using accessibility standards (took out because too many issues with D2L's editor)
 	// captionImages();
 	
@@ -720,6 +722,20 @@ function addStyleSheet()
 	document.getElementsByTagName("head")[0].appendChild(CSSFile);
 }
 
+/* adds the class "caption" to all H5 lines */
+function equationNumbering()
+{
+	// find all elements of elementType (initially it is H5)
+	var equations = encapObject.getElementsByClassName("eqNum");
+	
+	for(i=0; i<equations.length; i++)
+	{
+		if(equations[i].innerText.trim() != "")  // there is text in the caption
+		{
+			equations[i].innerHTML = "( " + (i+1) + " )";
+		}	
+	}
+}
 
 /* adds the class "caption" to all H5 lines */
 function addCaption(elementType)
@@ -1321,6 +1337,33 @@ function figureReferences()
 			figRefInPage[i].innerText = "Missing Fig.";
 		}
 		*/
+	}
+}
+
+/* finds all figure references in the page and add the correct numerical reference */
+function eqReferences()
+{
+	var eqRefInPage = encapObject.getElementsByClassName("eqRef");
+
+	for(i=0; i<eqRefInPage.length; i++)
+	{
+		// Outside of D2L: uses id with extra characters (c-) at beginning
+		eqID = eqRefInPage[i].id.slice(2);
+
+		if(eqRefInPage[i].innerText.trim() != "" &&
+			encapObject.querySelector("#" + eqID) &&   // getElementById(figureID) && 
+			encapObject.querySelector("#" + eqID).innerText != "")
+		{
+			caption = encapObject.querySelector("#" + eqID).innerText;
+			
+			eqRef = caption.slice(1,-1); 
+			
+			eqRefInPage[i].innerText = "Eq. " + eqRef;	
+		}
+		else
+		{
+			eqRefInPage[i].innerText = "Missing Eq.";
+		}
 	}
 }
 

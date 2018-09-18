@@ -35,7 +35,7 @@ h4
 	color: rgb(0,70,0); 
 	background-color: rgb(220,220,220); 
 }
-h5, .caption, .figureRef
+h5, .caption, .figureRef, .eqNum, .eqRef
 { 
 	font-style: italic; 
 	color: rgb(0,100,0); 
@@ -129,7 +129,7 @@ h6>br,h6>h6
 {
 	color: red;
 }
-.figureRef, .fr
+.figureRef, .fr, .eqNum
 {
 	text-decoration: line-through;
 }
