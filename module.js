@@ -98,10 +98,23 @@ Still needed :
 	</script>
 */
 // remove display="block" from <math> objects -- only Latex equations
-m = document.getElementsByTagName("math");
-for(i=0; i<m.length; i++)
+if(document.readyState === "complete" ||
+  (document.readyState !== "loading" && !document.documentElement.doScroll)) 
 {
-	m[i].setAttribute("display", "inline");
+  callback();
+} 
+else 
+{
+  document.addEventListener("DOMContentLoaded", callback);
+}
+
+function callback()
+{
+	m = document.getElementsByTagName("math");
+	for(i=0; i<m.length; i++)
+	{
+		m[i].setAttribute("display", "inline");
+	}
 }
 
 smallImageHeight = 100;			// set the height of flex-sized images when small 
