@@ -1110,7 +1110,7 @@ function makeContextMenu(funct, param = null)
 		submenu = document.createElement("menu");
 		submenu.label = "Page Map";
 
-			divsInPage = encapObject.getElementsByTagName("div");
+			divsInPage = encapObject.getElementsByClassName("contentDiv");
 			divID = new Array();
 			for(i=1; i<divsInPage.length; i++)  // skip the title
 			{
