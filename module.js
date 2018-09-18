@@ -97,6 +97,13 @@ Still needed :
 		document.getElementsByTagName('head')[0].appendChild(scriptFile);
 	</script>
 */
+// remove display="block" from <math> objects -- only Latex equations
+m = document.getElementsByTagName("math");
+for(i=0; i<m.length; i++)
+{
+	m[i].setAttribute("display", "inline");
+}
+
 smallImageHeight = 100;			// set the height of flex-sized images when small 
 imageHeight = new Array();		// the heights of all flex-sized images in a page
 imageWidth = new Array();		// the widths of all flex-sized images in a page
@@ -141,13 +148,6 @@ parent.window.onload = function()
 	encapObject = document.body;  
 	editURL = "";
 
-	
-// remove display="block" from <math> objects -- only Latex equations
-m = document.getElementsByTagName("math");
-for(i=0; i<m.length; i++)
-{
-	m[i].setAttribute("display", "inline");
-}
 	
 		// check if we are in Joomla or D2L
 	
