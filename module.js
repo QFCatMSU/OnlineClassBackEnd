@@ -1264,17 +1264,9 @@ function figureReferences()
 
 	for(i=0; i<figRefInPage.length; i++)
 	{
-		// the id of figure you are refering to is the title on the figureRef
-		if(figRefInPage[i].title)
-		{
-			// D2L -- uses title
-			figureID = figRefInPage[i].title;
-		}
-		else 
-		{
-			// Outside of D2L: uses id with extra characters (c-) at beginning
-			figureID = figRefInPage[i].id.slice(2);
-		}
+		// uses id with extra characters (c-) at beginning
+		figureID = figRefInPage[i].id.slice(2);
+
 		// check if the title refers to a legitimate ID for a caption in the page
 		/*if(figRefInPage[i].innerText.trim() != "" &&
 			document.getElementById(figureID) && 
@@ -1282,15 +1274,15 @@ function figureReferences()
 			document.getElementById(figureID).nextElementSibling.tagName == "FIGCAPTION")	
 			
 		Check if:
-		1) there is text in the figureRef
-		2) title of figureRef is an id 
+		1) there is text in the figureRef (e.g., it is not an accidental figureRef)
+		2) the id of figureRef (minus first two characters) is an id of a caption 
 		3) the id is of class caption (or a parent -- this is the D2L issue where [span] can turn up where not wanted --
 			-- not going to implement this yet.
-		4) the caption has text 		
+		4) the caption has non-white space text 		
 		*/
 		if(figRefInPage[i].innerText.trim() != "" &&
 			encapObject.querySelector("#" + figureID) &&   // getElementById(figureID) && 
-			encapObject.querySelector("#" + figureID).innerText != "")
+			encapObject.querySelector("#" + figureID).innerText.trim() != "")
 		{
 			caption = encapObject.querySelector("#" + figureID).innerText;
 			strIndex = caption.indexOf(":");  // find the location of the first semicolon
@@ -1303,40 +1295,6 @@ function figureReferences()
 		{
 			figRefInPage[i].innerText = "Missing Fig.";
 		}
-		
-		/*************Deprecated Code
-		/* if 1) there is text inside this figure ref (it is not blank) 
-				2) the element exists and 
-				3) this element has a next sibling element and 
-				4) the next sibling element is a figCaption	
-		   All four conditions are warnings that should be broken up and logged in the console
-		
-		if(figRefInPage[i].innerText.trim() != "" &&
-			document.getElementById(figureID) && 
-			document.getElementById(figureID).nextElementSibling && 
-			document.getElementById(figureID).nextElementSibling.tagName == "FIGCAPTION")
-		{
-			/* go to caption attached to figure
-			[figure]
-			   [img]         <-- actual figure
-				[figcaption]  <-- caption attached to figure
-			[/figure]  
-			
-			// get the caption
-			caption = document.getElementById(figureID).nextElementSibling.innerText;
-			strIndex = caption.indexOf(":");  // find the location of the first semicolon
-			
-			figRef = caption.slice(0, strIndex); // get "Fig. #"
-			
-			figRefInPage[i].innerText = figRef;
-		}
-		// making sure D2L did not add a wayward object with nothing it in 
-		// that cannot be seen by the user (need to log this to console)
-		else if(figRefInPage[i].innerText.trim() != "")
-		{
-			figRefInPage[i].innerText = "Missing Fig.";
-		}
-		*/
 	}
 }
 
@@ -1352,7 +1310,7 @@ function eqReferences()
 
 		if(eqRefInPage[i].innerText.trim() != "" &&
 			encapObject.querySelector("#" + eqID) &&   // getElementById(figureID) && 
-			encapObject.querySelector("#" + eqID).innerText != "")
+			encapObject.querySelector("#" + eqID).innerText.trim() != "")
 		{
 			caption = encapObject.querySelector("#" + eqID).innerText;
 			
