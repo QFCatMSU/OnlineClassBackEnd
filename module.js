@@ -354,6 +354,9 @@ parent.window.onload = function()
 	
 	// check the URL to see if there is a request to go to a specific part of the page
 	checkURLForPos();
+	
+	// target all hyperlinks to a new window
+	linksToNewWindow();
 }
 
 /* removes all of the [div] elements in the page and move the content inside the [div]
@@ -1118,7 +1121,7 @@ function makeContextMenu(funct, param = null)
 		{
 			menuItem = document.createElement("menuitem");
 			menuItem.label = "Edit Page";
-			menuItem.onclick = function() { window.open(editURL, "blank") };
+			menuItem.onclick = function() { window.open(editURL, "_blank") };
 			contextMenu.appendChild(menuItem);
 		}
 
@@ -1407,6 +1410,23 @@ function scrollToElement(elementID)
 	/** Don't need the return link! (huh??) ****/
 	element.appendChild(returnLink);
 	returnLink.style.display = "block";
+}
+
+function linksToNewWindow()
+{
+	links = encapObject.querySelectorAll('a');
+	
+	for(i=0; i<links.length; i++)
+	{
+		if(links[i].href.trim() != "" && !(links[i].classList.contains("sameWin")))
+		{
+			links[i].target = "_blank";
+		}
+		else
+		{
+			links[i].target = "_self";
+		}
+	}
 }
 /* Things to do
 - check if there is content in the source file <done>
