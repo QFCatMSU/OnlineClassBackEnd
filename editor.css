@@ -129,7 +129,7 @@ h6>br,h6>h6
 {
 	color: red;
 }
-.figureRef, .fr, .eqNum
+.figureRef, .fr, .eqNum, .eqRef
 {
 	text-decoration: line-through;
 }
