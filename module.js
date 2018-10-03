@@ -1134,6 +1134,7 @@ function makeContextMenu(funct, param = null)
 				{
 					// the id of the div is "div#.#" with the #'s matching the ouline.
 					divsInPage[i].id = "div" + parseFloat(divsInPage[i].textContent);
+					divsInPage[i].id = divsInPage[i].id.replace(".", "-");
 				}
 				divID = divsInPage[i].id;		
 
@@ -1376,18 +1377,21 @@ function scrollToElement(elementID)
 			}
 		}
 
+		// remove the returnLink so it does not factor in to the size 
+		returnLink.style.display = "none";
 		// get the amount of vertical space the header take -- this is D2L only
-		if(window.parent.document.getElementById("d2l_minibar"))
+		// don't think this object exists anymore 
+		/*if(window.parent.document.getElementById("d2l_minibar"))
 		{
 			headerHeight = window.parent.document.getElementById("d2l_minibar").offsetHeight;
 		}
 		else
 		{
 			headerHeight = 0;
-		}
-		
+		}*/
+
 		// calc the vertical position of the linkTo element in the parent page
-		totalScrollY = element.offsetTop + iframeOffset - headerHeight;
+		totalScrollY = element.offsetTop + iframeOffset - 0; // headerHeight = 0;
 
 		// scroll the parent to the vertical position of the linkTo element
 		window.parent.scrollTo(element.offsetLeft, totalScrollY);	
