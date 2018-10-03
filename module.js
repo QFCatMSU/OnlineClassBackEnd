@@ -228,6 +228,7 @@ parent.window.onload = function()
 			homePage.href = "https://d2l.msu.edu/d2l/home/" + redNum;
 			homePage.target = "_parent";
 			homePage.classList.add("lessonLink");
+			homePage.classList.add("sameWin");
 			homePage.classList.add("homePage");
 			
 			titleObj = encapObject.querySelector("#title");
@@ -248,6 +249,7 @@ parent.window.onload = function()
 				newPrevPage.href = url[0].href;
 				newPrevPage.target = "_parent";
 				newPrevPage.classList.add("lessonLink");
+				newPrevPage.classList.add("sameWin");
 				newPrevPage.classList.add("previousLesson");
 				encapObject.insertBefore(newPrevPage, homePage);
 				prevPage[0].parentNode.removeChild(prevPage[0]);
@@ -264,6 +266,7 @@ parent.window.onload = function()
 				newNextPage.href = url[0].href;
 				newNextPage.target = "_parent";
 				newNextPage.classList.add("lessonLink");
+				newNextPage.classList.add("sameWin");
 				newNextPage.classList.add("nextLesson");
 				encapObject.insertBefore(newNextPage, homePage);
 				nextPage[0].parentNode.removeChild(nextPage[0]);
