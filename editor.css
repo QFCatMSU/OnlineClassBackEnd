@@ -10,7 +10,37 @@
 	h6>h6::first-child (currently unused) is the only example I know of so far 
 	
 	but h6>h6 works */
-			
+	
+body
+{
+	counter-reset: h2Count figCount eqCount;
+}
+h2::before 
+{
+  counter-increment: h2Count;               
+  content: counter(h2Count) "- ";              
+}
+h3::before 
+{
+  counter-increment: h3Count;               
+  content: counter(h2Count) "-" counter(h3Count) " ";    
+}	
+h4::before 
+{
+  counter-increment: h4Count;               
+  content: counter(h2Count) "-" counter(h3Count) "-" counter(h4Count) " ";              
+}	
+h5::before
+{
+  counter-increment: figCount;               
+  content: "fig. " counter(figCount) ": ";  
+}
+.eqNum::before
+{
+  counter-increment: eqCount;               
+  content: "(EQ " counter(eqCount) ")";  
+}
+
 h1  
 { 
 	color: rgb(0,0,100); 
@@ -22,12 +52,14 @@ h2
 	color: rgb(100,0,0); 
 	text-align: left; 
 	background-color: rgb(220,220,220); 
+	counter-reset: h3Count;
 }
 h3
 { 
 	margin-top: 15px; 
 	color: rgb(0,0,100); 
 	background-color: rgb(220,220,220); 
+	counter-reset: h4Count;
 }
 h4
 { 	
@@ -150,23 +182,3 @@ h6>br,h6>h6
 {
 	background-color: powderblue;
 }
-/****** deprecated styles
-		table 
-		{ margin-bottom: 10px; width: 100%; } 
-		td 
-		{ height: 18px; }
-		.title
-		{ text-align: center; }
-		div
-		{
-			padding-left: 25px;
-			padding-right: 10px;
-			padding-top: 15px;
-			padding-bottom: 15px;
-			margin-top: 5px;
-			margin-bottom: 5px;
-			background-color: rgb(220,220,220);
-			border-radius: 10px;
-			overflow: auto;
-		}
-******* end of deprecated styles */
