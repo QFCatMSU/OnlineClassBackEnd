@@ -678,14 +678,7 @@ function createInPageLinks()
 	for(i=0; i<linkElements.length; i++)	
 	{
 		// get id of figure you are refering to (this.id - "fig-")
-		if(linkElements[i].title == "") // old way of doing things -- deprecated
-		{	
-			linkToId = linkElements[i].id.slice(2);  // this line remove the "l-" part of the id (which is 5 characters)
-		}
-		else
-		{
-			linkToId = linkElements[i].title;
-		}
+		linkToId = linkElements[i].id.slice(2);  // this line remove the "l-" part of the id (which is 5 characters)
 		
 		// find the element to link to (assumming linkToId is valid)
 		if(linkToId)  // make sure the value exists
