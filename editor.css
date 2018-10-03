@@ -39,7 +39,7 @@ h5::before
 {
   counter-increment: eqCount;               
   content: "( " counter(eqCount) " )";  
-  text-decoration: none;
+  text-decoration-line: none; /* does not work -- is there another way? */
 }
 
 h1  
