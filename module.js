@@ -302,6 +302,7 @@ parent.window.onload = function()
 	
 	// add printer icon to title
 	printLink = document.createElement('a');
+	printLink.classList.add("sameWin");
 	printLink.href = "javascript:window.print()";
 	printLink.style.paddingLeft = "9px";
 	printLink.innerHTML = "&#x1F5B6;";
