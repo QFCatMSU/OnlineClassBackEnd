@@ -360,7 +360,7 @@ parent.window.onload = function()
 	checkURLForPos();
 	
 	// target all hyperlinks to a new window
-	//linksToNewWindow();
+	linksToNewWindow();
 }
 
 /* removes all of the [div] elements in the page and move the content inside the [div]
@@ -1411,17 +1411,13 @@ function scrollToElement(elementID)
 
 function linksToNewWindow()
 {
-	links = encapObject.querySelectorAll('a');
+	links = encapObject.querySelectorAll('a[href]');
 	
 	for(i=0; i<links.length; i++)
 	{
-		if(links[i].href.trim() != "" && !(links[i].classList.contains("sameWin")))
+		if(links[i].href.trim() != "" && !(links[i].classList.contains("sameWin")) && links[i].target == "_self")
 		{
 			links[i].target = "_blank";
-		}
-		else
-		{
-			links[i].target = "_self";
 		}
 	}
 }
