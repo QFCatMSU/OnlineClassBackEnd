@@ -1280,7 +1280,7 @@ function figureReferences()
 			-- not going to implement this yet.
 		4) the caption has non-white space text 		
 		*/
-		if(figRefInPage[i].innerText.trim() != "" &&
+		if(figureID.trim() != "" && figRefInPage[i].innerText.trim() != "" &&
 			encapObject.querySelector("#" + figureID) &&   // getElementById(figureID) && 
 			encapObject.querySelector("#" + figureID).innerText.trim() != "")
 		{
@@ -1308,7 +1308,7 @@ function eqReferences()
 		// Outside of D2L: uses id with extra characters (c-) at beginning
 		eqID = eqRefInPage[i].id.slice(2);
 
-		if(eqRefInPage[i].innerText.trim() != "" &&
+		if(eqID.trim() != "" && eqRefInPage[i].innerText.trim() != "" &&
 			encapObject.querySelector("#" + eqID) &&   // getElementById(figureID) && 
 			encapObject.querySelector("#" + eqID).innerText.trim() != "")
 		{
