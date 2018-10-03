@@ -360,7 +360,7 @@ parent.window.onload = function()
 	checkURLForPos();
 	
 	// target all hyperlinks to a new window
-	linksToNewWindow();
+	//linksToNewWindow();
 }
 
 /* removes all of the [div] elements in the page and move the content inside the [div]
