@@ -38,7 +38,8 @@ h5::before
 .eqNum::before
 {
   counter-increment: eqCount;               
-  content: "(EQ " counter(eqCount) ")";  
+  content: "( " counter(eqCount) " )";  
+  text-decoration: none;
 }
 
 h1  
