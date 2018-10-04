@@ -246,7 +246,7 @@ td
     -o-user-select: none;
     user-select: none;
 }
-.caption, .figureRef, .c, .fr, .eqNum, .eqRef
+.caption, .figureRef, .c, .fr, .eqNum, .eqRef, .sectRef
 {
 	color: rgb(0,100,0);
 	font-style: italic;

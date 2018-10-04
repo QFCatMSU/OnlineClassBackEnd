@@ -327,6 +327,7 @@ parent.window.onload = function()
 	// find all references to figures in the webpage and add correct figure number
 	figureReferences();	
 	eqReferences();
+
 	// associate captions and images using accessibility standards (took out because too many issues with D2L's editor)
 	// captionImages();
 	
@@ -340,7 +341,7 @@ parent.window.onload = function()
 	
 	// Create a right-click menu
 	makeContextMenu("create");  // needs to happen after divs are created
-	
+		sectReferences();
 	// convert class="linkTo" to an anchor link -- D2L does not allow you to make links using a hash tag (#)
 	/*addAnchorLink(); --deprecated -- all functionality is now in createInPageLinks() */
 	
@@ -1269,10 +1270,7 @@ function figureReferences()
 		figureID = figRefInPage[i].id.slice(2);
 
 		// check if the title refers to a legitimate ID for a caption in the page
-		/*if(figRefInPage[i].innerText.trim() != "" &&
-			document.getElementById(figureID) && 
-			document.getElementById(figureID).nextElementSibling && 
-			document.getElementById(figureID).nextElementSibling.tagName == "FIGCAPTION")	
+		/*
 			
 		Check if:
 		1) there is text in the figureRef (e.g., it is not an accidental figureRef)
@@ -1322,6 +1320,35 @@ function eqReferences()
 		else
 		{
 			eqRefInPage[i].innerText = "Missing Eq.";
+		}
+	}
+}
+
+/* finds all section references in the page and add the correct numerical reference */
+function sectReferences()
+{
+	var sectRefInPage = encapObject.getElementsByClassName("sectRef");
+
+	for(i=0; i<sectRefInPage.length; i++)
+	{
+		// Uses id with extra characters (s-) at beginning
+		sectID = sectRefInPage[i].id.slice(2);
+
+		if(sectID.trim() != "" && sectRefInPage[i].innerText.trim() != "" &&
+			encapObject.querySelector("#" + sectID) &&  
+			encapObject.querySelector("#" + sectID).innerText.trim() != "")
+		{
+			sectNum = parseInt(encapObject.querySelector("#" + sectID).innerText);
+					
+			sectRefInPage[i].innerText = "Sect " + sectNum;	
+			
+			divID = "div" + String(sectNum).replace(".", "-");
+				
+			sectRefInPage[i].onclick = scrollToElementReturn(divID);
+		}
+		else
+		{
+			sectRefInPage[i].innerText = "Missing Sect.";
 		}
 	}
 }
