@@ -1359,6 +1359,9 @@ function scrollToElement(elementID)
 	var element = encapObject.querySelector("#" + elementID);  
 	scrollTopPosition = window.parent.scrollY;  // save the value of the scroll position
 
+	// remove the returnLink so it does not factor in to the size 
+	returnLink.style.display = "none";
+		
 	if (window.self !== window.top)  // we are in an iframe
 	{
 		// get iframes from the parent windows:
@@ -1376,19 +1379,6 @@ function scrollToElement(elementID)
 				break;  // don't need to check anymore iframes
 			}
 		}
-
-		// remove the returnLink so it does not factor in to the size 
-		returnLink.style.display = "none";
-		// get the amount of vertical space the header take -- this is D2L only
-		// don't think this object exists anymore 
-		/*if(window.parent.document.getElementById("d2l_minibar"))
-		{
-			headerHeight = window.parent.document.getElementById("d2l_minibar").offsetHeight;
-		}
-		else
-		{
-			headerHeight = 0;
-		}*/
 
 		// calc the vertical position of the linkTo element in the parent page
 		totalScrollY = element.offsetTop + iframeOffset - 0; // headerHeight = 0;
@@ -1425,11 +1415,3 @@ function linksToNewWindow()
 		}
 	}
 }
-/* Things to do
-- check if there is content in the source file <done>
-- create the divs in destination <done>
-- check if div already exists in destination <done>
-- allow user to control which sections get copied 
-  - ALL, ALL_BUT_LINKS, CONTENT_ONLY, 
-- create a mapping of section types to numbers (instead of using div1, div2...)
-*/
