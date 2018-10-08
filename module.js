@@ -1438,7 +1438,7 @@ function linksToNewWindow()
 	{
 		if(links[i].href.trim() != "" && !(links[i].classList.contains("sameWin")) &&
 			!(links[i].classList.contains("download")) && 
-			(links[i].target == "_self" || !(links[i].target))
+			(links[i].target == "_self" || !(links[i].target)))
 		{
 			links[i].target = "_blank";
 		}
