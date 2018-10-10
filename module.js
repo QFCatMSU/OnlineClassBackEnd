@@ -1,102 +1,3 @@
-/* New Issues (May 2017) 
-- replacing images in D2L causes D2L to get stuck in a loop
-  -- need to delte image first and then add new image (replace does not work)
-- make sure module.css is completely independent of editor.css (rename to D2L editor.css?)
-
-/* Recent Fixes (April 2017)
-- made H5 the caption style (still can add "caption" as a class))
-- switch code block from <addr> to <h6>
-  - D2L allows <addr> to be embedded within <addr> (which is a problem!) but does not allow this with <h6>
-- switch div titles to data-titles to stop tooltip pop-ups
-- Use titles in codeLines to allow for cutomized line numbers (can start with a value other than 1)
-- MAC color scheme direction added
-- iframe can access parent window (and control it)
-- href="#" switched to onclick="scrollTo..."
-- iframe in D2L resizes vertically when material changes vertical size
-- figure references that are blank are ignored
-- when you copy/paste a block of code from the website, D2L will include the generated <div id="codeBlock">
-  causing lots of formatting issues
-  Solution: remove all div from the webpage initially and copy the content of the div to the same location
-- when you copy/paste a block of code from the website, D2L will include the generated class <h6 class="codeBlock firstLine">
-
-Still needed :
-- formula do not work in sandbox in Chrome (work in FireFox)
-- pagemap for all browsers
-- right-click not working -- working (changed function name)
-- click-out issue -- gone away??
-- print full sized picture (Firefox only) -- seems to only be a Firefox/our HP printer issue
-- changing links to pics/files that get renamed
-- switch all figure links to titles instead on fig-[id] -- working, not fully switched
-- create a console log ***
-- have jumplinks use title instead of link-[id] -- working, not fully switched
-
-*/
-
-/* Issues:
-- An image without a caption will not be put inside a [figure]
-  -- not sure this is the way it should be...
-  
-- some pages in D2L end with: ?ou=457124 (where 457124 is the class number)-- this is redundant info and 
-  causes problem when clicking to edit to page.  
-  - have right-click split the url at the "?"
-  
-- page now looks for itself in an iframe to find its offset in the parent page
-
-- can now handle if we are in an iframe (D2L) or not 
-  - MUCH better for sandboxing code
-
-- code was only fixing the first script set that used [br] 
-  - issue: number of codelines changes when the first was fixed -- needed to update for loop to reflect that.
-  
-- you can make a relative link to the file for a class but not the content.  
-	The difference is that, when you link the file, the file will load in the 
-	iframe but the rest of the page will still reflect the original content.  
-	So, hyperlinks to the content will break if taken out of context.
-
-- hideEmptyTables needs to check both the primary and secondary pages for content -- 
-	right now it is just checking primary (I think - not tested)
-
-- change [pre] in code only if it does not have its own class already
-
-- copy/paste puts [br] in text -- make that into code?
-
-- instructors still have to put in hash tag hyperlinks in HTML
-  -- set an ID and do in JS
-  
-- change absolute links in D2L back to relative links
-
-- D2L autogenerates figcaptions
-  -- set a class called caption and change in JavaScript
-  
-- Copying code within code causes nested [address]
-  -- color it red in editor to give warning
-  -- later: switched to H6 (does not have nesting issue)
- 
-- Nothing asking if user should save changes when exiting page
-
-- Cannot set style to multiple block objects -- will set to parent object 
-
-- blank address lines are not counted in editor or browsers
-  -- browser: Javascript add space
-  -- editor: add min-height
-
-- copy code from outside source puts in <br>
-
-- If you try to include this JavaScript file in D2L using the correct relative link: 
-   ../../Programming/module.js
-	D2L will modify the link to the incorrect absolute link:
-	https://d2l.msu.edu/content/DEVELOPMENT/2016/courses/DEV-belinsky-2016-TestRClass/R/Lessons/../../../../Programming/module.js
-	
-	To make it work in D2L with sa relative link you would need to use: Programming/module.js
-	but, this is an incorrect relative link and would not work outside of D2L
-	
-	To fix the issue, I put JavaScript code that adds a JavaScript file in the <head> of all lessons
-	<script>
-		var scriptFile = document.createElement('script');
-		scriptFile.src = "../../Programming/module.js";
-		document.getElementsByTagName('head')[0].appendChild(scriptFile);
-	</script>
-*/
 // remove display="block" from <math> objects -- only Latex equations
 if(document.readyState === "complete" ||
   (document.readyState !== "loading" && !document.documentElement.doScroll)) 
@@ -110,6 +11,7 @@ else
 
 function callback()
 {
+
 	m = document.getElementsByTagName("math");
 	for(i=0; i<m.length; i++)
 	{
@@ -362,6 +264,17 @@ parent.window.onload = function()
 	
 	// target all hyperlinks to a new window
 	linksToNewWindow();
+	
+	// MathJax/IE bug where annotation take up space but are not displayed
+	if(window.navigator.userAgent.indexOf("Edge ") > -1 || 
+		window.navigator.userAgent.indexOf("MSIE "))
+	{
+		mathObj = document.getElementsByClassName("MJX_Assistive_MathML");
+		for(i=0; i<mathObj.length; i++)
+		{
+			mathObj[i].style.cssText += ";display: none !important;";
+		}
+	}
 }
 
 /* removes all of the [div] elements in the page and move the content inside the [div]
