@@ -1,24 +1,25 @@
-// remove display="block" from <math> objects -- only Latex equations
+/* remove display="block" from <math> objects -- only Latex equations
 if(document.readyState === "complete" ||
   (document.readyState !== "loading" && !document.documentElement.doScroll)) 
 {
   callback();
 } 
-else 
-{
+ 
+
   document.addEventListener("DOMContentLoaded", callback);
-}
+
 
 function callback()
 {
-
-	m = document.getElementsByTagName("math");
+	m = document.getElementsByTagName("Math");
 	for(i=0; i<m.length; i++)
 	{
 		m[i].setAttribute("display", "inline");
 	}
-}
+}*/
 
+
+	
 smallImageHeight = 100;			// set the height of flex-sized images when small 
 imageHeight = new Array();		// the heights of all flex-sized images in a page
 imageWidth = new Array();		// the widths of all flex-sized images in a page
@@ -27,7 +28,13 @@ scrollTopPosition = 0; 			// value saved for links-return-links within a page
 returnLink = null;				// element on page that contains the return link
 overflowCalled = false;   		// check to see if there is a current check of code lines
 
-
+// change the display type of all math objects so they all display in the same way (this is a D2L issue)
+m = document.getElementsByTagName("math");
+for(i=0; i<m.length; i++)
+{
+	m[i].setAttribute("display", "inline");
+}
+	
 addStyleSheet();  // can be done before page load since this is called in the [head]
 	
 // resize the iframe in the parent window when the page gets resized
@@ -207,7 +214,7 @@ parent.window.onload = function()
 	printLink.classList.add("sameWin");
 	printLink.href = "javascript:window.print()";
 	printLink.style.paddingLeft = "9px";
-	printLink.innerHTML = "&#x1F5B6;";
+	printLink.innerHTML = "&#9113"; //"&#x1F5B6;";
 	titleObj.appendChild(printLink);
 	
 	// there should be no [div] elements in the page -- [div] can be copied/pasted in
@@ -274,6 +281,16 @@ parent.window.onload = function()
 		{
 			mathObj[i].style.cssText += ";display: none !important;";
 		}
+	}
+	
+	// In D2l, some math object are display as blocks, others inline
+	// This code make all of them go inline
+	mathObj = document.getElementsByClassName("MathJax_Display");
+
+	while(mathObj.length > 0)
+	{
+		mathObj[0].classList.add("MathJax");
+		mathObj[0].classList.remove("MathJax_Display");
 	}
 }
 
