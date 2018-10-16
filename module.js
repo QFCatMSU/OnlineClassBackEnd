@@ -42,9 +42,7 @@ parent.window.onload = function()
 {	
 	encapObject = document.body;  
 	fixMathJaxEQs();
-	editURL = "";
-
-	
+	editURL = "";	
 		// check if we are in Joomla or D2L
 	
    // check if any meta content starts with "Joomla"
@@ -1335,11 +1333,14 @@ function fixMathJaxEQs()
 {
 	// change the display type of all math objects so they all display in the same way (this is a D2L issue)
 	var m = encapObject.querySelector('math[display="block"]');
-	for(i=0; i<m.length; i++)
-	{
-		m[i].setAttribute("display", "inline");
-	}
 	
+	if(m)
+	{
+		for(i=0; i<m.length; i++)
+		{
+			m[i].setAttribute("display", "inline");
+		}
+	}
 	// In D2l, some math object are display as blocks, others inline
 	// This code make all of them go inline
 	mathObj = encapObject.getElementsByClassName("MathJax_Display");
