@@ -1338,7 +1338,7 @@ function fixMathJaxEQs()
 	if(window.navigator.userAgent.indexOf("Edge ") > -1 || 
 		window.navigator.userAgent.indexOf("MSIE "))
 	{
-		mathObj = encapObject.getElementsByClassName("MJX_Assistive_MathML");
+		mathObj = document.body.getElementsByClassName("MJX_Assistive_MathML");
 		for(i=0; i<mathObj.length; i++)
 		{
 			mathObj[i].style.cssText += ";display: none !important;";
