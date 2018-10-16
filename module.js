@@ -7,7 +7,7 @@ returnLink = null;				// element on page that contains the return link
 overflowCalled = false;   		// check to see if there is a current check of code lines
 
 encapObject = document.body;  
-fixMathJaxEQs();
+document.addEventListener('DOMContentLoaded', function (){ fixMathJaxEQs(); });
 addStyleSheet();  // can be done before page load since this is called in the [head]
 	
 // resize the iframe in the parent window when the page gets resized
