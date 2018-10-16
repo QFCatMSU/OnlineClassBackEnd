@@ -6,8 +6,8 @@ scrollTopPosition = 0; 			// value saved for links-return-links within a page
 returnLink = null;				// element on page that contains the return link
 overflowCalled = false;   		// check to see if there is a current check of code lines
 
-
-	
+encapObject = document.body;  
+fixMathJaxEQs();
 addStyleSheet();  // can be done before page load since this is called in the [head]
 	
 // resize the iframe in the parent window when the page gets resized
@@ -40,8 +40,7 @@ window.parent.addEventListener("resize", function()
 // this still seems to work if there is no parent -- probably should check for this, though
 parent.window.onload = function()
 {	
-	encapObject = document.body;  
-	fixMathJaxEQs();
+
 	editURL = "";	
 		// check if we are in Joomla or D2L
 	
@@ -243,9 +242,6 @@ parent.window.onload = function()
 	
 	// target all hyperlinks to a new window
 	linksToNewWindow();
-		
-	fixMathJaxEQs();
-
 }
 
 /* removes all of the [div] elements in the page and move the content inside the [div]
@@ -1332,23 +1328,11 @@ function linksToNewWindow()
 function fixMathJaxEQs()
 {
 	// change the display type of all math objects so they all display in the same way (this is a D2L issue)
-	var m = encapObject.querySelector('math[display="block"]');
+	var m = encapObject.querySelectorAll('math[display="block"]');
 	
-	if(m)
+	for(i=0; i<m.length; i++)
 	{
-		for(i=0; i<m.length; i++)
-		{
-			m[i].setAttribute("display", "inline");
-		}
-	}
-	// In D2l, some math object are display as blocks, others inline
-	// This code make all of them go inline
-	mathObj = encapObject.getElementsByClassName("MathJax_Display");
-
-	while(mathObj.length > 0)
-	{
-		mathObj[0].classList.add("MathJax");
-		mathObj[0].classList.remove("MathJax_Display");
+		m[i].setAttribute("display", "inline");
 	}
 	
 	// MathJax/IE bug where annotation take up space but are not displayed
