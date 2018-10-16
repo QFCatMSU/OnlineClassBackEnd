@@ -1,25 +1,3 @@
-/* remove display="block" from <math> objects -- only Latex equations
-if(document.readyState === "complete" ||
-  (document.readyState !== "loading" && !document.documentElement.doScroll)) 
-{
-  callback();
-} 
- 
-
-  document.addEventListener("DOMContentLoaded", callback);
-
-
-function callback()
-{
-	m = document.getElementsByTagName("Math");
-	for(i=0; i<m.length; i++)
-	{
-		m[i].setAttribute("display", "inline");
-	}
-}*/
-
-
-	
 smallImageHeight = 100;			// set the height of flex-sized images when small 
 imageHeight = new Array();		// the heights of all flex-sized images in a page
 imageWidth = new Array();		// the widths of all flex-sized images in a page
@@ -28,7 +6,7 @@ scrollTopPosition = 0; 			// value saved for links-return-links within a page
 returnLink = null;				// element on page that contains the return link
 overflowCalled = false;   		// check to see if there is a current check of code lines
 
-fixMathJaxEQs();
+
 	
 addStyleSheet();  // can be done before page load since this is called in the [head]
 	
@@ -63,6 +41,7 @@ window.parent.addEventListener("resize", function()
 parent.window.onload = function()
 {	
 	encapObject = document.body;  
+	fixMathJaxEQs();
 	editURL = "";
 
 	
@@ -268,6 +247,7 @@ parent.window.onload = function()
 	linksToNewWindow();
 		
 	fixMathJaxEQs();
+
 }
 
 /* removes all of the [div] elements in the page and move the content inside the [div]
@@ -1354,7 +1334,7 @@ function linksToNewWindow()
 function fixMathJaxEQs()
 {
 	// change the display type of all math objects so they all display in the same way (this is a D2L issue)
-	m = document.getElementsByTagName("math");
+	var m = encapObject.querySelector('math[display="block"]');
 	for(i=0; i<m.length; i++)
 	{
 		m[i].setAttribute("display", "inline");
@@ -1362,7 +1342,7 @@ function fixMathJaxEQs()
 	
 	// In D2l, some math object are display as blocks, others inline
 	// This code make all of them go inline
-	mathObj = document.getElementsByClassName("MathJax_Display");
+	mathObj = encapObject.getElementsByClassName("MathJax_Display");
 
 	while(mathObj.length > 0)
 	{
@@ -1374,10 +1354,21 @@ function fixMathJaxEQs()
 	if(window.navigator.userAgent.indexOf("Edge ") > -1 || 
 		window.navigator.userAgent.indexOf("MSIE "))
 	{
-		mathObj = document.getElementsByClassName("MJX_Assistive_MathML");
+		mathObj = encapObject.getElementsByClassName("MJX_Assistive_MathML");
 		for(i=0; i<mathObj.length; i++)
 		{
 			mathObj[i].style.cssText += ";display: none !important;";
 		}
 	}
+}
+
+
+iFrame = window.parent.document.getElementsByClassName("d2l-fileviewer");
+iFrame[0].addEventListener("load", function() { fixIframeSize(); });
+//alert(iFrame[0].onload);
+function fixIframeSize()
+{
+	iFrame = window.parent.document.getElementsByClassName("d2l-iframe");
+	iFrame[0].style.height = document.documentElement.scrollHeight + "px";
+	setTimeout( function(){iFrame[0].style.height = document.documentElement.scrollHeight + "px";}, 9000);
 }
