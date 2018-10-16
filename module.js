@@ -6,7 +6,6 @@ scrollTopPosition = 0; 			// value saved for links-return-links within a page
 returnLink = null;				// element on page that contains the return link
 overflowCalled = false;   		// check to see if there is a current check of code lines
 
-encapObject = document.body;  
 document.addEventListener('DOMContentLoaded', function (){ fixMathJaxEQs(); });
 addStyleSheet();  // can be done before page load since this is called in the [head]
 	
@@ -40,7 +39,7 @@ window.parent.addEventListener("resize", function()
 // this still seems to work if there is no parent -- probably should check for this, though
 parent.window.onload = function()
 {	
-
+	encapObject = document.body;  
 	editURL = "";	
 		// check if we are in Joomla or D2L
 	
@@ -1328,7 +1327,7 @@ function linksToNewWindow()
 function fixMathJaxEQs()
 {
 	// change the display type of all math objects so they all display in the same way (this is a D2L issue)
-	var m = encapObject.querySelectorAll('math[display="block"]');
+	var m = document.body.querySelectorAll('math[display="block"]');
 	
 	for(i=0; i<m.length; i++)
 	{
