@@ -1401,7 +1401,7 @@ function openEmailWindow()
 						address.focus(); 
 						address.value = instructorEmail;
 						subject = emailWindow.document.getElementById("Subject");
-						subject.value = window.document.title + " issue";
+						subject.value = window.document.title;
 						//subject.click();
 					//							addressControl.blur();
 					//	address.blur();
