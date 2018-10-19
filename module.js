@@ -6,7 +6,12 @@ scrollTopPosition = 0; 			// value saved for links-return-links within a page
 returnLink = null;				// element on page that contains the return link
 overflowCalled = false;   		// check to see if there is a current check of code lines
 
-document.addEventListener('DOMContentLoaded', function (){ fixMathJaxEQs(); });
+// D2L variables
+redNum = -1;						// the number of the class 
+instructorEmail = "Charlie Belinsky <belinsky@msu.edu>;";
+
+// pre-onload functions
+fixMathJaxEQs();	// Make all math equations default to inline mode (D2L issue)
 addStyleSheet();  // can be done before page load since this is called in the [head]
 	
 // resize the iframe in the parent window when the page gets resized
@@ -19,8 +24,9 @@ window.parent.addEventListener("resize", function()
 	
 	// get iframes from the parent windows:
 	parentIFrames = window.parent.document.getElementsByTagName("iframe");
-	if (parentIFrames[0])
+	if (parentIFrames[0] && parentIFrames[0].contentWindow.document.body)
 	{
+		// change to size of the document
 		parentIFrames[0].height = parentIFrames[0].contentWindow.document.body.scrollHeight;
 	}
 	
@@ -39,7 +45,12 @@ window.parent.addEventListener("resize", function()
 // this still seems to work if there is no parent -- probably should check for this, though
 parent.window.onload = function()
 {	
-	encapObject = document.body;  
+	encapObject = document.body;  	
+	
+	fixMathJaxEQs();
+	fixIframeSize();
+
+
 	editURL = "";	
 		// check if we are in Joomla or D2L
 	
@@ -75,7 +86,7 @@ parent.window.onload = function()
 		oldURL = String(window.parent.location); 
 		editURL = oldURL.split('?')[0];  // get rid of parameters (designated by "?")
 		editURL = editURL.replace("viewContent", "contentFile"); // replace viewContent with contentFile
-		editURL = editURL.replace("View", "EditFile?fm=0"); 	// replace View with EditFile?fm=0
+		editURL = editURL.replace("View", "EditFile?fm=0"); 	 	// replace View with EditFile?fm=0
 					
 		// remove the header in the D2L page
 		p = parent.document.getElementsByClassName("d2l-page-header");
@@ -160,7 +171,7 @@ parent.window.onload = function()
 			}
 		}
 	}
-
+		
 	// add class name
 	p = encapObject.getElementsByClassName("p");
 	for(i=0; i<p.length; i++)
@@ -201,6 +212,8 @@ parent.window.onload = function()
 	// adds the caption class to all H5 elements
 	addCaption("H5");
 	
+	createEmailLink();
+	
 	equationNumbering();
 	
 	// find all references to figures in the webpage and add correct figure number
@@ -220,9 +233,7 @@ parent.window.onload = function()
 	
 	// Create a right-click menu
 	makeContextMenu("create");  // needs to happen after divs are created
-		sectReferences();
-	// convert class="linkTo" to an anchor link -- D2L does not allow you to make links using a hash tag (#)
-	/*addAnchorLink(); --deprecated -- all functionality is now in createInPageLinks() */
+	sectReferences();
 	
 	// set up onclick functionality for "anchor" links (needed because page exists in an iframe)
 	createInPageLinks();
@@ -1327,18 +1338,35 @@ function linksToNewWindow()
 function fixMathJaxEQs()
 {
 	// change the display type of all math objects so they all display in the same way (this is a D2L issue)
-	var m = document.body.querySelectorAll('math[display="block"]');
+	var m = document.querySelectorAll('math[display="block"]');
 	
 	for(i=0; i<m.length; i++)
 	{
 		m[i].setAttribute("display", "inline");
 	}
 	
+	// this might not be needed...
+	mathSpan = document.querySelectorAll("span.MathJax_Preview");
+	//mathDis = document.querySelectorAll(".MathJax_Display");
+	//mathPro = document.querySelectorAll(".MathJax_Processing");
+	//mathPro2 = document.querySelectorAll(".MathJax_Processed");
+	
+	//alert(m.length + " " +  mathSpan.length + " " + mathDis.length + " " + mathPro.length + " " + mathPro2.length);
+
+	for(i=0; i<mathSpan.length; i++)
+	{
+		if (mathSpan[i].nextElementSibling.nodeName == "DIV")
+		{
+			mathSpan[i].nextElementSibling.removeAttribute("style");				
+			mathSpan[i].nextElementSibling.removeAttribute("class");
+			mathSpan[i].nextElementSibling.style.display = "inline";
+		}
+	}
 	// MathJax/IE bug where annotation take up space but are not displayed
 	if(window.navigator.userAgent.indexOf("Edge ") > -1 || 
 		window.navigator.userAgent.indexOf("MSIE "))
 	{
-		mathObj = document.body.getElementsByClassName("MJX_Assistive_MathML");
+		mathObj = document.getElementsByClassName("MJX_Assistive_MathML");
 		for(i=0; i<mathObj.length; i++)
 		{
 			mathObj[i].style.cssText += ";display: none !important;";
@@ -1346,13 +1374,53 @@ function fixMathJaxEQs()
 	}
 }
 
-
-iFrame = window.parent.document.getElementsByClassName("d2l-fileviewer");
-iFrame[0].addEventListener("load", function() { fixIframeSize(); });
-//alert(iFrame[0].onload);
+function createEmailLink()
+{
+	emailLink = encapObject.getElementsByClassName("email");
+	
+	for(i=0; i<emailLink.length; i++)
+	{
+		emailLink[i].style.textDecoration = "none";
+		emailLink[i].onclick = function() {openEmailWindow();};
+		emailLink[i].onmouseover = function() {this.style.textDecoration = "underline";};
+		emailLink[i].onmouseout = function() {this.style.textDecoration = "none";};
+	}
+}
+function openEmailWindow()
+{
+	emailWindow = window.open("https://d2l.msu.edu/d2l/le/email/" + redNum + "/ComposePopup");
+	  
+  emailWindow.onload = function() 
+					{		
+						header = emailWindow.document.body.querySelector(".vui-heading-1");
+						header.innerText = "Send Message to Instructor";
+							
+						addressControl = emailWindow.document.getElementById("ToAddresses$control");
+						addressControl.click();
+						address = emailWindow.document.getElementById("ToAddresses");
+						address.focus(); 
+						address.value = instructorEmail;
+						subject = emailWindow.document.getElementById("Subject");
+						subject.value = window.document.title + " issue";
+						//subject.click();
+					//							addressControl.blur();
+					//	address.blur();
+					
+					//	address.blur();
+					//	evt = new Event('blur');
+					//	addressControl.dispatchEvent(evt);
+					//	address.dispatchEvent(evt);
+					//	addressControl.click();
+					//	subject.focus(); 
+					//	subject.click();
+					};
+}
 function fixIframeSize()
 {
 	iFrame = window.parent.document.getElementsByClassName("d2l-iframe");
-	iFrame[0].style.height = document.documentElement.scrollHeight + "px";
-	setTimeout( function(){iFrame[0].style.height = document.documentElement.scrollHeight + "px";}, 9000);
+	if (iFrame[0])
+	{
+		iFrame[0].style.height = document.documentElement.scrollHeight + "px";
+		setTimeout( function(){iFrame[0].style.height = document.documentElement.scrollHeight + "px";}, 9000);
+	}
 }

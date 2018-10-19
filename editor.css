@@ -183,3 +183,9 @@ h6>br,h6>h6
 {
 	background-color: powderblue;
 }
+.email
+{
+	color: rgb(0,0,150);
+	text-decoration: underline;
+	cursor: pointer;
+}
