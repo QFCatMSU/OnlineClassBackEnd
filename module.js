@@ -188,15 +188,18 @@ parent.window.onload = function()
 	
 	// set title on webpage
 	titleObj = encapObject.querySelector("#title");
-	window.document.title = titleObj.textContent;
-	
-	// add printer icon to title
-	printLink = document.createElement('a');
-	printLink.classList.add("sameWin");
-	printLink.href = "javascript:window.print()";
-	printLink.style.paddingLeft = "9px";
-	printLink.innerHTML = "&#9113"; //"&#x1F5B6;";
-	titleObj.appendChild(printLink);
+	if(titleObj)
+	{
+		window.document.title = titleObj.textContent;
+		
+		// add printer icon to title
+		printLink = document.createElement('a');
+		printLink.classList.add("sameWin");
+		printLink.href = "javascript:window.print()";
+		printLink.style.paddingLeft = "9px";
+		printLink.innerHTML = "&#9113"; //"&#x1F5B6;";
+		titleObj.appendChild(printLink);
+	}
 	
 	// there should be no [div] elements in the page -- [div] can be copied/pasted in
 	removeDivs();
@@ -1377,14 +1380,16 @@ function fixMathJaxEQs()
 	
 	// fix quations so that limits to summations are put above and below the summation (as opposed to on the side)
 	// find all mstyle elements that have an munderover element as a direct child
-	var mstyle =  document.querySelectorAll('mstyle > munderover');
+	// this will give you the munder and munderover objects -- we want to modify the mstyle parent
+	var m1 =  document.querySelectorAll("mstyle>munder, mstyle>munderover");
 	
-	for(i=0; i<mstyle.length; i++)
+	// go through each munder and munderover element
+	for(i=0; i<m1.length; i++)
 	{
-		// if displaystyle is not set, set it to "true"
-		if(mstyle[i].getAttribute("displaystyle") == null)
+		// parent is mstyle
+		if(m1[i].parentNode.hasAttribute("displaystyle") == false)
 		{	
-			mstyle[i].setAttribute("displaystyle", "true");
+			m1[i].setAttribute("displaystyle", "true");
 		}
 	}
 }
