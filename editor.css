@@ -162,6 +162,11 @@ h6>br,h6>h6
 {
 	color: red;
 }
+.bib
+{
+	padding-left: 20px; 
+	text-indent: -20px;
+}	
 .figureRef, .fr, .eqNum, .eqRef, .sectRef
 {
 	text-decoration: line-through;
