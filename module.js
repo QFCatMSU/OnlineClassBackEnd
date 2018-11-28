@@ -229,7 +229,9 @@ parent.window.onload = function()
 	addDivs("H3");
 	
 	// add outline to the divs
-	addOutline()
+	addOutline();
+	
+	//fix math equations
 	
 	// Create a right-click menu
 	makeContextMenu("create");  // needs to happen after divs are created
@@ -1370,6 +1372,19 @@ function fixMathJaxEQs()
 		for(i=0; i<mathObj.length; i++)
 		{
 			mathObj[i].style.cssText += ";display: none !important;";
+		}
+	}
+	
+	// fix quations so that limits to summations are put above and below the summation (as opposed to on the side)
+	// find all mstyle elements that have an munderover element as a direct child
+	var mstyle =  document.querySelectorAll('mstyle > munderover');
+	
+	for(i=0; i<mstyle.length; i++)
+	{
+		// if displaystyle is not set, set it to "true"
+		if(mstyle[i].getAttribute("displaystyle") == null)
+		{	
+			mstyle[i].setAttribute("displaystyle", "true");
 		}
 	}
 }
