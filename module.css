@@ -182,7 +182,11 @@ td
 {
 	background-color: rgb(210,210,220);	
 }
-
+.bib
+{
+	padding-left: 20px; 
+	text-indent: -20px;
+}	
 
 /*** Code typesettings ****/
 .code
