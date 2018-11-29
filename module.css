@@ -217,6 +217,10 @@ td
 {
 	color: yellow;
 }
+.codeBlock.nonum > .code
+{
+	padding-left: 5.5em;
+}
 .codeBlock:not(.nonum) > .code:before
 {	
 	counter-increment: codeLines;

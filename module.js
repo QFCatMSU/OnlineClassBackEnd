@@ -606,9 +606,11 @@ function addStyleSheet()
 	scripts = document.getElementsByTagName("script");
 	for(i=0; i<scripts.length; i++)
 	{
-		if(scripts[i].src.includes("module.js"))
+		jsIndex = scripts[i].src.indexOf("module.js");
+		if(jsIndex != -1) //scripts[i].src.includes("module.js"))
 		{
-			cssFile = scripts[i].src.slice(0,-2) + "css";
+			//cssFile = scripts[i].src.slice(0,-2) + "css"; -- old system, when on Github
+			cssFile = scripts[i].src.substring(0,jsIndex) + "module.css";
 		}
 	}
 	CSSFile.href = cssFile;	// location depends on platform
@@ -721,8 +723,8 @@ function addCodeTags(elementType)
 		codeLines[i].classList.add("code");
 
 		// add two spaces at the beginning of each code line (to fit the curly brackets in)
-		codeLines[i].innerHTML = "  " + codeLines[i].innerHTML;  // innerText was stripping [span]
-			
+	//	codeLines[i].innerHTML = "  " + codeLines[i].innerHTML;  // innerText was stripping [span]
+		
 		/* D2L-only fix: when code is copied and pasted in D2L, the class names can also be copy/pasted --
 			removes erroneous class names */
 		if(codeLines[i].classList.contains("firstLine"))
