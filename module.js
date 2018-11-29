@@ -577,23 +577,25 @@ function createInPageLinks()
 		linkToId = linkElements[i].id.slice(2);  // this line remove the "l-" part of the id (which is 5 characters)
 		
 		// find the element to link to (assumming linkToId is valid)
-		if(linkToId)  // make sure the value exists
+		if(isValid(linkToId))  // make sure the value exists
 		{
-			linkToElement = encapObject.querySelector("#" + linkToId); // getElementById(linkToId);
+			if(linkToId)
+			{
+				linkToElement = encapObject.querySelector("#" + linkToId); // getElementById(linkToId);
+			}
+			if(linkToElement) // if there is an element to link to
+			{
+				// go to scrollToElement() function when the anchor is clicked
+				linkElements[i].onclick = scrollToElementReturn(linkToElement.id);
+			}
+			else if(linkElements[i].innerText.trim() != "") // there is content but an invalid link -- add warning to text
+			{
+				linkElements[i].innerText += " ***Link does not exist***"
+			}
 		}
-		
-		if(linkToElement) // if there is an element to link to
+		else
 		{
-			// go to scrollToElement() function when the anchor is clicked
-			linkElements[i].onclick = scrollToElementReturn(linkToElement.id);
-		}
-		else if(linkElements[i].innerText.trim() != "") // there is content but an invalid link -- add warning to text
-		{
-			linkElements[i].innerText += " ***Link does not exist***"
-		}
-		else // no content and no link element -- likely a editor issue -- do nothing right now
-		{
-			
+			linkElements[i].innerText += " ***Link ID has invalid characters***"
 		}
 	}
 }
@@ -1167,16 +1169,20 @@ function figureReferences()
 		figureID = figRefInPage[i].id.slice(2);
 
 		// check if the title refers to a legitimate ID for a caption in the page
+
+		if(isValid(figureID)==false)
+		{
+			figRefInPage[i].innerText = "***Invalid characters in Figure ID***";
+		}
 		/*
-			
-		Check if:
-		1) there is text in the figureRef (e.g., it is not an accidental figureRef)
-		2) the id of figureRef (minus first two characters) is an id of a caption 
-		3) the id is of class caption (or a parent -- this is the D2L issue where [span] can turn up where not wanted --
-			-- not going to implement this yet.
-		4) the caption has non-white space text 		
+			Check if:
+			1) there is text in the figureRef (e.g., it is not an accidental figureRef)
+			2) the id of figureRef (minus first two characters) is an id of a caption 
+			3) the id is of class caption (or a parent -- this is the D2L issue where [span] can turn up where not wanted --
+				-- not going to implement this yet.
+			4) the caption has non-white space text 		
 		*/
-		if(figureID.trim() != "" && figRefInPage[i].innerText.trim() != "" &&
+		else if(figureID.trim() != "" && figRefInPage[i].innerText.trim() != "" &&
 			encapObject.querySelector("#" + figureID) &&   // getElementById(figureID) && 
 			encapObject.querySelector("#" + figureID).innerText.trim() != "")
 		{
@@ -1204,7 +1210,11 @@ function eqReferences()
 		// Outside of D2L: uses id with extra characters (c-) at beginning
 		eqID = eqRefInPage[i].id.slice(2);
 
-		if(eqID.trim() != "" && eqRefInPage[i].innerText.trim() != "" &&
+		if(isValid(eqID)==false)
+		{
+			eqRefInPage[i].innerText = "***Invalid characters in Equation ID***";
+		}
+		else if(eqID.trim() != "" && eqRefInPage[i].innerText.trim() != "" &&
 			encapObject.querySelector("#" + eqID) &&   // getElementById(figureID) && 
 			encapObject.querySelector("#" + eqID).innerText.trim() != "")
 		{
@@ -1231,7 +1241,11 @@ function sectReferences()
 		// Uses id with extra characters (s-) at beginning
 		sectID = sectRefInPage[i].id.slice(2);
 
-		if(sectID.trim() != "" && sectRefInPage[i].innerText.trim() != "" &&
+		if(isValid(sectID)==false)
+		{
+			sectRefInPage[i].innerText = "***Invalid characters in Section ID***";
+		}
+		else if(sectID.trim() != "" && sectRefInPage[i].innerText.trim() != "" &&
 			encapObject.querySelector("#" + sectID) &&  
 			encapObject.querySelector("#" + sectID).innerText.trim() != "")
 		{
@@ -1445,4 +1459,9 @@ function fixIframeSize()
 		iFrame[0].style.height = document.documentElement.scrollHeight + "px";
 		setTimeout( function(){iFrame[0].style.height = document.documentElement.scrollHeight + "px";}, 9000);
 	}
+}
+
+function isValid(str)
+{
+	return !/[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/g.test(str);
 }
