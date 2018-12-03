@@ -327,7 +327,7 @@ function createFlexImages()
 		imageWidth[i] = flexImage[i].naturalWidth;
 		
 		// initalize the flex image to the small size
-		changeSize(flexImage[i], "minimize")
+		changeSize(flexImage[i], "minimize");
 	}
 }
 
@@ -1193,7 +1193,7 @@ function figureReferences()
 			
 			figRefInPage[i].innerText = figRef;	
 		}
-		else
+		else if(figRefInPage[i].innerText.trim() != "")
 		{
 			figRefInPage[i].innerText = "Missing Fig.";
 		}
@@ -1224,7 +1224,8 @@ function eqReferences()
 			
 			eqRefInPage[i].innerText = "Eq. " + eqRef;	
 		}
-		else
+		// if there is no text, then this was probably not meant to be an EQ Ref 
+		else if( eqRefInPage[i].innerText.trim() != "")
 		{
 			eqRefInPage[i].innerText = "Missing Eq.";
 		}
@@ -1257,7 +1258,7 @@ function sectReferences()
 				
 			sectRefInPage[i].onclick = scrollToElementReturn(divID);
 		}
-		else
+		else if(sectRefInPage[i].innerText.trim() != "")
 		{
 			sectRefInPage[i].innerText = "Missing Sect.";
 		}
