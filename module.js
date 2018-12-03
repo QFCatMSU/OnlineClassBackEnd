@@ -120,14 +120,8 @@ parent.window.onload = function()
 			homePage.classList.add("lessonLink");
 			homePage.classList.add("sameWin");
 			homePage.classList.add("homePage");
-			
-			titleObj = encapObject.querySelector("#title");
-			
-			if(titleObj)
-			{
-				encapObject.insertBefore(homePage, titleObj);
-			}
-			
+			encapObject.prepend(homePage);
+				
 			// add previous link
 			prevPage = encapObject.querySelectorAll(".previousLesson, .pl");
 			if(prevPage[0])  // a prevPage object exists
@@ -185,20 +179,28 @@ parent.window.onload = function()
 		nn[i].classList.add("nonum");
 		nn[i].classList.add("partial");
 	}
-	
+
 	// set title on webpage
 	titleObj = encapObject.querySelector("#title");
+	if(!titleObj )titleObj = encapObject.querySelector(".title");
+	
 	if(titleObj)
 	{
 		window.document.title = titleObj.textContent;
 		
-		// add printer icon to title
+		// create printer icon 
 		printLink = document.createElement('a');
 		printLink.classList.add("sameWin");
 		printLink.href = "javascript:window.print()";
 		printLink.style.paddingLeft = "9px";
 		printLink.innerHTML = "&#9113"; //"&#x1F5B6;";
+	
+		// add printer icon to title
 		titleObj.appendChild(printLink);
+	}
+	else
+	{
+		window.document.title = "No Title";
 	}
 	
 	// there should be no [div] elements in the page -- [div] can be copied/pasted in
