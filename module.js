@@ -1466,5 +1466,5 @@ function fixIframeSize()
 
 function isValid(str)
 {
-	return !/[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/g.test(str);
+	return !/[~`!#$%\^&*+=\[\]\\';,/{}|\\":<>\?]/g.test(str);
 }
