@@ -222,8 +222,8 @@ parent.window.onload = function()
 	equationNumbering();
 	
 	// find all references to figures in the webpage and add correct figure number
-	figureReferences();	
-	eqReferences();
+	//figureReferences();	
+	//eqReferences();
 
 	// associate captions and images using accessibility standards (took out because too many issues with D2L's editor)
 	// captionImages();
@@ -240,10 +240,10 @@ parent.window.onload = function()
 	
 	// Create a right-click menu
 	makeContextMenu("create");  // needs to happen after divs are created
-	sectReferences();
-	
+	//sectReferences();
+	addReferences();
 	// set up onclick functionality for "anchor" links (needed because page exists in an iframe)
-	createInPageLinks();
+	//createInPageLinks();
 	
 	// adds code tags to all content within an [h6] tag
 	// need to add the divs before doing the code tags becuase this includes the div codeblocks
@@ -557,7 +557,7 @@ Two issues here
 1) D2L does not allow the user to use an anchor link as a hyperlink hence the workaround
 using classes 
 2) page exists in an iframe -- hence we need to scroll to the anchor as opposed to linking to it
-*/ 
+
 function createInPageLinks()
 {
 	linkElements = encapObject.getElementsByClassName("linkTo");
@@ -572,7 +572,7 @@ function createInPageLinks()
 		actually want
 		<p class="linkTo" id="link-to-here" onclick="scrollHere()"> I am the content </p>
 		
-	}*/
+	}
 	for(i=0; i<linkElements.length; i++)	
 	{
 		// get id of figure you are refering to (this.id - "fig-")
@@ -600,7 +600,7 @@ function createInPageLinks()
 			linkElements[i].innerText += " ***Link ID has invalid characters***"
 		}
 	}
-}
+}*/ 
 	
 	/* link to external CSS file 
 		This is in the javascript because D2L will rewrite links in the HTML file */
@@ -1160,109 +1160,162 @@ function addDownloadLinks()
 	}
 }
 
-/* finds all figure references in the page and add the correct numerical reference */
+/* finds all figure references in the page and add the correct numerical reference 
 function figureReferences()
 {
 	var figRefInPage = encapObject.getElementsByClassName("figureRef");
 
 	for(i=0; i<figRefInPage.length; i++)
 	{
-		// uses id with extra characters (c-) at beginning
-		figureID = figRefInPage[i].id.slice(2);
-
 		// check if the title refers to a legitimate ID for a caption in the page
-
-		if(isValid(figureID)==false)
+		if(figRefInPage[i].id.trim() != "")  // there is an ID
 		{
-			figRefInPage[i].innerText = "***Invalid characters in Figure ID***";
-		}
-		/*
-			Check if:
-			1) there is text in the figureRef (e.g., it is not an accidental figureRef)
-			2) the id of figureRef (minus first two characters) is an id of a caption 
-			3) the id is of class caption (or a parent -- this is the D2L issue where [span] can turn up where not wanted --
-				-- not going to implement this yet.
-			4) the caption has non-white space text 		
-		*/
-		else if(figureID.trim() != "" && figRefInPage[i].innerText.trim() != "" &&
-			encapObject.querySelector("#" + figureID) &&   // getElementById(figureID) && 
-			encapObject.querySelector("#" + figureID).innerText.trim() != "")
-		{
-			caption = encapObject.querySelector("#" + figureID).innerText;
-			strIndex = caption.indexOf(":");  // find the location of the first semicolon
+			// uses id with extra characters (c-) at beginning
+			figureID = figRefInPage[i].id.slice(2);
+		
+			if(isValid(figureID)==false)
+			{
+				figRefInPage[i].innerText = "***Invalid characters in Figure ID***";
+			}
+			/*
+				Check if:
+				1) there is text in the figureRef (e.g., it is not an accidental figureRef)
+				2) the id of figureRef (minus first two characters) is an id of a caption 
+				3) the id is of class caption (or a parent -- this is the D2L issue where [span] can turn up where not wanted --
+					-- not going to implement this yet.
+				4) the caption has non-white space text 		
 			
-			figRef = caption.slice(0, strIndex); // get "Fig. #"
-			
-			figRefInPage[i].innerText = figRef;	
-		}
-		else if(figRefInPage[i].innerText.trim() != "")
-		{
-			figRefInPage[i].innerText = "Missing Fig.";
+			else if(figRefInPage[i].innerText.trim() != "" &&
+				encapObject.querySelector("#" + figureID) &&   // getElementById(figureID) && 
+				encapObject.querySelector("#" + figureID).innerText.trim() != "")
+			{
+				caption = encapObject.querySelector("#" + figureID).innerText;
+				strIndex = caption.indexOf(":");  // find the location of the first semicolon
+				
+				figRef = caption.slice(0, strIndex); // get "Fig. #"
+				
+				figRefInPage[i].innerText = figRef;	
+			}
+			else if(figRefInPage[i].innerText.trim() != "")
+			{
+				figRefInPage[i].innerText = "Missing Fig.";
+			}
 		}
 	}
-}
+}*/
 
-/* finds all figure references in the page and add the correct numerical reference */
+/* finds all figure references in the page and add the correct numerical reference 
 function eqReferences()
 {
 	var eqRefInPage = encapObject.getElementsByClassName("eqRef");
 
 	for(i=0; i<eqRefInPage.length; i++)
-	{
-		// Outside of D2L: uses id with extra characters (c-) at beginning
-		eqID = eqRefInPage[i].id.slice(2);
+	{	
+		// this is mostly to fix a D2L error where subsequent lines will retain the class of 
+		// the previous line -- but it is not reflected in the editor
+		if(eqRefInPage[i].id.trim() != "")  // there is an ID
+		{
+			// Outside of D2L: uses id with extra characters (c-) at beginning
+			eqID = eqRefInPage[i].id.slice(2);
 
-		if(isValid(eqID)==false)
-		{
-			eqRefInPage[i].innerText = "***Invalid characters in Equation ID***";
-		}
-		else if(eqID.trim() != "" && eqRefInPage[i].innerText.trim() != "" &&
-			encapObject.querySelector("#" + eqID) &&   // getElementById(figureID) && 
-			encapObject.querySelector("#" + eqID).innerText.trim() != "")
-		{
-			caption = encapObject.querySelector("#" + eqID).innerText;
-			
-			eqRef = caption.slice(1,-1); 
-			
-			eqRefInPage[i].innerText = "Eq. " + eqRef;	
-		}
-		// if there is no text, then this was probably not meant to be an EQ Ref 
-		else if( eqRefInPage[i].innerText.trim() != "")
-		{
-			eqRefInPage[i].innerText = "Missing Eq.";
+			if(isValid(eqID)==false)
+			{
+				eqRefInPage[i].innerText = "***Invalid characters in Equation ID***";
+			}
+			else if(eqRefInPage[i].innerText.trim() != "" &&
+				encapObject.querySelector("#" + eqID) &&   // getElementById(figureID) && 
+				encapObject.querySelector("#" + eqID).innerText.trim() != "")
+			{
+				caption = encapObject.querySelector("#" + eqID).innerText;
+				
+				eqRef = caption.slice(1,-1); 
+				
+				eqRefInPage[i].innerText = "Eq. " + eqRef;	
+			}
+			// if there is no text, then this was probably not meant to be an EQ Ref 
+			else if( eqRefInPage[i].innerText.trim() != "")
+			{
+				eqRefInPage[i].innerText = "Missing Eq.";
+			}
 		}
 	}
-}
+}*/
 
 /* finds all section references in the page and add the correct numerical reference */
-function sectReferences()
+function addReferences()
 {
-	var sectRefInPage = encapObject.getElementsByClassName("sectRef");
+	var references = encapObject.querySelectorAll(".sectRef, .figureRef, .eqRef, .linkTo");
 
-	for(i=0; i<sectRefInPage.length; i++)
+	for(i=0; i<references.length; i++)
 	{
-		// Uses id with extra characters (s-) at beginning
-		sectID = sectRefInPage[i].id.slice(2);
-
-		if(isValid(sectID)==false)
+		fullRefID = references[i].id;
+		refID = fullRefID.slice(2);
+	
+		// check if the reference has no ID
+		if(fullRefID == "")  
 		{
-			sectRefInPage[i].innerText = "***Invalid characters in Section ID***";
+			// right now, this situation is handled in editor.CSS
 		}
-		else if(sectID.trim() != "" && sectRefInPage[i].innerText.trim() != "" &&
-			encapObject.querySelector("#" + sectID) &&  
-			encapObject.querySelector("#" + sectID).innerText.trim() != "")
+		// no text associated with the reference
+		else if (references[i].innerText.trim() == "")
 		{
-			sectNum = parseInt(encapObject.querySelector("#" + sectID).innerText);
-					
-			sectRefInPage[i].innerText = "Sect " + sectNum;	
+			// right now, this situation is handled in editor.CSS			
+		}
+		// check if ID has any invalid characters
+		else if(isValid(refID) == false)
+		{
+			references[i].innerText = "***Invalid characters in ID***";
+		}
+		// check if first character in ID is a number
+		else if(isNaN(refID[0]) == false)
+		{
+			references[i].innerText = "***Cannot start ID with number***";
+		}
+		// reference link does not exist
+		else if(!(encapObject.querySelector("#" + refID)))
+		{
+			references[i].innerText = "***Invalid Link***";				
+		}
+		// there is no content at the link (not sure this is neccessary...)
+		else if (encapObject.querySelector("#" + refID).innerText.trim() == "")
+		{
+			references[i].innerText = "***No content at link***";					
+		}
+		// ref ID is a valid element with content 		
+		// if this is a section ref
+		else if(references[i].classList.contains("sectRef")) 
+		{
+			// get first number from section ID (div)
+			sectNum = parseInt(encapObject.querySelector("#" + refID).innerText);
+			// change text on sect ref to indicate section num
+			references[i].innerText = "Sect " + sectNum;	
 			
+			// create a link that scrolls to the section
 			divID = "div" + String(sectNum).replace(".", "-");
-				
-			sectRefInPage[i].onclick = scrollToElementReturn(divID);
+			references[i].onclick = scrollToElementReturn(divID);
 		}
-		else if(sectRefInPage[i].innerText.trim() != "")
+		// if this is a equation ref
+		else if(references[i].classList.contains("eqRef")) 
 		{
-			sectRefInPage[i].innerText = "Missing Sect.";
+			caption = encapObject.querySelector("#" + refID).innerText;
+			eqRef = caption.slice(1,-1); 
+			references[i].innerText = "Eq. " + eqRef;	
+		}
+		// if this is a figure ref
+		else if(references[i].classList.contains("figureRef")) 
+		{
+			caption = encapObject.querySelector("#" + refID).innerText;
+			strIndex = caption.indexOf(":");  // find the location of the first semicolon
+			
+			figRef = caption.slice(0, strIndex); // get "Fig. #"
+			
+			references[i].innerText = figRef;	
+		}
+		// this is an extensioin or trap link
+		else if(references[i].classList.contains("linkTo")) 
+		{
+			// go to scrollToElement() function when the anchor is clicked
+			references[i].onclick = scrollToElementReturn(refID);
 		}
 	}
 }

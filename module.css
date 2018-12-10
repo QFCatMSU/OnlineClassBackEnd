@@ -254,7 +254,7 @@ td
     -o-user-select: none;
     user-select: none;
 }
-.caption, .figureRef, .c, .fr, .eqNum, .eqRef, .sectRef
+.caption, .figureRef[id], .c, .fr, .eqNum, .eqRef[id], .sectRef[id]
 {
 	color: rgb(0,100,0);
 	font-style: italic;
@@ -268,6 +268,10 @@ td
 	padding-left: 0px;
 	font-weight: normal;
 	font-size: 14px;
+}
+.sectRef[id]
+{
+	cursor: pointer;
 }
 .firstLine, .fl
 {
@@ -376,7 +380,7 @@ img.flexSize, img.fs
 	background-color: rgb(220,220,220);
 	border-radius: 10px;
 }
-.figureRef, .fr, .eqNum, .eqRef
+.figureRef[id], .fr, .eqNum[id], .eqRef[id]
 {
 	text-decoration: none;
 }

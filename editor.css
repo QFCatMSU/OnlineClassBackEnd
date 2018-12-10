@@ -171,6 +171,14 @@ h6>br,h6>h6
 {
 	text-decoration: line-through;
 }
+/* References that have text but no IDs */
+.figureRef:not([id]):not(empty)::before, .eqRef:not([id]):not(empty)::before, .sectRef:not([id]):not(empty)::before, .linkTo:not([id]):not(empty)::before
+{
+	content: "Ref w/o ID-";
+	background-color: yellow;
+	color: red;
+	font-weight: bold;
+}
 .note
 {
 	color: rgb(160,64,0);
