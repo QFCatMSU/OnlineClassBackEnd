@@ -1394,7 +1394,7 @@ function captionImages()
 			parElement = parElement.parentElement;
 		}
 		
-		/*** Add error onscreen if parent [p] not found?? ***/
+		/*** Add error onscreen if parent [p] not found?? ***
 		// first make sure that we actally got an element and not end-of-page
 		if(parElement)  
 		{
