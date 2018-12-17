@@ -3,7 +3,7 @@ imageHeight = new Array();		// the heights of all flex-sized images in a page
 imageWidth = new Array();		// the widths of all flex-sized images in a page
 minImageWidth = 700;				// minimum width for a flexSize image in expanded mode
 scrollTopPosition = 0; 			// value saved for links-return-links within a page
-returnLink = null;				// element on page that contains the return link
+//returnLink = null;				// element on page that contains the return link
 overflowCalled = false;   		// check to see if there is a current check of code lines
 
 // D2L variables
@@ -208,7 +208,8 @@ parent.window.onload = function()
 	removeDivs();
 	
 	// a link used everytime the person jumps in the page to return them to the original spot
-	createReturnLink(); 
+	/* Deprecated -- will use right-click */
+	//createReturnLink(); 
 	
 	// allow users to resize images from small to full-size
 	createFlexImages();
@@ -288,7 +289,8 @@ function removeDivs()
 }
 
 /* Whenever an in-page jump is made, a return link will appear in the
-	element that returns you to the previous positioin */
+	element that returns you to the previous positioin 
+	Deprecated -- using right-click menu *
 function createReturnLink()
 {
 	// create a return link to the position in page the user was at before making the jump
@@ -303,7 +305,7 @@ function createReturnLink()
 		goBackToPrevLocation();
 		return false;		// stops the page from reloading -- unsure why!
 	}
-}
+}*/
 /*
 Find all images within the page that have the "flexSize" class
 and add onclick events that give the user the ability to change 
@@ -545,8 +547,16 @@ function changeAllPicSize(param)
 function goBackToPrevLocation()
 {
 	leftPos = window.parent.scrollX; 	// get the left position of the scroll
-	returnLink.style.display = "none";	// make the return link disappear
-
+	// returnLink.style.display = "none";	// make the return link disappear
+	if (navigator.userAgent.indexOf("Firefox") != -1)
+	{
+		encapObject.querySelector("menuitem[id='previousLocMenuItem']").disabled = "disabled";
+	}
+	else
+	{
+		encapObject.querySelector("a[id='previousLocMenuItem']").style.display = "none";
+	}
+	
 	// scroll the page vertically to the position the page was
 	// at when the link was originally clicked (stored as a global variable)
 	window.parent.scrollTo(leftPos, scrollTopPosition);
@@ -912,6 +922,14 @@ function makeContextMenu(funct, param = null)
 		contextMenu.type = "context";
 		contextMenu.id = "rightClickMenu";
 
+		// add a Return to Previous location button
+		menuItem = document.createElement("menuitem");
+		menuItem.label = "Go to Previous Location";
+		menuItem.id = "previousLocMenuItem";
+		menuItem.onclick = 	function(){	goBackToPrevLocation();
+													return false; };
+		contextMenu.appendChild(menuItem);
+		
 		// add a Print lesson button to the context menu
 		menuItem = document.createElement("menuitem");
 		menuItem.label = "Print";
@@ -921,6 +939,7 @@ function makeContextMenu(funct, param = null)
 		};
 		contextMenu.appendChild(menuItem);
 
+		
 		// add a Maximize All (flexSize) Pics button to the context menu
 		menuItem = document.createElement("menuitem");
 		menuItem.label = "Maximize All Pictures...";
@@ -967,6 +986,9 @@ function makeContextMenu(funct, param = null)
 		contextMenu.appendChild(submenu);
 
 		encapObject.appendChild(contextMenu);
+		
+		encapObject.querySelector("menuitem[id='previousLocMenuItem']").disabled = "disabled";
+
 	}
 	else // for all other browsers -- eventually would like to combine with above code
 	{
@@ -976,6 +998,13 @@ function makeContextMenu(funct, param = null)
 			elemDiv.id = "rightClickDiv";
 			elemDiv.classList.add("rcMenu");
 
+			var menuItem9 = document.createElement('a');	
+			menuItem9.href = "javascript: goBackToPrevLocation()";
+			menuItem9.id = "previousLocMenuItem";
+			menuItem9.innerHTML = "Return to previous location";
+			menuItem9.style.display = "none";
+			elemDiv.appendChild(menuItem9);
+			
 			var menuItem7 = document.createElement('a');	
 			menuItem7.href = "javascript:copySelectedText()"
 			menuItem7.innerHTML = "Copy Selected Text";
@@ -987,6 +1016,7 @@ function makeContextMenu(funct, param = null)
 			menuItem8.innerHTML = "Print/ Save as PDF";
 			menuItem8.style.display = "block";
 			elemDiv.appendChild(menuItem8);
+
 			
 			var menuItem4 = document.createElement('a');	
 			oldURL = String(window.parent.location);  // otherwise you will edit the URL
@@ -1191,7 +1221,7 @@ function scrollToElement(elementID)
 	scrollTopPosition = window.parent.scrollY;  // save the value of the scroll position
 
 	// remove the returnLink so it does not factor in to the size 
-	returnLink.style.display = "none";
+	//returnLink.style.display = "none";
 		
 	if (window.self !== window.top)  // we are in an iframe
 	{
@@ -1230,8 +1260,17 @@ function scrollToElement(elementID)
 	}
 	
 	/** Don't need the return link! (huh??) ****/
-	element.appendChild(returnLink);
-	returnLink.style.display = "block";
+	//element.appendChild(returnLink);
+	//returnLink.style.display = "block";
+	if (navigator.userAgent.indexOf("Firefox") != -1)
+	{
+		encapObject.querySelector("menuitem[id='previousLocMenuItem']").disabled = false;
+	}
+	else
+	{
+		encapObject.querySelector("a[id='previousLocMenuItem']").style.display = "block";
+	}
+
 }
 
 function linksToNewWindow()
