@@ -12,6 +12,7 @@ instructorEmail = "Charlie Belinsky <belinsky@msu.edu>;";
 
 // pre-onload functions
 fixMathJaxEQs();	// Make all math equations default to inline mode (D2L issue)
+addEqNumbering(); // 
 addStyleSheet();  // can be done before page load since this is called in the [head]
 	
 // resize the iframe in the parent window when the page gets resized
@@ -896,90 +897,7 @@ function selectText(element)
 	window.getSelection().addRange(range);
 }
 
-/* takes
-<p><img src="ImgSrc"></p>
-<p class="caption">Caption text </p>
 
-and converts it to
-
-<figure>
-	<img src="ImgSrc">
-	<figCaption">Caption text </figCaption>
-</figure>
-*/
-function captionImages()
-{
-	// get all the images in the page (can later expand to tables, code-blocks...)
-	var imagesInPage = encapObject.getElementsByTagName("img");
-	
-	/* should have this in D2L:
-		[p]      <-- parent of image
-		  [img]  <-- looking at images
-		[/p]
-		[p class="caption]	   <-- nextElementSibling of parent with caption
-		[/p]
-		
-		and converting it to this:
-		[p]
-		   [figure]
-		     [img]
-			  [figcaption]  <-- old caption with "Fig. #:" appended
-		   [/figure]
-		[/p]
-	*/
-	for(i=0; i<imagesInPage.length; i++)
-	{	
-		// trying to find the paragraph [p] parent of the image --
-		// the problem is that there might be [b], [i], or [span] ancestors in the way
-		parElement = imagesInPage[i].parentElement;
-
-		while(parElement && parElement.tagName != "P")
-		{
-			parElement = parElement.parentElement;
-		}
-		
-		/*** Add error onscreen if parent [p] not found?? ***/
-		// first make sure that we actally got an element and not end-of-page
-		if(parElement)  
-		{
-			/* need to find a class="caption" element in the next element sibling's descendants
-			   again, same issue as before where you should have
-			      [p class="caption"] 
-					but could have
-					[p][span][b][i][span class="caption"]    */
-					
-			if(parElement.nextElementSibling)  // if there is a next sibling
-			{
-				capElement = parElement.nextElementSibling;  // go to the next sibling (likely a [p])
-			
-				while(capElement.childElementCount != 0 && !(capElement.classList.contains("caption")))
-				{
-					capElement = capElement.childNodes[0];
-				}
-
-				/*** Add error onscreen if caption not found?? ***/
-				// make sure we found an element with class = "caption"
-				if(capElement.classList.contains("caption"))
-				{
-					figure = document.createElement("figure");			// create a [figure] element
-					figCaption = document.createElement("figCaption");	// create a [figcaption] element
-					
-					// copy caption in [figcaption] element and preprend with the figure number
-					figCaption.innerHTML = capElement.innerText;	
-					figCaption.classList.add("caption");					// add caption class to [figCaption]
-					figure.appendChild(imagesInPage[i]);					// add image to [figure]
-					figure.appendChild(figCaption);							// add [figcaption] to [figure]
-					
-					// remove the original caption
-					capElement.parentElement.removeChild(capElement);
-					
-					// add figure to parent of image
-					parElement.appendChild(figure);
-				}
-			}
-		}
-	}
-}
 
 function makeContextMenu(funct, param = null)
 {
@@ -1159,87 +1077,6 @@ function addDownloadLinks()
 		downloadLinks[i].download = "";
 	}
 }
-
-/* finds all figure references in the page and add the correct numerical reference 
-function figureReferences()
-{
-	var figRefInPage = encapObject.getElementsByClassName("figureRef");
-
-	for(i=0; i<figRefInPage.length; i++)
-	{
-		// check if the title refers to a legitimate ID for a caption in the page
-		if(figRefInPage[i].id.trim() != "")  // there is an ID
-		{
-			// uses id with extra characters (c-) at beginning
-			figureID = figRefInPage[i].id.slice(2);
-		
-			if(isValid(figureID)==false)
-			{
-				figRefInPage[i].innerText = "***Invalid characters in Figure ID***";
-			}
-			/*
-				Check if:
-				1) there is text in the figureRef (e.g., it is not an accidental figureRef)
-				2) the id of figureRef (minus first two characters) is an id of a caption 
-				3) the id is of class caption (or a parent -- this is the D2L issue where [span] can turn up where not wanted --
-					-- not going to implement this yet.
-				4) the caption has non-white space text 		
-			
-			else if(figRefInPage[i].innerText.trim() != "" &&
-				encapObject.querySelector("#" + figureID) &&   // getElementById(figureID) && 
-				encapObject.querySelector("#" + figureID).innerText.trim() != "")
-			{
-				caption = encapObject.querySelector("#" + figureID).innerText;
-				strIndex = caption.indexOf(":");  // find the location of the first semicolon
-				
-				figRef = caption.slice(0, strIndex); // get "Fig. #"
-				
-				figRefInPage[i].innerText = figRef;	
-			}
-			else if(figRefInPage[i].innerText.trim() != "")
-			{
-				figRefInPage[i].innerText = "Missing Fig.";
-			}
-		}
-	}
-}*/
-
-/* finds all figure references in the page and add the correct numerical reference 
-function eqReferences()
-{
-	var eqRefInPage = encapObject.getElementsByClassName("eqRef");
-
-	for(i=0; i<eqRefInPage.length; i++)
-	{	
-		// this is mostly to fix a D2L error where subsequent lines will retain the class of 
-		// the previous line -- but it is not reflected in the editor
-		if(eqRefInPage[i].id.trim() != "")  // there is an ID
-		{
-			// Outside of D2L: uses id with extra characters (c-) at beginning
-			eqID = eqRefInPage[i].id.slice(2);
-
-			if(isValid(eqID)==false)
-			{
-				eqRefInPage[i].innerText = "***Invalid characters in Equation ID***";
-			}
-			else if(eqRefInPage[i].innerText.trim() != "" &&
-				encapObject.querySelector("#" + eqID) &&   // getElementById(figureID) && 
-				encapObject.querySelector("#" + eqID).innerText.trim() != "")
-			{
-				caption = encapObject.querySelector("#" + eqID).innerText;
-				
-				eqRef = caption.slice(1,-1); 
-				
-				eqRefInPage[i].innerText = "Eq. " + eqRef;	
-			}
-			// if there is no text, then this was probably not meant to be an EQ Ref 
-			else if( eqRefInPage[i].innerText.trim() != "")
-			{
-				eqRefInPage[i].innerText = "Missing Eq.";
-			}
-		}
-	}
-}*/
 
 /* finds all section references in the page and add the correct numerical reference */
 function addReferences()
@@ -1428,8 +1265,6 @@ function fixMathJaxEQs()
 	//mathPro = document.querySelectorAll(".MathJax_Processing");
 	//mathPro2 = document.querySelectorAll(".MathJax_Processed");
 	
-	//alert(m.length + " " +  mathSpan.length + " " + mathDis.length + " " + mathPro.length + " " + mathPro2.length);
-
 	for(i=0; i<mathSpan.length; i++)
 	{
 		if (mathSpan[i].nextElementSibling.nodeName == "DIV")
@@ -1494,17 +1329,6 @@ function openEmailWindow()
 						address.value = instructorEmail;
 						subject = emailWindow.document.getElementById("Subject");
 						subject.value = window.document.title;
-						//subject.click();
-					//							addressControl.blur();
-					//	address.blur();
-					
-					//	address.blur();
-					//	evt = new Event('blur');
-					//	addressControl.dispatchEvent(evt);
-					//	address.dispatchEvent(evt);
-					//	addressControl.click();
-					//	subject.focus(); 
-					//	subject.click();
 					};
 }
 function fixIframeSize()
@@ -1521,3 +1345,96 @@ function isValid(str)
 {
 	return !/[~`!#$%\^&*+=\[\]\\';,/{}|\\":<>\?]/g.test(str);
 }
+
+function addEqNumbering()
+{
+	mathEqs = document.querySelectorAll(".equation[id]");
+	//alert(mathEqs.length);
+}
+	
+/* takes
+<p><img src="ImgSrc"></p>
+<p class="caption">Caption text </p>
+
+and converts it to
+
+<figure>
+	<img src="ImgSrc">
+	<figCaption">Caption text </figCaption>
+</figure>
+UNUSED function -- too many complications in implementation!
+function captionImages()
+{
+	// get all the images in the page (can later expand to tables, code-blocks...)
+	var imagesInPage = encapObject.getElementsByTagName("img");
+	
+	/* should have this in D2L:
+		[p]      <-- parent of image
+		  [img]  <-- looking at images
+		[/p]
+		[p class="caption]	   <-- nextElementSibling of parent with caption
+		[/p]
+		
+		and converting it to this:
+		[p]
+		   [figure]
+		     [img]
+			  [figcaption]  <-- old caption with "Fig. #:" appended
+		   [/figure]
+		[/p]
+	
+	for(i=0; i<imagesInPage.length; i++)
+	{	
+		// trying to find the paragraph [p] parent of the image --
+		// the problem is that there might be [b], [i], or [span] ancestors in the way
+		parElement = imagesInPage[i].parentElement;
+
+		while(parElement && parElement.tagName != "P")
+		{
+			parElement = parElement.parentElement;
+		}
+		
+		/*** Add error onscreen if parent [p] not found?? ***/
+		// first make sure that we actally got an element and not end-of-page
+		if(parElement)  
+		{
+			/* need to find a class="caption" element in the next element sibling's descendants
+			   again, same issue as before where you should have
+			      [p class="caption"] 
+					but could have
+					[p][span][b][i][span class="caption"]    
+					
+			if(parElement.nextElementSibling)  // if there is a next sibling
+			{
+				capElement = parElement.nextElementSibling;  // go to the next sibling (likely a [p])
+			
+				while(capElement.childElementCount != 0 && !(capElement.classList.contains("caption")))
+				{
+					capElement = capElement.childNodes[0];
+				}
+
+				/*** Add error onscreen if caption not found?? **
+				// make sure we found an element with class = "caption"
+				if(capElement.classList.contains("caption"))
+				{
+					figure = document.createElement("figure");			// create a [figure] element
+					figCaption = document.createElement("figCaption");	// create a [figcaption] element
+					
+					// copy caption in [figcaption] element and preprend with the figure number
+					figCaption.innerHTML = capElement.innerText;	
+					figCaption.classList.add("caption");					// add caption class to [figCaption]
+					figure.appendChild(imagesInPage[i]);					// add image to [figure]
+					figure.appendChild(figCaption);							// add [figcaption] to [figure]
+					
+					// remove the original caption
+					capElement.parentElement.removeChild(capElement);
+					
+					// add figure to parent of image
+					parElement.appendChild(figure);
+				}
+			}
+		}
+	}
+}
+*/
+	

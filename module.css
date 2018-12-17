@@ -254,7 +254,7 @@ td
     -o-user-select: none;
     user-select: none;
 }
-.caption, .figureRef[id], .c, .fr, .eqNum, .eqRef[id], .sectRef[id]
+.caption, .figNum, .figureRef[id], .c, .fr[id], .eqNum, .eqRef[id], .sectRef[id]
 {
 	color: rgb(0,100,0);
 	font-style: italic;
@@ -475,7 +475,7 @@ img.flexSize, img.fs
 	{
 		color: rgb(102,0,0);
 	}
-	.caption, .figureRef, .c, .fr
+	.caption, .figNum, .figureRef, .c, .fr
 	{
 		color: rgb(90,90,0);
 		font-style: italic;
