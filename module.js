@@ -659,7 +659,10 @@ function addCaption(elementType)
 	// this is deprecated in DreamWeaver
 	for(i=0; i<captionLines.length; i++)
 	{
-		captionLines[i].classList.add("caption");	
+		if(!(captionLines[i].classList.contains("eqNum")))
+		{
+			captionLines[i].classList.add("caption");	
+		}
 	}
 	
 	// In D2L, H5 was used to signify a caption;
@@ -906,8 +909,6 @@ function selectText(element)
 	range.selectNode(element);
 	window.getSelection().addRange(range);
 }
-
-
 
 function makeContextMenu(funct, param = null)
 {
@@ -1167,6 +1168,9 @@ function addReferences()
 			caption = encapObject.querySelector("#" + refID).innerText;
 			eqRef = caption.slice(1,-1); 
 			references[i].innerText = "Eq. " + eqRef;	
+
+			// create a link that scrolls to the equation
+			references[i].onclick = scrollToElementReturn(refID);
 		}
 		// if this is a figure ref
 		else if(references[i].classList.contains("figureRef")) 
@@ -1177,6 +1181,9 @@ function addReferences()
 			figRef = caption.slice(0, strIndex); // get "Fig. #"
 			
 			references[i].innerText = figRef;	
+			
+			// create a link that scrolls to the figure
+			references[i].onclick = scrollToElementReturn(refID);
 		}
 		// this is an extensioin or trap link
 		else if(references[i].classList.contains("linkTo")) 
@@ -1218,6 +1225,14 @@ function checkURLForPos()
 function scrollToElement(elementID)
 {		
 	var element = encapObject.querySelector("#" + elementID);  
+	if(element.classList.contains("caption"))
+	{
+		offset = 200;
+	}
+	else
+	{
+		offset = 50;
+	}
 	scrollTopPosition = window.parent.scrollY;  // save the value of the scroll position
 
 	// remove the returnLink so it does not factor in to the size 
@@ -1242,7 +1257,7 @@ function scrollToElement(elementID)
 		}
 
 		// calc the vertical position of the linkTo element in the parent page
-		totalScrollY = element.offsetTop + iframeOffset - 0; // headerHeight = 0;
+		totalScrollY = element.offsetTop + iframeOffset - offset; // headerHeight = 0;
 
 		// scroll the parent to the vertical position of the linkTo element
 		window.parent.scrollTo(element.offsetLeft, totalScrollY);	
@@ -1250,7 +1265,7 @@ function scrollToElement(elementID)
 	else
 	{
 		// no parent frame - scroll to location of linkTo element
-		window.parent.scrollTo(element.offsetLeft, element.offsetTop);
+		window.parent.scrollTo(element.offsetLeft, (element.offsetTop-offset));
 	}
 
 	// check if element is a div, if not, go to it's parent element (which should be a div)
