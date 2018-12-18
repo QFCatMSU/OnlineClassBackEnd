@@ -911,7 +911,9 @@ function selectText(element)
 }
 
 function makeContextMenu(funct, param = null)
-{
+{	
+	roles = parent.document.querySelector("#RoleContainer"); 
+	
 	// for Firefox 
 	if (navigator.userAgent.indexOf("Firefox") != -1)
 	{
@@ -954,7 +956,7 @@ function makeContextMenu(funct, param = null)
 		contextMenu.appendChild(menuItem);
 
 		// Add an Edit Page option if we are within a CMS environment
-		if(editURL != "")
+		if(editURL != "" && roles && roles.innerHTML.includes("Editor"))
 		{
 			menuItem = document.createElement("menuitem");
 			menuItem.label = "Edit Page";
@@ -1018,16 +1020,18 @@ function makeContextMenu(funct, param = null)
 			menuItem8.style.display = "block";
 			elemDiv.appendChild(menuItem8);
 
-			
-			var menuItem4 = document.createElement('a');	
-			oldURL = String(window.parent.location);  // otherwise you will edit the URL
-			newURL = oldURL.replace("viewContent", "contentFile"); 
-			newURL = newURL.replace("View", "EditFile?fm=0"); 
-			menuItem4.href = newURL; //newURL;
-			menuItem4.target = "_parent";
-			menuItem4.innerHTML = "Edit Page";
-			menuItem4.style.display = "block";
-			elemDiv.appendChild(menuItem4);
+			if(editURL != "" && roles && roles.innerHTML.includes("Editor"))
+			{
+				var menuItem4 = document.createElement('a');	
+				oldURL = String(window.parent.location);  // otherwise you will edit the URL
+				newURL = oldURL.replace("viewContent", "contentFile"); 
+				newURL = newURL.replace("View", "EditFile?fm=0"); 
+				menuItem4.href = newURL; //newURL;
+				menuItem4.target = "_parent";
+				menuItem4.innerHTML = "Edit Page";
+				menuItem4.style.display = "block";
+				elemDiv.appendChild(menuItem4);
+			}
 			
 			var menuItem5 = document.createElement('a');	
 			menuItem5.href = "javascript:changeAllPicSize('maximize')"
