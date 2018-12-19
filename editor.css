@@ -38,7 +38,7 @@ h4::before
 h5.eqNum::after
 {
   counter-increment: eqCount;               
-  content: " ( Eq. " counter(eqCount) " )";  
+  content: " ( " counter(eqCount) " )";  
 }
 .eqNum:not(h5)::before
 {

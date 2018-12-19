@@ -643,7 +643,11 @@ function equationNumbering()
 	
 	for(i=0; i<equations.length; i++)
 	{
-		if(equations[i].innerText.trim() != "")  // there is text in the caption
+		if(equations[i].tagName == "H5")
+		{
+			equations[i].innerHTML = equations[i].innerHTML + " ( " + (i+1) + " )";
+		}
+		else if(equations[i].innerText.trim() != "")  // there is text in the caption
 		{
 			equations[i].innerHTML = "( " + (i+1) + " )";
 		}	
