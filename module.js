@@ -649,7 +649,7 @@ function equationNumbering()
 		}
 		else if(equations[i].innerText.trim() != "")  // there is text in the caption
 		{
-			equations[i].innerHTML = "( " + (i+1) + " )";
+			equations[i].innerHTML = " ( " + (i+1) + " )";
 		}	
 	}
 }
@@ -929,12 +929,25 @@ function makeContextMenu(funct, param = null)
 		contextMenu.type = "context";
 		contextMenu.id = "rightClickMenu";
 
+		// add a Go to Top button
+		menuItem = document.createElement("menuitem");
+		menuItem.label = "Go to Top of Page";
+		menuItem.id = "topMenuItem";
+		menuItem.onclick = function()
+		{	
+			window.parent.scrollTo(window.parent.scrollX, 0);
+		};
+		contextMenu.appendChild(menuItem);
+		
 		// add a Return to Previous location button
 		menuItem = document.createElement("menuitem");
 		menuItem.label = "Go to Previous Location";
 		menuItem.id = "previousLocMenuItem";
-		menuItem.onclick = 	function(){	goBackToPrevLocation();
-													return false; };
+		menuItem.onclick = 	function()
+		{	
+			goBackToPrevLocation();
+			return false; 
+		};
 		contextMenu.appendChild(menuItem);
 		
 		// add a Print lesson button to the context menu
@@ -1005,6 +1018,13 @@ function makeContextMenu(funct, param = null)
 			elemDiv.id = "rightClickDiv";
 			elemDiv.classList.add("rcMenu");
 
+			var menuItem10 = document.createElement('a');	
+			menuItem10.href = "javascript: window.parent.scrollTo(window.parent.scrollX, 0);";
+			menuItem10.id = "topMenuItem";
+			menuItem10.innerHTML = "Go to Top of Page";
+			menuItem10.style.display = "block";
+			elemDiv.appendChild(menuItem10);
+			
 			var menuItem9 = document.createElement('a');	
 			menuItem9.href = "javascript: goBackToPrevLocation()";
 			menuItem9.id = "previousLocMenuItem";
@@ -1174,7 +1194,11 @@ function addReferences()
 		else if(references[i].classList.contains("eqRef")) 
 		{
 			caption = encapObject.querySelector("#" + refID).innerText;
-			eqRef = caption.slice(1,-1); 
+
+			/* find the last "(" in the line -- represents ( EQ# )
+			   split the line right after the "("
+				grab the number */
+			eqRef = parseInt(caption.slice( (caption.lastIndexOf("("))+1 ));
 			references[i].innerText = "Eq. " + eqRef;	
 
 			// create a link that scrolls to the equation
@@ -1314,6 +1338,7 @@ function linksToNewWindow()
 function fixMathJaxEQs()
 {
 	// change the display type of all math objects so they all display in the same way (this is a D2L issue)
+	// this works if it happens before mathjax javascript is executed 
 	var m = document.querySelectorAll('math[display="block"]');
 	
 	for(i=0; i<m.length; i++)
@@ -1321,7 +1346,7 @@ function fixMathJaxEQs()
 		m[i].setAttribute("display", "inline");
 	}
 	
-	// this might not be needed...
+	// this works if it happens after mathjax javascript is executed 
 	mathSpan = document.querySelectorAll("span.MathJax_Preview");
 	//mathDis = document.querySelectorAll(".MathJax_Display");
 	//mathPro = document.querySelectorAll(".MathJax_Processing");
@@ -1347,7 +1372,7 @@ function fixMathJaxEQs()
 		}
 	}
 	
-	// fix quations so that limits to summations are put above and below the summation (as opposed to on the side)
+	// fix equations so that limits to summations are put above and below the summation (as opposed to on the side)
 	// find all mstyle elements that have an munderover element as a direct child
 	// this will give you the munder and munderover objects -- we want to modify the mstyle parent
 	var m1 =  document.querySelectorAll("mstyle>munder, mstyle>munderover");
@@ -1355,8 +1380,8 @@ function fixMathJaxEQs()
 	// go through each munder and munderover element
 	for(i=0; i<m1.length; i++)
 	{
-		// parent is mstyle
-		if(m1[i].parentNode.hasAttribute("displaystyle") == false)
+		// parent is mstyle -- checking if it has the attricute "displaystyle"
+		if(!(m1[i].parentNode.hasAttribute("displaystyle")))
 		{	
 			m1[i].setAttribute("displaystyle", "true");
 		}
