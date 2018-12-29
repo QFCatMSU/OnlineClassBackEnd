@@ -55,6 +55,14 @@ h1
 	/* h1 is essentially the title of the lesson */
 	font-size: 24px;
 	color: rgb(0,0,100);
+	width: 100%;
+	text-align: center;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	background-color: rgb(220,220,220);
+	border-radius: 10px;
 }
 h2
 {
@@ -374,7 +382,7 @@ img.flexSize, img.fs
 	display: block;
 	margin: auto;
 }
-.title
+/*.title
 {
 	font-size: 24px;
 	width: 100%;
@@ -382,7 +390,7 @@ img.flexSize, img.fs
 	padding: 0;
 	background-color: rgb(220,220,220);
 	border-radius: 10px;
-}
+}*/
 .figureRef[id], .fr, .eqNum[id], .eqRef[id]
 {
 	text-decoration: none;

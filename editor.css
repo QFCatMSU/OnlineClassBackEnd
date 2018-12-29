@@ -173,7 +173,7 @@ h6>br,h6>h6
 	padding-left: 20px; 
 	text-indent: -20px;
 }	
-.figureRef, .fr, .eqNum:not(h5)::before, .eqRef, .sectRef
+.figureRef, .fr, .eqNum:not(h5)::before, .eqRef /*, .sectRef */
 {
 	text-decoration: line-through;
 }

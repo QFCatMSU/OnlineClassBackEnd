@@ -181,9 +181,9 @@ parent.window.onload = function()
 		nn[i].classList.add("partial");
 	}
 
-	// set title on webpage
-	titleObj = encapObject.querySelector("#title");
-	if(!titleObj )titleObj = encapObject.querySelector(".title");
+	// set title on webpage -- the first H1 on the page
+	titleObj = encapObject.querySelector("h1");
+	//if(!titleObj )titleObj = encapObject.querySelector(".title");
 	
 	if(titleObj)
 	{
@@ -401,7 +401,6 @@ function addDivs(elementType)
 		nextSibling = null;
 	
 		newDiv = document.createElement("div");	// create a new div
-		newDiv.classList.add("contentDiv");			// add a class name to the div
 					
 		// get title from element -- tranfer to new div
 		// use data-title instead of title because title will create a tooltip popup (which I don't want)
@@ -447,12 +446,13 @@ function addDivs(elementType)
 		// add the page title class to the div with H1
 		if(elementType == "H1")
 		{	
-			newDiv.classList.add("title");
+			//newDiv.classList.add("title");
 		}
 		else if(elementType == "H2")
 		{	
 			// add the class "h2Div" to div with H2
 			newDiv.classList.add("h2Div");
+			newDiv.classList.add("contentDiv");			// add a class name to the div
 			
 			// add "nonlinear" class for div that contain non-linear content
 			if((elements[i].className != "" ) &&
@@ -467,6 +467,7 @@ function addDivs(elementType)
 		{	
 			// add the class "h3Div" to div with "H3"
 			newDiv.classList.add("h3Div");
+			newDiv.classList.add("contentDiv");			// add a class name to the div
 			
 			// Check to see if the previous sibling (div with H2 or H3) has class "nonlinear"
 			// if so -- then this div should also be class "nonlinear"
@@ -1183,8 +1184,12 @@ function addReferences()
 		{
 			// get first number from section ID (div)
 			sectNum = parseInt(encapObject.querySelector("#" + refID).innerText);
-			// change text on sect ref to indicate section num
-			references[i].innerText = "Sect " + sectNum;	
+			
+			if(references[i].classList.contains("label"))
+			{
+				// add section num to the link
+				references[i].innerText = references[i].innerText + " (Sect " + sectNum + ")";	
+			}
 			
 			// create a link that scrolls to the section
 			divID = "div" + String(sectNum).replace(".", "-");
