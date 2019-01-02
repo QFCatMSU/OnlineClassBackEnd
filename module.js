@@ -270,21 +270,23 @@ function removeDivs()
 	divElements = encapObject.getElementsByTagName("DIV");
 
 	// the [div] length changes as [div] are removed -- we need to hold the initial number of [div]
-	initNumOfDivs = divElements.length;
+	// initNumOfDivs = divElements.length;
 	
-	for(i=0; i<initNumOfDivs; i++)   // could do while(divElement[0])
+	// Remove all the divs from the page but keep the content -- start with the last div
+	//	to avoid recursion issues
+	while(divElements.length > 0)  //for(i=0; i<initNumOfDivs; i++)   // could do while(divElement[0])
 	{
 		/* Since we are always removing the previous [div], we are always dealing with the first [div]
 			of the remaining [div], hence [0] is always used (unintuitive, I know -- its JavaScript) */
 			
 		// get information inside the div and save it to a temp variable
-		divContent = divElements[0].innerHTML
+		divContent = divElements[divElements.length-1].innerHTML
 		
 		// copy the content of the [div] before the [div] 
-		divElements[0].insertAdjacentHTML("beforebegin", divContent);
+		divElements[divElements.length-1].insertAdjacentHTML("beforebegin", divContent);
 		
 		// remove the [div]
-		divElements[0].parentElement.removeChild(divElements[0]);
+		divElements[divElements.length-1].parentElement.removeChild(divElements[divElements.length-1]);
 	}
 }
 
@@ -492,21 +494,6 @@ function addDivs(elementType)
 			newDiv.classList.add("h3NextDiv");	// it is the middle of a section
 		}
 		newDiv.appendChild(currentElement);	// add content to the new div
-		
-		// figure out what the next div is -- basically this determines
-		// if this content is the middle or end of a section 
-	/*	if(elementType != "H1" && 
-				(currentElement.nextElementSibling  || //currentElement.nextElementSibling == null ||
-				 currentElement.nextElementSibling.tagName == "H2" ||
-				 currentElement.nextElementSibling.tagName == "DIV" ))
-		{
-			newDiv.classList.add("h2NextDiv");	// it is the end of a section
-		}
-		else if(currentElement.nextElementSibling.tagName == "H3")
-		{
-			newDiv.classList.add("h3NextDiv");	// it is the middle of a section
-		}
-		newDiv.appendChild(currentElement);	// add content to the new div*/
 	}
 }
 
