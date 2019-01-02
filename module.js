@@ -478,10 +478,25 @@ function addDivs(elementType)
 			}
 		}	
 
+		if(currentElement.nextElementSibling == null) // there is no next
+		{
+			newDiv.classList.add("h2NextDiv");	// should change at some point -- probably indicates an error
+		}
+		else if(currentElement.nextElementSibling.tagName == "H2" ||
+				  currentElement.nextElementSibling.tagName == "DIV" )
+		{
+			newDiv.classList.add("h2NextDiv");	// it is the end of a section
+		}
+		else if(currentElement.nextElementSibling.tagName == "H3")
+		{
+			newDiv.classList.add("h3NextDiv");	// it is the middle of a section
+		}
+		newDiv.appendChild(currentElement);	// add content to the new div
+		
 		// figure out what the next div is -- basically this determines
 		// if this content is the middle or end of a section 
-		if(elementType != "H1" && 
-				(currentElement.nextElementSibling == null ||
+	/*	if(elementType != "H1" && 
+				(currentElement.nextElementSibling  || //currentElement.nextElementSibling == null ||
 				 currentElement.nextElementSibling.tagName == "H2" ||
 				 currentElement.nextElementSibling.tagName == "DIV" ))
 		{
@@ -491,7 +506,7 @@ function addDivs(elementType)
 		{
 			newDiv.classList.add("h3NextDiv");	// it is the middle of a section
 		}
-		newDiv.appendChild(currentElement);	// add content to the new div
+		newDiv.appendChild(currentElement);	// add content to the new div*/
 	}
 }
 
