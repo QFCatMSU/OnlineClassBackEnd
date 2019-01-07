@@ -276,8 +276,7 @@ function removeDivs()
 	//	to avoid recursion issues
 	while(divElements.length > 0)  //for(i=0; i<initNumOfDivs; i++)   // could do while(divElement[0])
 	{
-		/* Since we are always removing the previous [div], we are always dealing with the first [div]
-			of the remaining [div], hence [0] is always used (unintuitive, I know -- its JavaScript) */
+		// divElements.length is decreased by one everytime a div is removed 
 			
 		// get information inside the div and save it to a temp variable
 		divContent = divElements[divElements.length-1].innerHTML
@@ -404,7 +403,7 @@ function addDivs(elementType)
 	
 		newDiv = document.createElement("div");	// create a new div
 					
-		// get title from element -- tranfer to new div
+		// get title from element -- transfer to new div
 		// use data-title instead of title because title will create a tooltip popup (which I don't want)
 		if(elements[i].title != "")
 		{
@@ -436,6 +435,7 @@ function addDivs(elementType)
 			<h3>  -- this last element could also be <h2>, <div>, or end-of-page
 		*/
 		while(currentElement.nextElementSibling != null &&
+				currentElement.nextElementSibling.tagName != "H1" &&
 				currentElement.nextElementSibling.tagName != "H2" &&
 				currentElement.nextElementSibling.tagName != "H3" &&
 				currentElement.nextElementSibling.tagName != "DIV")
@@ -448,7 +448,8 @@ function addDivs(elementType)
 		// add the page title class to the div with H1
 		if(elementType == "H1")
 		{	
-			//newDiv.classList.add("title");
+			newDiv.classList.add("h1Div");
+			//newDiv.classList.add("contentDiv");			// add a class name to the div
 		}
 		else if(elementType == "H2")
 		{	
@@ -485,7 +486,7 @@ function addDivs(elementType)
 			newDiv.classList.add("h2NextDiv");	// should change at some point -- probably indicates an error
 		}
 		else if(currentElement.nextElementSibling.tagName == "H2" ||
-				  currentElement.nextElementSibling.tagName == "DIV" )
+				currentElement.nextElementSibling.tagName == "DIV" )
 		{
 			newDiv.classList.add("h2NextDiv");	// it is the end of a section
 		}
@@ -919,7 +920,7 @@ function selectText(element)
 
 function makeContextMenu(funct, param = null)
 {	
-	roles = parent.document.querySelector("#RoleContainer"); 
+
 	
 	// for Firefox 
 	if (navigator.userAgent.indexOf("Firefox") != -1)
@@ -976,6 +977,7 @@ function makeContextMenu(funct, param = null)
 		contextMenu.appendChild(menuItem);
 
 		// Add an Edit Page option if we are within a CMS environment
+		roles = parent.document.querySelector("#RoleContainer"); 
 		if(editURL != "" && roles && roles.innerHTML.includes("Editor"))
 		{
 			menuItem = document.createElement("menuitem");
@@ -1047,6 +1049,7 @@ function makeContextMenu(funct, param = null)
 			menuItem8.style.display = "block";
 			elemDiv.appendChild(menuItem8);
 
+			roles = parent.document.querySelector("#RoleContainer"); 
 			if(editURL != "" && roles && roles.innerHTML.includes("Editor"))
 			{
 				var menuItem4 = document.createElement('a');	
@@ -1231,6 +1234,115 @@ function addReferences()
 			references[i].onclick = scrollToElementReturn(refID);
 		}
 	}
+
+	// new system for references
+	var references = encapObject.querySelectorAll(".ref, .reference");
+	for(i=0; i<references.length; i++)
+	{
+		fullRefID = references[i].id;
+		refID = fullRefID.slice(2);
+	
+		// check if the reference has no ID
+		if(fullRefID == "")  
+		{
+			// right now, this situation is handled in editor.CSS
+		}
+		// no text associated with the reference
+		else if (references[i].innerText.trim() == "")
+		{
+			// right now, this situation is handled in editor.CSS			
+		}
+		// check if ID has any invalid characters
+		else if(isValid(refID) == false)
+		{
+			references[i].innerText = "***Invalid characters in ID***";
+		}
+		// check if first character in ID is a number
+		else if(isNaN(refID[0]) == false)
+		{
+			references[i].innerText = "***Cannot start ID with number***";
+		}
+		// reference link does not exist
+		else if(!(encapObject.querySelector("#" + refID)))
+		{
+			references[i].innerText = "***Invalid Link***";				
+		}
+		// there is no content at the link (not sure this is neccessary...)
+		else if (encapObject.querySelector("#" + refID).innerText.trim() == "")
+		{
+			references[i].innerText = "***No content at link***";					
+		}
+		// if this is a equation ref
+		else if(encapObject.querySelector("#" + refID).classList.contains("eqNum")) 
+		{
+			caption = encapObject.querySelector("#" + refID).innerText;
+
+			/* find the last "(" in the line -- represents ( EQ# )
+			   split the line right after the "("
+				grab the number */
+			eqRef = parseInt(caption.slice( (caption.lastIndexOf("("))+1 ));
+			
+			refIndex = references[i].innerText.indexOf("##");
+			if(refIndex != -1)
+			{
+				str = references[i].innerText;
+				var pos = str.lastIndexOf('##');
+				references[i].innerText = str.substring(0,pos) + eqRef + str.substring(pos+2);
+				//references[i].innerText = references[i].innerText.replace("##", eqRef);
+			}
+
+			// create a link that scrolls to the equation
+			references[i].onclick = scrollToElementReturn(refID);
+		}
+		// if this is a figure ref
+		else if(encapObject.querySelector("#" + refID).nodeName.toLowerCase() == "h5") 
+		{
+			caption = encapObject.querySelector("#" + refID).innerText;
+			strIndex = caption.indexOf(":");  // find the location of the first semicolon
+			
+			figRef = caption.slice(0, strIndex); // get "Fig. #"
+			
+			refIndex = references[i].innerText.indexOf("##");
+			if(refIndex != -1)
+			{
+				str = references[i].innerText;
+				var pos = str.lastIndexOf('##');
+				references[i].innerText = str.substring(0,pos) + figRef + str.substring(pos+2);
+				//references[i].innerText = references[i].innerText.replace("##", figRef);
+			}
+			
+			// create a link that scrolls to the figure
+			references[i].onclick = scrollToElementReturn(refID);
+		}
+		// this a is section header (h2-h4)
+		else if(encapObject.querySelector("#" + refID).nodeName.toLowerCase() == "h1" ||
+				  encapObject.querySelector("#" + refID).nodeName.toLowerCase() == "h2" ||
+				  encapObject.querySelector("#" + refID).nodeName.toLowerCase() == "h3" ||
+				  encapObject.querySelector("#" + refID).nodeName.toLowerCase() == "h4") 
+		{
+			// get first number from section ID (div)
+			sectNum = parseFloat(encapObject.querySelector("#" + refID).innerText);
+			
+			refIndex = references[i].innerText.indexOf("##");
+			if(refIndex != -1)
+			{
+				str = references[i].innerText;
+				var pos = str.lastIndexOf('##');
+				references[i].innerText = str.substring(0,pos) + sectNum + str.substring(pos+2);
+				//references[i].innerText = references[i].innerText.replace("##", sectNum);
+			}
+			
+			// create a link that scrolls to the section
+			divID = "div" + String(sectNum).replace(".", "-");
+			references[i].onclick = scrollToElementReturn(divID);
+		}
+		// for all other elements in the page
+		else 
+		{
+			// go to scrollToElement() function when the anchor is clicked
+			references[i].onclick = scrollToElementReturn(refID);
+		}
+	}
 }
 
 function checkURLForPos()
@@ -1272,11 +1384,8 @@ function scrollToElement(elementID)
 	{
 		offset = 50;
 	}
-	scrollTopPosition = window.parent.scrollY;  // save the value of the scroll position
+	scrollTopPosition = window.parent.scrollY;  // save the current value of the scroll position
 
-	// remove the returnLink so it does not factor in to the size 
-	//returnLink.style.display = "none";
-		
 	if (window.self !== window.top)  // we are in an iframe
 	{
 		// get iframes from the parent windows:
@@ -1296,7 +1405,7 @@ function scrollToElement(elementID)
 		}
 
 		// calc the vertical position of the linkTo element in the parent page
-		totalScrollY = element.offsetTop + iframeOffset - offset; // headerHeight = 0;
+		totalScrollY = element.offsetParent.offsetTop + element.offsetTop + iframeOffset - offset; // headerHeight = 0;
 
 		// scroll the parent to the vertical position of the linkTo element
 		window.parent.scrollTo(element.offsetLeft, totalScrollY);	
@@ -1304,10 +1413,11 @@ function scrollToElement(elementID)
 	else
 	{
 		// no parent frame - scroll to location of linkTo element
-		window.parent.scrollTo(element.offsetLeft, (element.offsetTop-offset));
+		window.parent.scrollTo( element.offsetLeft, (element.offsetParent.offsetTop + element.offsetTop - offset));
 	}
 
 	// check if element is a div, if not, go to it's parent element (which should be a div)
+	// I don't think this is doing anything...
 	if(element.tagName != "DIV")
 	{
 		element = element.parentElement;

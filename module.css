@@ -57,12 +57,20 @@ h1
 	color: rgb(0,0,100);
 	width: 100%;
 	text-align: center;
+	line-height: 100%;
+}
+.h1Div
+{
 	padding-top: 10px;
 	padding-bottom: 10px;
+	padding-left: 25px;
+	padding-right: 25px;	
 	margin-top: 5px;
 	margin-bottom: 5px;
 	background-color: rgb(220,220,220);
-	border-radius: 10px;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	overflow: auto;
 }
 h2
 {
@@ -262,7 +270,7 @@ td
     -o-user-select: none;
     user-select: none;
 }
-.caption, .figNum, .figureRef[id], .c, .fr[id], .eqNum, .eqRef[id], .sectRef[id]
+.caption, .figNum, .figureRef[id], .c, .fr[id], .eqNum, .eqRef[id], .sectRef[id], .ref[id], .reference[id]
 {
 	color: rgb(0,100,0);
 	font-style: italic;
@@ -277,7 +285,7 @@ td
 	font-weight: normal;
 	font-size: 14px;
 }
-.sectRef[id], .eqRef[id], .figureRef[id], .figRef[id]
+.sectRef[id], .eqRef[id], .figureRef[id], .figRef[id], .ref[id], .reference[id]
 {
 	cursor: pointer;
 }
@@ -451,7 +459,7 @@ img.flexSize, img.fs
 			I thought this should override all other heights automatically */
 		height: auto !important; 
 	}
-	.code .hl,.code .highlight,.code.h1, .code.highlight
+	.code .hl,.code .highlight,.code.hl, .code.highlight
 	{
 		/*font-weight: bold !important;
 		font-style: italic !important;*/
