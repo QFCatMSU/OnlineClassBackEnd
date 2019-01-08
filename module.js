@@ -743,8 +743,7 @@ function addCodeTags(elementType)
 			codeLines[i].parentElement.insertBefore(codeBlockDiv, codeLines[i]);
 			
 			// check if this is a partial codeblock or a full codeblock
-			if(!codeBlockDiv.classList.contains("partial") &&
-				!codeBlockDiv.classList.contains("text"))
+			if(codeBlockDiv.classList.contains("brackets"))
 			{
 				/**** added formatting to put in {} ************/
 				// create a line that just has a start curly bracket ( { )
@@ -779,9 +778,8 @@ function addCodeTags(elementType)
 		//check if the next element after this codeLine is an [H6] -- if not than this is the last line
 		if(codeLines[i].nextElementSibling == null || codeLines[i].nextElementSibling.tagName != elementType)
 		{
-			// check if this is a partial codeblock or a full codeblock
-			if(!codeBlockDiv.classList.contains("partial") &&
-				!codeBlockDiv.classList.contains("text"))
+			// check if this is a codeblock that needs curly brackets
+			if(codeBlockDiv.classList.contains("brackets"))
 			{
 				codeBlockDiv.appendChild(codeLines[i]);
 				/**** added formatting to put in curly brackets {} **********/
