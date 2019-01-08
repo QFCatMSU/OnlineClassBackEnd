@@ -865,8 +865,6 @@ function selectText(element)
 
 function makeContextMenu(funct, param = null)
 {	
-
-	
 	// for Firefox 
 	if (navigator.userAgent.indexOf("Firefox") != -1)
 	{
@@ -908,7 +906,6 @@ function makeContextMenu(funct, param = null)
 		};
 		contextMenu.appendChild(menuItem);
 
-		
 		// add a Maximize All (flexSize) Pics button to the context menu
 		menuItem = document.createElement("menuitem");
 		menuItem.label = "Maximize All Pictures...";
@@ -935,28 +932,21 @@ function makeContextMenu(funct, param = null)
 		submenu = document.createElement("menu");
 		submenu.label = "Page Map";
 
-			divsInPage = encapObject.getElementsByClassName("contentDiv");
-			divID = new Array();
-			for(i=1; i<divsInPage.length; i++)  // skip the title
+		sectionsInPage = encapObject.querySelectorAll("h2,h3");
+		for(i=0; i<sectionsInPage.length; i++)
+		{
+			mapItem = document.createElement("menuitem");
+			mapItem.label = sectionsInPage[i].innerText;
+			if(sectionsInPage[i].id == "")
 			{
-				if(divsInPage[i].id == "")
-				{
-					// the id of the div is "div#.#" with the #'s matching the ouline.
-					divsInPage[i].id = "div" + parseFloat(divsInPage[i].textContent);
-					divsInPage[i].id = divsInPage[i].id.replace(".", "-");
-				}
-				divID = divsInPage[i].id;		
-
-				mapItem = document.createElement("menuitem");
-				mapItem.label = divsInPage[i].dataTitle;
-				mapItem.onclick = scrollToElementReturn(divID);
-				submenu.appendChild(mapItem);								
+				sectionsInPage[i].id = "_sect" + i;
 			}
+			mapItem.onclick = scrollToElementReturn(sectionsInPage[i].id);
+			submenu.appendChild(mapItem);		
+		}
 
 		contextMenu.appendChild(submenu);
-
 		encapObject.appendChild(contextMenu);
-		
 		encapObject.querySelector("menuitem[id='previousLocMenuItem']").disabled = "disabled";
 
 	}
