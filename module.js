@@ -54,6 +54,9 @@ parent.window.onload = function()
 
 	editURL = "";	
 		// check if we are in Joomla or D2L
+		
+	// there should be no [div] elements in the page -- [div] can be copied/pasted in
+	removeDivs();
 	
    // check if any meta content starts with "Joomla"
 	if(document.querySelectorAll('meta[content^="Joomla"]').length > 0)  // we are in Joomla
@@ -110,6 +113,11 @@ parent.window.onload = function()
 
 		if(self != top)
 		{
+			// create div at top of page and add the home page, previous, and next page
+			divTop = document.createElement("div");
+			divTop.classList.add("headerDiv");
+			encapObject.prepend(divTop);
+			
 			// add home page link
 			url = window.parent.location.href;
 			classNum = url.match(/\/[0-9]{3,}\//); 
@@ -121,7 +129,7 @@ parent.window.onload = function()
 			homePage.classList.add("lessonLink");
 			homePage.classList.add("sameWin");
 			homePage.classList.add("homePage");
-			encapObject.prepend(homePage);
+			divTop.appendChild(homePage);
 				
 			// add previous link
 			prevPage = encapObject.querySelectorAll(".previousLesson, .pl");
@@ -136,7 +144,7 @@ parent.window.onload = function()
 				newPrevPage.classList.add("lessonLink");
 				newPrevPage.classList.add("sameWin");
 				newPrevPage.classList.add("previousLesson");
-				encapObject.insertBefore(newPrevPage, homePage);
+				divTop.insertBefore(newPrevPage, homePage);
 				prevPage[0].parentNode.removeChild(prevPage[0]);
 			}
 					
@@ -153,9 +161,9 @@ parent.window.onload = function()
 				newNextPage.classList.add("lessonLink");
 				newNextPage.classList.add("sameWin");
 				newNextPage.classList.add("nextLesson");
-				encapObject.insertBefore(newNextPage, homePage);
+				divTop.insertBefore(newNextPage, homePage);
 				nextPage[0].parentNode.removeChild(nextPage[0]);
-			}
+			}	
 		}
 		else
 		{
@@ -204,8 +212,7 @@ parent.window.onload = function()
 		window.document.title = "No Title";
 	}
 	
-	// there should be no [div] elements in the page -- [div] can be copied/pasted in
-	removeDivs();
+
 	
 	// a link used everytime the person jumps in the page to return them to the original spot
 	/* Deprecated -- will use right-click */
