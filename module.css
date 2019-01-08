@@ -229,6 +229,11 @@ td
 	color: darkred;
 	font-style: italic;
 }
+.error
+{
+	color: darkred;
+	background-color: yellow;
+}
 .code .hl,.code .highlight,.code.h1, .code.highlight
 {
 	color: yellow;

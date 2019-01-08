@@ -222,14 +222,7 @@ parent.window.onload = function()
 	createEmailLink();
 	
 	equationNumbering();
-	
-	// find all references to figures in the webpage and add correct figure number
-	//figureReferences();	
-	//eqReferences();
-
-	// associate captions and images using accessibility standards (took out because too many issues with D2L's editor)
-	// captionImages();
-	
+		
 	// structure the page with DIVs based on the headers 
 	addDivs("H1");
 	addDivs("H2");
@@ -567,55 +560,7 @@ function goBackToPrevLocation()
 	return false;	// so the page does not reload (don't ask why!)
 }
 
-/* Finds all elements with class "linkTo" and adds a pseudo-anchor link--
-Two issues here
-1) D2L does not allow the user to use an anchor link as a hyperlink hence the workaround
-using classes 
-2) page exists in an iframe -- hence we need to scroll to the anchor as opposed to linking to it
 
-function createInPageLinks()
-{
-	linkElements = encapObject.getElementsByClassName("linkTo");
-	
-	/*
-		Essentially we are going 
-			from		
-		<p class="linkTo" id="link-to-here"> I am the content </p>
-			to
-		<p class="linkTo" id="link-to-here"> <a href="#to-here"> I am the content </a> </p>
-		
-		actually want
-		<p class="linkTo" id="link-to-here" onclick="scrollHere()"> I am the content </p>
-		
-	}
-	for(i=0; i<linkElements.length; i++)	
-	{
-		// get id of figure you are refering to (this.id - "fig-")
-		linkToId = linkElements[i].id.slice(2);  // this line remove the "l-" part of the id (which is 5 characters)
-		
-		// find the element to link to (assumming linkToId is valid)
-		if(isValid(linkToId))  // make sure the value exists
-		{
-			if(linkToId)
-			{
-				linkToElement = encapObject.querySelector("#" + linkToId); // getElementById(linkToId);
-			}
-			if(linkToElement) // if there is an element to link to
-			{
-				// go to scrollToElement() function when the anchor is clicked
-				linkElements[i].onclick = scrollToElementReturn(linkToElement.id);
-			}
-			else if(linkElements[i].innerText.trim() != "") // there is content but an invalid link -- add warning to text
-			{
-				linkElements[i].innerText += " ***Link does not exist***"
-			}
-		}
-		else
-		{
-			linkElements[i].innerText += " ***Link ID has invalid characters***"
-		}
-	}
-}*/ 
 	
 	/* link to external CSS file 
 		This is in the javascript because D2L will rewrite links in the HTML file */
@@ -1239,8 +1184,8 @@ function addReferences()
 	var references = encapObject.querySelectorAll(".ref, .reference");
 	for(i=0; i<references.length; i++)
 	{
-		fullRefID = references[i].id;
-		refID = fullRefID.slice(2);
+		fullRefID = references[i].id; // Get the ID for the reference
+		refID = fullRefID.slice(2);	// remove the "r-" at the beginning of the ID
 	
 		// check if the reference has no ID
 		if(fullRefID == "")  
@@ -1255,31 +1200,35 @@ function addReferences()
 		// check if ID has any invalid characters
 		else if(isValid(refID) == false)
 		{
-			references[i].innerText = "***Invalid characters in ID***";
+			references[i].classList.add("error");
+			references[i].innerText = "**Invalid characters in ID: " + references[i].innerText + "** ";
 		}
-		// check if first character in ID is a number
+		// check if the ID starts with a number
 		else if(isNaN(refID[0]) == false)
 		{
-			references[i].innerText = "***Cannot start ID with number***";
+			references[i].classList.add("error");
+			references[i].innerText = "**Cannot start ID with number: " + references[i].innerText + "** ";
 		}
 		// reference link does not exist
 		else if(!(encapObject.querySelector("#" + refID)))
 		{
-			references[i].innerText = "***Invalid Link***";				
+			references[i].classList.add("error");
+			references[i].innerText = "**Invalid Link: " + references[i].innerText + "** ";				
 		}
 		// there is no content at the link (not sure this is neccessary...)
 		else if (encapObject.querySelector("#" + refID).innerText.trim() == "")
 		{
-			references[i].innerText = "***No content at link***";					
+			references[i].classList.add("error");
+			references[i].innerText = "**No content at link: "  + references[i].innerText + "** ";					
 		}
-		// if this is a equation ref
+		// if this is a reference to an equation -- this handles the situation where H5 is used and not
 		else if(encapObject.querySelector("#" + refID).classList.contains("eqNum")) 
 		{
 			caption = encapObject.querySelector("#" + refID).innerText;
 
 			/* find the last "(" in the line -- represents ( EQ# )
-			   split the line right after the "("
-				grab the number */
+			   split the line right after the "(" -- so you have EQ#) left
+				grab the number from the split of section */
 			eqRef = parseInt(caption.slice( (caption.lastIndexOf("("))+1 ));
 			
 			refIndex = references[i].innerText.indexOf("##");
@@ -1288,13 +1237,12 @@ function addReferences()
 				str = references[i].innerText;
 				var pos = str.lastIndexOf('##');
 				references[i].innerText = str.substring(0,pos) + eqRef + str.substring(pos+2);
-				//references[i].innerText = references[i].innerText.replace("##", eqRef);
 			}
 
 			// create a link that scrolls to the equation
 			references[i].onclick = scrollToElementReturn(refID);
 		}
-		// if this is a figure ref
+		// if this is a figure ref (has h5 tag and does not have eqNum class)
 		else if(encapObject.querySelector("#" + refID).nodeName.toLowerCase() == "h5") 
 		{
 			caption = encapObject.querySelector("#" + refID).innerText;
@@ -1308,19 +1256,19 @@ function addReferences()
 				str = references[i].innerText;
 				var pos = str.lastIndexOf('##');
 				references[i].innerText = str.substring(0,pos) + figRef + str.substring(pos+2);
-				//references[i].innerText = references[i].innerText.replace("##", figRef);
 			}
 			
 			// create a link that scrolls to the figure
 			references[i].onclick = scrollToElementReturn(refID);
 		}
-		// this a is section header (h2-h4)
-		else if(encapObject.querySelector("#" + refID).nodeName.toLowerCase() == "h1" ||
-				  encapObject.querySelector("#" + refID).nodeName.toLowerCase() == "h2" ||
+		// this links to a section header (h2-h4)
+		else if(encapObject.querySelector("#" + refID).nodeName.toLowerCase() == "h2" ||
 				  encapObject.querySelector("#" + refID).nodeName.toLowerCase() == "h3" ||
 				  encapObject.querySelector("#" + refID).nodeName.toLowerCase() == "h4") 
 		{
 			// get first number from section ID (div)
+		//	strIndex = encapObject.querySelector("#" + refID).innerText.indexOf("-");  // find the location of the first dash
+		//	sectNum = encapObject.querySelector("#" + refID).innerText.slice(0, (strIndex-2));
 			sectNum = parseFloat(encapObject.querySelector("#" + refID).innerText);
 			
 			refIndex = references[i].innerText.indexOf("##");
@@ -1329,16 +1277,53 @@ function addReferences()
 				str = references[i].innerText;
 				var pos = str.lastIndexOf('##');
 				references[i].innerText = str.substring(0,pos) + sectNum + str.substring(pos+2);
-				//references[i].innerText = references[i].innerText.replace("##", sectNum);
 			}
 			
 			// create a link that scrolls to the section
-			divID = "div" + String(sectNum).replace(".", "-");
-			references[i].onclick = scrollToElementReturn(divID);
+			references[i].onclick = scrollToElementReturn(refID);
 		}
 		// for all other elements in the page
 		else 
 		{
+			refObject = encapObject.querySelector("#" + refID);
+			parentObj = refObject.parentNode.nodeName.toLowerCase();
+			refNum = -1;
+			
+			/* make sure to check for parent */
+			if(parentObj && parentObj == "h5")
+			{
+				strIndex = caption.indexOf(":");  // find the location of the first semicolon
+				refNum = parentObj.innerText.slice(0, strIndex);
+			}
+			else if(parentObj && parentObj.firstElementChild &&
+					  parentObj == "div" && (parentObj.firstElementChild.nodeName.toLowerCase() == "h2" ||
+													 parentObj.firstElementChild.nodeName.toLowerCase() == "h3" ||
+													 parentObj.firstElementChild.nodeName.toLowerCase() == "h4"))
+			{
+				strIndex = caption.indexOf("-");  // find the location of the first dash
+				refNum = parentObj.firstElementChild.innerText.slice(0, (strIndex-2));
+				// refNum = parseFloat(parentObj.firstElementChild.innerText);
+			}
+			else if(parentObj.parentNode)
+			{
+				grandParent = parentObj.parentNode.nodeName.toLowerCase();
+				if(grandParent == "div" && (grandParent.firstElementChild.nodeName.toLowerCase() == "h2" ||
+													 grandParent.firstElementChild.nodeName.toLowerCase() == "h3" ||
+													 grandParent.firstElementChild.nodeName.toLowerCase() == "h4"))
+				{
+					strIndex = caption.indexOf("-");  // find the location of the first dash
+					refNum = parentObj.firstElementChild.innerText.slice(0, (strIndex-2));
+				}
+			}
+
+			if(refIndex != -1)
+			{
+				str = references[i].innerText;
+				var pos = str.lastIndexOf('##');
+				references[i].innerText = str.substring(0,pos) + eqRef + str.substring(pos+2);
+			}
+			
+			// find the nearest ancestor an parent to the object 
 			// go to scrollToElement() function when the anchor is clicked
 			references[i].onclick = scrollToElementReturn(refID);
 		}
@@ -1376,56 +1361,62 @@ function checkURLForPos()
 function scrollToElement(elementID)
 {		
 	var element = encapObject.querySelector("#" + elementID);  
-	if(element.classList.contains("caption"))
-	{
-		offset = 200;
-	}
-	else
-	{
-		offset = 50;
-	}
-	scrollTopPosition = window.parent.scrollY;  // save the current value of the scroll position
-
+	var bounding = element.getBoundingClientRect();	// gives the square location of the element
+	var elementTop = bounding.top;			// top position of element in pixels
+	var elementBottom = bounding.bottom;	// bottom position of the element in pixels
+	var iframeOffset = 0; 						// default value if the iframe is not found 
+	var scrollTop = 0;							// default value if the page is not scrolled
+	var windowHeight = window.parent.innerHeight;	// height of the webpage with the lesson
+	var windowScroll = window.parent.scrollY; 	// amount window has been scrolled
+	
+	// check if the lesson is in an iframe
 	if (window.self !== window.top)  // we are in an iframe
 	{
 		// get iframes from the parent windows:
 		parentIFrames = window.parent.document.getElementsByTagName("iframe");
-		
-		iframeOffset = 0; // default value if the iframe is not found (should be a debug value)
-		
-		// go through iframe to find which has the same source as this page (i.e., it holds this page)
-		for(i=0; i<parentIFrames.length; i++)
+			
+		// go through iframe to find which has the same source as this lesson  
+		// (i.e., the iframe that contains this page)
+		for(i=0; i<parentIFrames.length; i++)	// most likely there is only one iframe!
 		{
-			if (window.location.href == parentIFrames[i].src) // this is the iframe that conatins the page
+			if (window.location.href == parentIFrames[i].src) // this is the iframe that conatins the lesson
 			{
-				// get the offset of this iFrame in the parent window
+				// get the distance between the top of this iFrame at the top of the parent window
 				iframeOffset = parentIFrames[i].offsetTop; 
-				break;  // don't need to check anymore iframes
+				break;  // don't need to check any more iframes
 			}
 		}
-
-		// calc the vertical position of the linkTo element in the parent page
-		totalScrollY = element.offsetParent.offsetTop + element.offsetTop + iframeOffset - offset; // headerHeight = 0;
-
-		// scroll the parent to the vertical position of the linkTo element
-		window.parent.scrollTo(element.offsetLeft, totalScrollY);	
-	}
-	else
-	{
-		// no parent frame - scroll to location of linkTo element
-		window.parent.scrollTo( element.offsetLeft, (element.offsetParent.offsetTop + element.offsetTop - offset));
-	}
-
-	// check if element is a div, if not, go to it's parent element (which should be a div)
-	// I don't think this is doing anything...
-	if(element.tagName != "DIV")
-	{
-		element = element.parentElement;
 	}
 	
-	/** Don't need the return link! (huh??) ****/
-	//element.appendChild(returnLink);
-	//returnLink.style.display = "block";
+	// calc the vertical position of the linkTo element in the parent page
+	elementYPos = element.offsetParent.offsetTop + element.offsetTop + iframeOffset;
+	
+	// if the element is already in the screen, don't bother scrolling
+	if(elementYPos < windowScroll || elementYPos >  (windowScroll+windowHeight) )
+	{
+		// add some padding so the object does not appear right at the top of the page
+		if(element.classList.contains("caption"))
+		{
+			offsetPadding = 200;	// add more padding if this is an image
+		}
+		else
+		{
+			offsetPadding = 50;
+		}
+		
+		// save the current value of the scroll position so we can return to this spot
+		scrollTopPosition = windowScroll;  
+
+		// scroll the parent to the vertical position of the linkTo element
+		window.parent.scrollTo(element.offsetLeft, (elementYPos -offsetPadding) );	
+	}
+	
+	// highlight the linked object for 2 seconds (2000 milliseconds)
+	currentStyle = element.style.backgroundColor;
+	element.style.backgroundColor = "yellow";
+	setTimeout(function(){element.style.backgroundColor = currentStyle;}, 2000);
+		
+	// change the right-click menu to show the return link
 	if (navigator.userAgent.indexOf("Firefox") != -1)
 	{
 		encapObject.querySelector("menuitem[id='previousLocMenuItem']").disabled = false;
@@ -1434,7 +1425,6 @@ function scrollToElement(elementID)
 	{
 		encapObject.querySelector("a[id='previousLocMenuItem']").style.display = "block";
 	}
-
 }
 
 function linksToNewWindow()
@@ -1553,7 +1543,6 @@ function isValid(str)
 function addEqNumbering()
 {
 	mathEqs = document.querySelectorAll(".equation[id]");
-	//alert(mathEqs.length);
 }
 	
 /* takes

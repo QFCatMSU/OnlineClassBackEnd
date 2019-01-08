@@ -40,7 +40,7 @@ h5.eqNum::after
   counter-increment: eqCount;               
   content: " ( " counter(eqCount) " )";  
 }
-.eqNum:not(h5)::before
+.eqNum:not(h5)::after
 {
   counter-increment: eqCount;               
   content: "( " counter(eqCount) " )";  
