@@ -1306,7 +1306,7 @@ function addReferences()
 				}
 			}
 
-			if(refIndex != -1)
+			if(refNum != -1)
 			{
 				str = references[i].innerText;
 				var pos = str.lastIndexOf('##');
