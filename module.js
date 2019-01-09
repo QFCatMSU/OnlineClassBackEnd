@@ -5,8 +5,6 @@ minImageWidth = 700;				// minimum width for a flexSize image in expanded mode
 scrollTopPosition = 0; 			// value saved for links-return-links within a page
 overflowCalled = false;   		// check to see if there is a current check of code lines
 
-alert(window.location);
-
 // D2L variables
 redNum = -1;						// the number of the class 
 instructorEmail = "Charlie Belinsky <belinsky@msu.edu>;";
@@ -277,24 +275,6 @@ function removeDivs()
 	}
 }
 
-/* Whenever an in-page jump is made, a return link will appear in the
-	element that returns you to the previous positioin 
-	Deprecated -- using right-click menu *
-function createReturnLink()
-{
-	// create a return link to the position in page the user was at before making the jump
-	returnLink = document.createElement("a");
-	returnLink.innerHTML += "Go back to previous location";
-	returnLink.href = "";
-	returnLink.id = "returnLink";
-	returnLink.className = "linkback";
-	returnLink.style.display = "none";
-	returnLink.onclick = function()
-	{
-		goBackToPrevLocation();
-		return false;		// stops the page from reloading -- unsure why!
-	}
-}*/
 /*
 Find all images within the page that have the "flexSize" class
 and add onclick events that give the user the ability to change 
@@ -1192,6 +1172,19 @@ function addReferences()
 			references[i].classList.add("error");
 			references[i].innerText = "**Cannot start ID with number: " + references[i].innerText + "** ";
 		}
+		// this is a link to a different page
+		else if(references[i].hasAttribute("href"))
+		{
+			// check to see if the href already has a "?" in it
+			if(references[i].href.includes("?"))
+			{
+				references[i].href = references[i].href + "&ref=" + refID;
+			}
+			else
+			{
+				references[i].href = references[i].href + "?ref=" + refID;		
+			}
+		}
 		// reference link does not exist
 		else if(!(encapObject.querySelector("#" + refID)))
 		{
@@ -1318,26 +1311,11 @@ function checkURLForPos()
 	// In D2L, the page is inside an iframe -- so need to check the parent
 	var urlString = parent.window.location.href;
 	var url = new URL(urlString);
-	var l1 = url.searchParams.get("l1");
-	var l2 = url.searchParams.get("l2");
-
-	// if no information came from the parent, check self
-	if(l1 == null)
-	{
-		urlString = window.location.href;
-		url = new URL(urlString);
-		l1 = url.searchParams.get("l1");
-		l2 = url.searchParams.get("l2");
-	}
+	var ref = url.searchParams.get("ref");
 	
-	if(l1 != null)
+	if(ref != null)
 	{
-		divID = "div" + l1;
-		if(l2 != null && l2 != 0)
-		{
-			divID += "." + l2;
-		}
-		scrollToElement(divID);
+		scrollToElement(ref);
 	}
 }
 
