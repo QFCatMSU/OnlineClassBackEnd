@@ -1215,8 +1215,11 @@ function addReferences()
 				references[i].innerText = str.substring(0,pos) + eqRef + str.substring(pos+2);
 			}
 
-			// create a link that scrolls to the equation
-			references[i].onclick = scrollToElementReturn(refID);
+			// make the reference linkable as long as the nolink class is not specified (not working yet...)
+			if( !(references[i].classList.contains("nolink")) )
+			{
+				references[i].onclick = scrollToElementReturn(refID);
+			}
 		}
 		// if this is a figure ref (has h5 tag and does not have eqNum class)
 		else if(encapObject.querySelector("#" + refID).nodeName.toLowerCase() == "h5") 
@@ -1234,8 +1237,11 @@ function addReferences()
 				references[i].innerText = str.substring(0,pos) + figRef + str.substring(pos+2);
 			}
 			
-			// create a link that scrolls to the figure
-			references[i].onclick = scrollToElementReturn(refID);
+			// make the reference linkable as long as the nolink class is not specified (not working yet...)
+			if( !(references[i].classList.contains("nolink")) )
+			{
+				references[i].onclick = scrollToElementReturn(refID);
+			}
 		}
 		// this links to a section header (h2-h4)
 		else if(encapObject.querySelector("#" + refID).nodeName.toLowerCase() == "h2" ||
@@ -1255,8 +1261,11 @@ function addReferences()
 				references[i].innerText = str.substring(0,pos) + sectNum + str.substring(pos+2);
 			}
 			
-			// create a link that scrolls to the section
-			references[i].onclick = scrollToElementReturn(refID);
+			// make the reference linkable as long as the nolink class is not specified (not working yet...)
+			if( !(references[i].classList.contains("nolink")) )
+			{
+				references[i].onclick = scrollToElementReturn(refID);
+			}
 		}
 		// for all other elements in the page
 		else 
@@ -1299,9 +1308,11 @@ function addReferences()
 				references[i].innerText = str.substring(0,pos) + eqRef + str.substring(pos+2);
 			}
 			
-			// find the nearest ancestor an parent to the object 
-			// go to scrollToElement() function when the anchor is clicked
-			references[i].onclick = scrollToElementReturn(refID);
+			// make the reference linkable as long as the nolink class is not specified (not working yet...)
+			if( !(references[i].classList.contains("nolink")) )
+			{
+				references[i].onclick = scrollToElementReturn(refID);
+			}
 		}
 	}
 }
