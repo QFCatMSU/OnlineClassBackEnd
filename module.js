@@ -3,8 +3,9 @@ imageHeight = new Array();		// the heights of all flex-sized images in a page
 imageWidth = new Array();		// the widths of all flex-sized images in a page
 minImageWidth = 700;				// minimum width for a flexSize image in expanded mode
 scrollTopPosition = 0; 			// value saved for links-return-links within a page
-//returnLink = null;				// element on page that contains the return link
 overflowCalled = false;   		// check to see if there is a current check of code lines
+
+alert(window.location);
 
 // D2L variables
 redNum = -1;						// the number of the class 
@@ -51,12 +52,10 @@ parent.window.onload = function()
 	fixMathJaxEQs();
 	fixIframeSize();
 
-
-	editURL = "";	
-		// check if we are in Joomla or D2L
-		
 	// there should be no [div] elements in the page -- [div] can be copied/pasted in
 	removeDivs();
+	
+	editURL = "";	
 	
    // check if any meta content starts with "Joomla"
 	if(document.querySelectorAll('meta[content^="Joomla"]').length > 0)  // we are in Joomla
@@ -175,7 +174,7 @@ parent.window.onload = function()
 		}
 	}
 		
-	// add class name
+	// add class names
 	p = encapObject.getElementsByClassName("p");
 	for(i=0; i<p.length; i++)
 	{
@@ -191,9 +190,8 @@ parent.window.onload = function()
 
 	// set title on webpage -- the first H1 on the page
 	titleObj = encapObject.querySelector("h1");
-	//if(!titleObj )titleObj = encapObject.querySelector(".title");
 	
-	if(titleObj)
+	if(titleObj)  // there is a title 
 	{
 		window.document.title = titleObj.textContent;
 		
@@ -212,16 +210,8 @@ parent.window.onload = function()
 		window.document.title = "No Title";
 	}
 	
-
-	
-	// a link used everytime the person jumps in the page to return them to the original spot
-	/* Deprecated -- will use right-click */
-	//createReturnLink(); 
-	
 	// allow users to resize images from small to full-size
 	createFlexImages();
-	
-	/* editModeStyles(); -- was trying to hide objects in editor but D2L editor does not look at JavaScript */
 	
 	// adds the caption class to all H5 elements
 	addCaption("H5");
@@ -238,11 +228,9 @@ parent.window.onload = function()
 	// add outline to the divs
 	addOutline();
 	
-	//fix math equations
-	
 	// Create a right-click menu
 	makeContextMenu("create");  // needs to happen after divs are created
-	//sectReferences();
+
 	addReferences();
 	// set up onclick functionality for "anchor" links (needed because page exists in an iframe)
 	//createInPageLinks();

@@ -65,8 +65,8 @@ h1
 	padding-bottom: 10px;
 	padding-left: 25px;
 	padding-right: 25px;	
-	margin-top: 5px;
-	margin-bottom: 5px;
+	/*margin-top: 5px;
+	margin-bottom: 5px;*/
 	background-color: rgb(220,220,220);
 	border-top-left-radius: 10px;
 	border-top-right-radius: 10px;
@@ -352,6 +352,10 @@ td
 {
 	overflow: auto;
 }
+.homePage
+{
+	margin-bottom: 5px;
+}
 .resize:hover
 {	
 	color: rgb(150,150,255);
@@ -526,4 +530,10 @@ img.flexSize, img.fs
 		left: -30px;
 		display: none;
 	}
+   /* hide video -- would like a more robust way to do this */
+	video
+	{
+		display:none;
+	}
+
 }
