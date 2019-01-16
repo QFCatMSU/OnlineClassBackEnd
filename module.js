@@ -1225,16 +1225,18 @@ function addReferences()
 		else if(encapObject.querySelector("#" + refID).nodeName.toLowerCase() == "h5") 
 		{
 			caption = encapObject.querySelector("#" + refID).innerText;
+			
+			//figNum = parseInt(caption); // get the firsat number from the caption -- it is the figure number
 			strIndex = caption.indexOf(":");  // find the location of the first semicolon
 			
-			figRef = caption.slice(0, strIndex); // get "Fig. #"
+			figNum = caption.slice(4, strIndex); // get the # in "Fig #"
 			
 			refIndex = references[i].innerText.indexOf("##");
 			if(refIndex != -1)
 			{
 				str = references[i].innerText;
 				var pos = str.lastIndexOf('##');
-				references[i].innerText = str.substring(0,pos) + figRef + str.substring(pos+2);
+				references[i].innerText = str.substring(0,pos) + figNum + str.substring(pos+2);
 			}
 			
 			// make the reference linkable as long as the nolink class is not specified (not working yet...)
