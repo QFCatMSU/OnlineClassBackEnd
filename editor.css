@@ -10,7 +10,7 @@
 	h6>h6::first-child (currently unused) is the only example I know of so far 
 	
 	but h6>h6 works */
-	
+
 body
 {
 	counter-reset: h2Count figCount eqCount;
@@ -192,11 +192,11 @@ h6>br,h6>h6
 	color: rgb(160,64,0);
 	font-style: italic;
 }
-.p, .partial
+.p, .partial, h6.partial + h6
 {
 	color: orange;
 }
-.nn, .nonum
+.nn, .nonum, h6.nn + h6
 {
 	color: rgb(255,110,110);
 }

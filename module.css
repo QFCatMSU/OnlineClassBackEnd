@@ -10,6 +10,15 @@ needed to use !important to force style changes
 borders do not work if there is no predefined width and height
 - use outline instead (for Code Blocks)
 */
+@-moz-document url-prefix() {
+    math {
+       /* text-decoration: underline; */
+    }
+}
+.MathJaxAlt_Display
+{
+	display: inline;
+}
 body
 {
 	background-color: rgb(0,60,60);
@@ -30,6 +39,7 @@ p, ul, ol, li
 math, .MathJax
 {
 	color: rgb(79,49,9);
+	display: inline;
 }
 figure
 {

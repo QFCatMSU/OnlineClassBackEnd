@@ -1,26 +1,127 @@
 smallImageHeight = 100;			// set the height of flex-sized images when small 
 imageHeight = new Array();		// the heights of all flex-sized images in a page
 imageWidth = new Array();		// the widths of all flex-sized images in a page
-minImageWidth = 700;				// minimum width for a flexSize image in expanded mode
+minImageWidth = 700;			// minimum width for a flexSize image in expanded mode
 scrollTopPosition = 0; 			// value saved for links-return-links within a page
 overflowCalled = false;   		// check to see if there is a current check of code lines
 
+/**** Changes to D2L MathJax code
+  1) Need to stop loading 		D2LMathML.DesktopInit('https://s.brightspace.com/lib/mathjax/2.6.1/MathJax.js?config=MML_HTMLorMML','https://s.brightspace.com/lib/mathjax/2.6.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML%2cSafe');
+     onDOMContent -- same as my code.
+  2) MathJS error b.parentNode prevents move from MathJax_Preview -> MathJax_Display
+  
+****/
+// Message subject was not lti.frameResize
+// b.parentNode is null MathJax.js 19:42041
+	mathObjCount = 0;
+	count=0;prevCount=0;countNum=0;currentStatus="";
+
+	//18-0-0-0 : 18-18-0-0
+	//18-0-0-0 : 6-18-8-0(4)
+	//18-0-0-0 : 14-18-1-3 (Edge)
+	//0-18-3-15 (Edge)
+	//18--0 (?)
+	//7-18-0-0 : 1-18-0-0 
+	//0-18-0-0 *
+	//modify the Math Jax Preview state?
+	/* Preview comes up -- with full data
+		MathJax display and Processing
+		Preview Data goes away */
+	// good: <span class="math" id="MathJax-Span-58" role="math" style="width: 0.87em; display: inline-block;">
+	// bad: <span class="math" id="MathJax-Span-58" role="math">
+	// bad??
+	// *: <span class="MathJax_Preview"><math title="" xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mstyle><munderover><mo>∑</mo><mn>6</mn><mn>4</mn></munderover><mi>a</mi><mi>d</mi><mi>f</mi></mstyle></semantics></math></span>
+	
+	// when the HTML loads (DomContent), load the file to manipulate the MathML
+	document.addEventListener('onDomContent', loadMathML());
+	
+	function loadMathML()
+	{
+		var script = document.createElement('script');
+		script.onload = function () 
+		{
+		   mathEdit(); // wait for mathML script to load before manipulating the script 
+		};
+		script.src = "/content/DEVELOPMENT/2018/courses/DEV-belinsky-2018-BackendTest/Programming/eqTest/MathML2.js";
+
+		document.head.appendChild(script); //or something of the likes
+	}
+
+	function mathEdit()
+	{
+		// get all Math object in the page
+		var mathObj = document.querySelectorAll('math');
+		mathObjCount = mathObj.length;
+		
+		// switch the display to block for each math element
+		// note: this is not the same as the CSS style block
+		//     display = inline means math characters are resized to fit inline
+		//     diaplay = block means math characters are styled naturally
+		for(i=0; i<mathObj.length; i++)
+		{
+			mathObj[i].setAttribute("display", "block");
+		}
+		
+		// if there are math objects, then
+		if(mathObjCount > 0)
+		{
+			// execute the MathJax code
+			D2LMathML2.DesktopInit('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=MML_HTMLorMML',
+						   'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML%2cSafe'); 
+			
+			// do post mathJax manipulation
+			postMathJax();
+		}
+	}
+
+	function postMathJax()
+	{
+		// MathJax will change all math objects into class="MathJax_Display" --
+		// find all mathJaxDisplay objects --
+		// note: MathJax is running asynchronously, so these objects will appear at different times
+		mathDis = document.querySelectorAll(".MathJax_Display");
+		countNum++;
+		
+		// For each MathJax_Display object
+		for(i=0; i<mathDis.length; i++)
+		{
+			// if it has not been changed to display:inline, change it to display:inline
+			if(mathDis[i].getAttribute("style") != "display: inline !important;" &&
+				mathDis[i].classList.length == 1)
+			{
+				// When display=clock is set, MathJax overcpmpensates and all sets the style display to block
+				// Switching this to inline makes the formula more flexible and matches the 
+				// D2L editor
+				mathDis[i].setAttribute("style", "display: inline !important;");
+				count++;
+			}
+		}
+		prevCount = count;
+		
+		// We are still waiting for MathJax to change all math objects
+		if(count < mathObjCount)
+		{
+			// recursive call in 300ms
+			setTimeout("postMathJax()", 300);
+		}
+	}
+	
 // D2L variables
 redNum = -1;						// the number of the class 
 instructorEmail = "Charlie Belinsky <belinsky@msu.edu>;";
 
 // pre-onload functions
-fixMathJaxEQs();	// Make all math equations default to inline mode (D2L issue)
+//fixMathJaxEQs();	// Make all math equations default to inline mode (D2L issue)
 addEqNumbering(); // 
 addStyleSheet();  // can be done before page load since this is called in the [head]
 	
 // resize the iframe in the parent window when the page gets resized
 window.parent.addEventListener("resize", function()
 {
-	/* When the parent page gets resized, it causes the content in the iframe to get resized.
-		But, the iframe itself only resizes when the content inside the iframe changes (D2L bug).*/
+	// When the parent page gets resized, it causes the content in the iframe to get resized.
+	//	But, the iframe itself only resizes when the content inside the iframe changes (D2L bug).
 	
-	// the iframe's height is set to "auto" so we don't need to directly change its size.
+	// In D2L, the iframe's height is set to "auto" so we don't need to directly change its size.
 	
 	// get iframes from the parent windows:
 	parentIFrames = window.parent.document.getElementsByTagName("iframe");
@@ -44,14 +145,11 @@ window.parent.addEventListener("resize", function()
 // don't do anything until the parent frame (d2L) loads 
 // this still seems to work if there is no parent -- probably should check for this, though
 parent.window.onload = function()
-{	
-	encapObject = document.body;  	
+{		
+	encapObject = document.body; 
 	
-	fixMathJaxEQs();
-	fixIframeSize();
-
 	// there should be no [div] elements in the page -- [div] can be copied/pasted in
-	removeDivs();
+	//removeDivs();
 	
 	editURL = "";	
 	
@@ -253,7 +351,7 @@ parent.window.onload = function()
    up one level */
 function removeDivs()
 {
-	divElements = encapObject.getElementsByTagName("DIV");
+	divElements = encapObject.querySelectorAll("DIV:not([class*='MathJax']) DIV:not([id*='MathJax'])");
 
 	// the [div] length changes as [div] are removed -- we need to hold the initial number of [div]
 	// initNumOfDivs = divElements.length;
@@ -1225,18 +1323,16 @@ function addReferences()
 		else if(encapObject.querySelector("#" + refID).nodeName.toLowerCase() == "h5") 
 		{
 			caption = encapObject.querySelector("#" + refID).innerText;
-			
-			//figNum = parseInt(caption); // get the firsat number from the caption -- it is the figure number
 			strIndex = caption.indexOf(":");  // find the location of the first semicolon
 			
-			figNum = caption.slice(4, strIndex); // get the # in "Fig #"
+			figRef = caption.slice(0, strIndex); // get "Fig. #"
 			
 			refIndex = references[i].innerText.indexOf("##");
 			if(refIndex != -1)
 			{
 				str = references[i].innerText;
 				var pos = str.lastIndexOf('##');
-				references[i].innerText = str.substring(0,pos) + figNum + str.substring(pos+2);
+				references[i].innerText = str.substring(0,pos) + figRef + str.substring(pos+2);
 			}
 			
 			// make the reference linkable as long as the nolink class is not specified (not working yet...)
@@ -1420,11 +1516,12 @@ function fixMathJaxEQs()
 {
 	// change the display type of all math objects so they all display in the same way (this is a D2L issue)
 	// this works if it happens before mathjax javascript is executed 
-	var m = document.querySelectorAll('math[display="block"]');
+	//var m = document.querySelectorAll('math[display="block"]');
+	var m = document.querySelectorAll('math');
 	
 	for(i=0; i<m.length; i++)
 	{
-		m[i].setAttribute("display", "inline");
+		m[i].setAttribute("display", "block");
 	}
 	
 	// this works if it happens after mathjax javascript is executed 
@@ -1437,12 +1534,12 @@ function fixMathJaxEQs()
 	{
 		if (mathSpan[i].nextElementSibling.nodeName == "DIV")
 		{
-			mathSpan[i].nextElementSibling.removeAttribute("style");				
-			mathSpan[i].nextElementSibling.removeAttribute("class");
-			mathSpan[i].nextElementSibling.style.display = "inline";
+			//mathSpan[i].nextElementSibling.removeAttribute("style");				
+			//mathSpan[i].nextElementSibling.removeAttribute("class");
+			//mathSpan[i].nextElementSibling.style.display = "inline";
 		}
 	}
-	// MathJax/IE bug where annotation take up space but are not displayed
+	// MathJax/IE bug where annotations take up space but are not displayed
 	if(window.navigator.userAgent.indexOf("Edge ") > -1 || 
 		window.navigator.userAgent.indexOf("MSIE "))
 	{
@@ -1456,15 +1553,15 @@ function fixMathJaxEQs()
 	// fix equations so that limits to summations are put above and below the summation (as opposed to on the side)
 	// find all mstyle elements that have an munderover element as a direct child
 	// this will give you the munder and munderover objects -- we want to modify the mstyle parent
-	var m1 =  document.querySelectorAll("mstyle>munder, mstyle>munderover");
+	//var m1 =  document.querySelectorAll("mstyle>munder, mstyle>munderover");
 	
 	// go through each munder and munderover element
-	for(i=0; i<m1.length; i++)
+	//for(i=0; i<m1.length; i++)
 	{
-		// parent is mstyle -- checking if it has the attricute "displaystyle"
-		if(!(m1[i].parentNode.hasAttribute("displaystyle")))
+		// parent is mstyle -- checking if it has the attribute "displaystyle"
+	//if(!(m1[i].parentNode.hasAttribute("displaystyle")))
 		{	
-			m1[i].setAttribute("displaystyle", "true");
+		//	m1[i].setAttribute("displaystyle", "true");
 		}
 	}
 }
@@ -1504,6 +1601,7 @@ function fixIframeSize()
 	iFrame = window.parent.document.getElementsByClassName("d2l-iframe");
 	if (iFrame[0])
 	{
+		/* This might only be a FireFox Developers Edition issue -- in which case it can be removed */
 		iFrame[0].style.height = document.documentElement.scrollHeight + "px";
 		setTimeout( function(){iFrame[0].style.height = document.documentElement.scrollHeight + "px";}, 9000);
 	}
