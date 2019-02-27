@@ -1325,7 +1325,8 @@ function addReferences()
 			caption = encapObject.querySelector("#" + refID).innerText;
 			strIndex = caption.indexOf(":");  // find the location of the first semicolon
 			
-			figRef = caption.slice(0, strIndex); // get "Fig. #"
+			//cheap fix -- use grep to check for numbers (future fix)
+			figRef = caption.slice(4, strIndex); // get "Fig. #"
 			
 			refIndex = references[i].innerText.indexOf("##");
 			if(refIndex != -1)
