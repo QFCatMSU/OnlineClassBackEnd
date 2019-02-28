@@ -317,9 +317,9 @@ parent.window.onload = function()
 	equationNumbering();
 		
 	// structure the page with DIVs based on the headers 
-	addDivs("H1");
-	addDivs("H2");
-	addDivs("H3");
+	addDivs();
+//	addDivs("H2");
+//	addDivs("H3");
 	
 	// add outline to the divs
 	addOutline();
@@ -455,10 +455,10 @@ function changeSize(element, instruction="none")
 
 /* uses the header structure of the page to create a visual style with div elements --
 	user passes in the elementType they want to structure (H1, H2, and H3 are currently supported */ 
-function addDivs(elementType)
+function addDivs()
 {
 	// find all element of the type asked for (H1, H2, and H3 currently supported)
-	elements = encapObject.getElementsByTagName(elementType);
+	elements = encapObject.querySelectorAll("H1, H2, H3");
 	
 	// for each element
 	for(i=0; i<elements.length; i++)
@@ -504,7 +504,9 @@ function addDivs(elementType)
 				currentElement.nextElementSibling.tagName != "H1" &&
 				currentElement.nextElementSibling.tagName != "H2" &&
 				currentElement.nextElementSibling.tagName != "H3" &&
-				currentElement.nextElementSibling.tagName != "DIV")
+				!(currentElement.nextElementSibling.classList.contains("h1Div")) && 
+				!(currentElement.nextElementSibling.classList.contains("h2Div")) && 
+				!(currentElement.nextElementSibling.classList.contains("h3Div"))) 
 		{
 			nextSibling = currentElement.nextElementSibling;	// get the next element
 			newDiv.appendChild(currentElement);						// add current element to div
@@ -512,12 +514,12 @@ function addDivs(elementType)
 		}	
 
 		// add the page title class to the div with H1
-		if(elementType == "H1")
+		if(elements[i].tagName == "H1")
 		{	
 			newDiv.classList.add("h1Div");
 			//newDiv.classList.add("contentDiv");			// add a class name to the div
 		}
-		else if(elementType == "H2")
+		else if(elements[i].tagName == "H2")
 		{	
 			// add the class "h2Div" to div with H2
 			newDiv.classList.add("h2Div");
@@ -532,7 +534,7 @@ function addDivs(elementType)
 				newDiv.classList.add("nonlinear");
 			}
 		}
-		else if(elementType == "H3")
+		else if(elements[i].tagName == "H3")
 		{	
 			// add the class "h3Div" to div with "H3"
 			newDiv.classList.add("h3Div");
@@ -552,11 +554,12 @@ function addDivs(elementType)
 			newDiv.classList.add("h2NextDiv");	// should change at some point -- probably indicates an error
 		}
 		else if(currentElement.nextElementSibling.tagName == "H2" ||
-				currentElement.nextElementSibling.tagName == "DIV" )
+					currentElement.nextElementSibling.classList.contains("h2Div"))
 		{
 			newDiv.classList.add("h2NextDiv");	// it is the end of a section
 		}
-		else if(currentElement.nextElementSibling.tagName == "H3")
+		else if(currentElement.nextElementSibling.tagName == "H3" ||
+					currentElement.nextElementSibling.classList.contains("h3Div"))
 		{
 			newDiv.classList.add("h3NextDiv");	// it is the middle of a section
 		}
