@@ -33,7 +33,7 @@ h4::before
 .figNum::before, h5:not([class])::before, h5[class='']::before
 {
   counter-increment: figCount;               
-  content: "fig. " counter(figCount) ": ";  
+  content: "Fig " counter(figCount) ": ";  
 }
 h5.eqNum::after
 {
