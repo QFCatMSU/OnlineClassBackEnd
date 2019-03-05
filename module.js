@@ -542,7 +542,7 @@ function addDivs()
 			
 			// Check to see if the previous sibling (div with H2 or H3) has class "nonlinear"
 			// if so -- then this div should also be class "nonlinear"
-			if(newDiv.previousElementSibling.className != "" &&
+			if(newDiv.previousElementSibling && newDiv.previousElementSibling.className != "" &&
 				(newDiv.previousElementSibling.classList.contains("nonlinear") ))
 			{
 				newDiv.classList.add("nonlinear");
