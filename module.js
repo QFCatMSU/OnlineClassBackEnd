@@ -81,9 +81,9 @@ parent.window.onload = function()
 function resizeIframeContent()
 {
 	// When the parent page gets resized, it causes the content in the iframe to get resized.
-	//	But, the iframe itself only resizes when the content inside the iframe changes (D2L bug).
+	//	But, the iframe only resizes when the content inside the iframe changes (D2L bug).
 	
-	// In D2L, the iframe's height is set to "auto" so we don't need to directly change its size.
+	// In D2L, the iframe's height is set to "auto" so we don't need to change its size.
 	
 	// get iframes from the parent windows:
 	parentIFrames = window.parent.document.getElementsByTagName("iframe");
