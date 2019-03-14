@@ -120,6 +120,10 @@ h6 .hl,h6 .highlight, h6.hl, h6.highlight
 {
 	color: yellow;
 }
+h6 .note, h6.note
+{
+	color: orange;
+}
 body
 { 
 	font-size: 14px; 

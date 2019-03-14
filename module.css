@@ -248,6 +248,10 @@ td
 {
 	color: yellow;
 }
+.code .note, .code.note
+{
+	color: orange;
+}
 .codeBlock.nonum > .code
 {
 	padding-left: 5.5em;
@@ -492,6 +496,10 @@ img.flexSize, img.fs
 		text-decoration: underline;
 		/* for some reason, light gray turn to black in print ?!? */
 		text-decoration-color: aqua;  	
+	}
+	.code .note,.code.note
+	{
+		color: rgb(75,75,0);
 	}
 	.code 
 	{
