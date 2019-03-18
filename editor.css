@@ -10,7 +10,38 @@
 	h6>h6::first-child (currently unused) is the only example I know of so far 
 	
 	but h6>h6 works */
-
+address, pre
+{
+	border-color: red;
+	border-radius: 5px;
+	border-left-style: double;
+	border-right-style: double;
+	border-bottom-style: none;
+	border-top-style: none;
+	border-width: 3px;
+	background-color: rgb(200,200,255);
+	font-style: normal;
+	color: rgb(55,55,0);
+	padding: 10px;
+	box-shadow: 10px 10px 5px grey;
+}
+pre
+{
+	border-color: rgb(50,50,50);
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	border-bottom-style: double;
+	border-top-style: double;
+	font-family: arial;
+}
+address:first-of-type
+{
+	border-top-style: double;
+}
+address:last-of-type
+{
+	border-bottom-style: double;
+}
 body
 {
 	counter-reset: h2Count figCount eqCount;
@@ -94,10 +125,28 @@ ul,ol
 	margin-bottom:0px; 
 	padding-bottom: 0px; 
 }
-ul
+
+ul, ul ul ul, ul ul ul ul ul
 {	
 	list-style-type: disc; 
 }
+
+ul ul, ul ul ul ul, ul ul ul ul ul ul
+{	
+	list-style-type: circle; 
+}
+
+ol, ol ol ol, ol ol ol ol ol, ol ol ol ol ol ol ol
+{	
+	list-style-type: number; 
+}
+
+ol ol, ol ol ol ol, ol ol ol ol ol ol
+{	
+	list-style-type: upper-alpha; 
+}
+
+/*
 ol
 {
 	list-style-type: none;
@@ -111,6 +160,38 @@ ol>li:before
 	content: counter(section, decimal) ") ";
 	margin-left: -16px;
 }
+
+		ol 
+		{
+			list-style-type: none;
+			counter-reset: item;
+			margin: 0;
+			padding: 0;
+		}
+
+		li 
+		{
+			display: table;
+			counter-increment: item;
+		}
+
+		li:before 
+		{
+			content: counters(item, ".") ". ";
+			display: table-cell;
+			padding-right: 0.6em;    
+		}
+
+		li li 
+		{
+			margin: 0;
+		}
+
+		li li:before 
+		{
+			content: counters(item, ".") " ";
+		}
+*/
 .hl,.highlight
 {
 	color: darkred;

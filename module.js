@@ -1,89 +1,127 @@
-smallImageHeight = 100;				// set the height of flex-sized images when small 
-imageHeight = new Array();			// the heights of all flex-sized images in a page
-imageWidth = new Array();			// the widths of all flex-sized images in a page
-minImageWidth = 700;					// minimum width for a flexSize image in expanded mode
-scrollTopPosition = 0; 				// value saved for links-return-links within a page
-overflowCalled = false;   			// check to see if there is a current check of code lines
-mathObjCount = 0;						// The number of equations in the lesson
-count=0;prevCount=0;countNum=0;	// used to keep track of the equations
-editURL = "";							// URL for the editting page 
+smallImageHeight = 100;			// set the height of flex-sized images when small 
+imageHeight = new Array();		// the heights of all flex-sized images in a page
+imageWidth = new Array();		// the widths of all flex-sized images in a page
+minImageWidth = 700;			// minimum width for a flexSize image in expanded mode
+scrollTopPosition = 0; 			// value saved for links-return-links within a page
+overflowCalled = false;   		// check to see if there is a current check of code lines
 
-// D2L variables (knobs to turn...)
+/**** Changes to D2L MathJax code
+  1) Need to stop loading 		D2LMathML.DesktopInit('https://s.brightspace.com/lib/mathjax/2.6.1/MathJax.js?config=MML_HTMLorMML','https://s.brightspace.com/lib/mathjax/2.6.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML%2cSafe');
+     onDOMContent -- same as my code.
+  2) MathJS error b.parentNode prevents move from MathJax_Preview -> MathJax_Display
+  
+****/
+// Message subject was not lti.frameResize
+// b.parentNode is null MathJax.js 19:42041
+	mathObjCount = 0;
+	count=0;prevCount=0;countNum=0;currentStatus="";
+
+	//18-0-0-0 : 18-18-0-0
+	//18-0-0-0 : 6-18-8-0(4)
+	//18-0-0-0 : 14-18-1-3 (Edge)
+	//0-18-3-15 (Edge)
+	//18--0 (?)
+	//7-18-0-0 : 1-18-0-0 
+	//0-18-0-0 *
+	//modify the Math Jax Preview state?
+	/* Preview comes up -- with full data
+		MathJax display and Processing
+		Preview Data goes away */
+	// good: <span class="math" id="MathJax-Span-58" role="math" style="width: 0.87em; display: inline-block;">
+	// bad: <span class="math" id="MathJax-Span-58" role="math">
+	// bad??
+	// *: <span class="MathJax_Preview"><math title="" xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mstyle><munderover><mo>∑</mo><mn>6</mn><mn>4</mn></munderover><mi>a</mi><mi>d</mi><mi>f</mi></mstyle></semantics></math></span>
+	
+	// when the HTML loads (DomContent), load the file to manipulate the MathML
+	document.addEventListener('onDomContent', loadMathML());
+	
+	function loadMathML()
+	{
+		var script = document.createElement('script');
+		script.onload = function () 
+		{
+		   mathEdit(); // wait for mathML script to load before manipulating the script 
+		};
+		script.src = "/content/DEVELOPMENT/2018/courses/DEV-belinsky-2018-BackendTest/Programming/eqTest/MathML2.js";
+
+		document.head.appendChild(script); //or something of the likes
+	}
+
+	function mathEdit()
+	{
+		// get all Math object in the page
+		var mathObj = document.querySelectorAll('math');
+		mathObjCount = mathObj.length;
+		
+		// switch the display to block for each math element
+		// note: this is not the same as the CSS style block
+		//     display = inline means math characters are resized to fit inline
+		//     diaplay = block means math characters are styled naturally
+		for(i=0; i<mathObj.length; i++)
+		{
+			mathObj[i].setAttribute("display", "block");
+		}
+		
+		// if there are math objects, then
+		if(mathObjCount > 0)
+		{
+			// execute the MathJax code
+			D2LMathML2.DesktopInit('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=MML_HTMLorMML',
+						   'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML%2cSafe'); 
+			
+			// do post mathJax manipulation
+			postMathJax();
+		}
+	}
+
+	function postMathJax()
+	{
+		// MathJax will change all math objects into class="MathJax_Display" --
+		// find all mathJaxDisplay objects --
+		// note: MathJax is running asynchronously, so these objects will appear at different times
+		mathDis = document.querySelectorAll(".MathJax_Display");
+		countNum++;
+		
+		// For each MathJax_Display object
+		for(i=0; i<mathDis.length; i++)
+		{
+			// if it has not been changed to display:inline, change it to display:inline
+			if(mathDis[i].getAttribute("style") != "display: inline !important;" &&
+				mathDis[i].classList.length == 1)
+			{
+				// When display=clock is set, MathJax overcpmpensates and all sets the style display to block
+				// Switching this to inline makes the formula more flexible and matches the 
+				// D2L editor
+				mathDis[i].setAttribute("style", "display: inline !important;");
+				count++;
+			}
+		}
+		prevCount = count;
+		
+		// We are still waiting for MathJax to change all math objects
+		if(count < mathObjCount)
+		{
+			// recursive call in 300ms
+			setTimeout("postMathJax()", 300);
+		}
+	}
+	
+// D2L variables
 redNum = -1;						// the number of the class 
 instructorEmail = "Charlie Belinsky <belinsky@msu.edu>;";
 
 // pre-onload functions
+//fixMathJaxEQs();	// Make all math equations default to inline mode (D2L issue)
 addEqNumbering(); // 
 addStyleSheet();  // can be done before page load since this is called in the [head]
-
+	
 // resize the iframe in the parent window when the page gets resized
-window.parent.addEventListener("resize", resizeIframeContent());
-
-
-// when the HTML loads (DomContent), load the file to manipulate the MathML
-document.addEventListener('onDomContent', loadMathML());
-
-// don't do anything until the parent frame (d2L) loads 
-// this still seems to work if there is no parent -- probably should check for this, though
-parent.window.onload = function()
-{		
-	encapObject = document.body; 
-
-	if(document.querySelectorAll('meta[content^="Joomla"]').length > 0) joomlaFixes();
-	
-	if(window.location.hostname == "d2l.msu.edu") d2lFixes();
-	
-	setClassNames();
-	
-	fixTitle();
-	
-	// allow users to resize images from small to full-size
-	createFlexImages();
-	
-	// adds the caption class to all H5 elements
-	addCaptions();
-	
-	createEmailLink();
-	
-	equationNumbering();
-		
-	// structure the page with DIVs based on the headers 
-	addDivs();
-	
-	// add outline to the divs
-	addOutline();
-	
-	// Create a right-click menu
-	makeContextMenu("create");  // needs to happen after divs are created
-
-	addReferences();
-	
-	// set up onclick functionality for "anchor" links (page exists in an iframe)
-	// createInPageLinks();
-	
-	// adds code tags to all content within an [h6] tag
-	// need to add divs before doing code tags becuase this includes the div codeblocks
-	addCodeTags("H6");
-	
-	overflowCodeLines();
-	
-	// convert "download" class to a download hyperlink 
-	//		(because D2L does not allow you to specify this trait)
-	addDownloadLinks();	
-	
-	// check the URL to see if there is a request to go to a specific part of the page
-	checkURLForPos();
-	
-	// target all hyperlinks to a new window
-	linksToNewWindow();
-}
-	
-function resizeIframeContent()
+window.parent.addEventListener("resize", function()
 {
 	// When the parent page gets resized, it causes the content in the iframe to get resized.
-	//	But, the iframe only resizes when the content inside the iframe changes (D2L bug).
+	//	But, the iframe itself only resizes when the content inside the iframe changes (D2L bug).
 	
-	// In D2L, the iframe's height is set to "auto" so we don't need to change its size.
+	// In D2L, the iframe's height is set to "auto" so we don't need to directly change its size.
 	
 	// get iframes from the parent windows:
 	parentIFrames = window.parent.document.getElementsByTagName("iframe");
@@ -102,202 +140,136 @@ function resizeIframeContent()
 		clearTimeout(overFlowTimer);
 	}
 	overFlowTimer = setTimeout(function() { overflowCodeLines(); }, 500);
-}
+});
 
-function loadMathML()
-{
-	var script = document.createElement('script');
-	script.onload = function () 
-	{
-		mathEdit(); // wait for mathML script to load before manipulating the script 
-	};
-	script.src = "/content/DEVELOPMENT/2018/courses/DEV-belinsky-2018-BackendTest/Programming/eqTest/MathML2.js";
-
-	document.head.appendChild(script); //or something of the likes
-}
-
-function mathEdit()
-{
-	// get all Math object in the page
-	var mathObj = document.querySelectorAll('math');
-	mathObjCount = mathObj.length;
+// don't do anything until the parent frame (d2L) loads 
+// this still seems to work if there is no parent -- probably should check for this, though
+parent.window.onload = function()
+{		
+	encapObject = document.body; 
 	
-	// switch the display to block for each math element
-	// note: this is not the same as the CSS style block
-	//     display = inline means math characters are resized to fit inline
-	//     diaplay = block means math characters are styled naturally
-	for(i=0; i<mathObj.length; i++)
-	{
-		mathObj[i].setAttribute("display", "block");
-	}
+	// there should be no [div] elements in the page -- [div] can be copied/pasted in
+	//removeDivs();
 	
-	// if there are math objects, then
-	if(mathObjCount > 0)
+	editURL = "";	
+	
+   // check if any meta content starts with "Joomla"
+	if(document.querySelectorAll('meta[content^="Joomla"]').length > 0)  // we are in Joomla
 	{
-		// execute the MathJax code
-		D2LMathML2.DesktopInit(
-			'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=MML_HTMLorMML',
-			'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML%2cSafe'); 
-		
-		// do post mathJax manipulation
-		postMathJax();
-	}
-}
+		// In Joomla, the article is in a div of class "container"
+		containers = document.querySelectorAll("div.container"); 
+		containers[0].style.backgroundColor = "#003c3c";
+		containers[0].style.padding = "9px";
 
-/**** Changes to D2L MathJax code
-  1) Need to stop loading 		
-		D2LMathML.DesktopInit('https://s.brightspace.com/lib/mathjax/2.6.1/MathJax.js?config=MML_HTMLorMML',
-		'https://s.brightspace.com/lib/mathjax/2.6.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML%2cSafe');
-     onDOMContent -- same as my code.
-  2) MathJS error b.parentNode prevents move from MathJax_Preview -> MathJax_Display
-****/	
-function postMathJax()
-{
-	// MathJax will change all math objects into class="MathJax_Display" --
-	// find all mathJaxDisplay objects --
-	// note: MathJax is running asynchronously, 
-	//			so these objects will appear at different times
-	mathDis = document.querySelectorAll(".MathJax_Display");
-	countNum++;
-	
-	// For each MathJax_Display object
-	for(i=0; i<mathDis.length; i++)
-	{
-		// if it has not been changed to display:inline, change it to display:inline
-		if(mathDis[i].getAttribute("style") != "display: inline !important;" &&
-			mathDis[i].classList.length == 1)
+		// Joomla uses these itemprprops -- need a better way to check for Joomla...
+		itemPropDiv = document.querySelectorAll("div[itemprop]");
+		if(itemPropDiv.length == 1)
 		{
-			// When display=block is set, MathJax overcpmpensates and 
-			// sets all style display to block.  Switching this to inline makes the formula 
-			// more flexible and matches the style in the D2L editor
-			mathDis[i].setAttribute("style", "display: inline !important;");
-			count++;
-		}
-	}
-	prevCount = count;
-	
-	// We are still waiting for MathJax to change all math objects
-	if(count < mathObjCount)
-	{
-		// recursive call in 300ms
-		setTimeout("postMathJax()", 300);
-	}
-}
-
-function joomlaFixes()
-{
-	// In Joomla, the article is in a div of class "container"
-	containers = document.querySelectorAll("div.container"); 
-	containers[0].style.backgroundColor = "#003c3c";
-	containers[0].style.padding = "9px";
-
-	// Joomla uses these itemprprops -- need a better way to check for Joomla...
-	itemPropDiv = document.querySelectorAll("div[itemprop]");
-	if(itemPropDiv.length == 1)
-	{
-		// the lesson is encapsulated in the div with the itemprop
-		encapObject = itemPropDiv[0];	
-		
-		// create the editing URL
-		// in Joomla it is: URL of page - last section +
-		// 			"?view=form&layout=edit&a_id=" + the page id
-		theURL = window.location.href; 
-		lastSlashIndex = theURL.lastIndexOf("/");
-		editURL = theURL.substring(0, lastSlashIndex);
-		pageID = theURL.substring((lastSlashIndex +1), theURL.indexOf("-"));
-		editURL = editURL + "?view=form&layout=edit&a_id=" + pageID;
-	}
-	
-	// will need to move this line to make it more general
-	encapObject.style.backgroundColor = "rgb(0,60,60)";	
-}
-
-function d2lFixes()
-{
-	oldURL = String(window.parent.location); 
-	// get rid of parameters (designated by "?")
-	editURL = oldURL.split('?')[0];  
-	// replace viewContent with contentFile
-	editURL = editURL.replace("viewContent", "contentFile"); 
-	// replace View with EditFile?fm=0
-	editURL = editURL.replace("View", "EditFile?fm=0"); 	 	
-				
-	// remove the header in the D2L page
-	parent.document.querySelector(".d2l-page-header").style.display = "none";
-	parent.document.querySelector(".d2l-page-collapsepane-container").style.display = "none";
-	parent.document.querySelector(".d2l-page-main-padding").style.padding = "0";
-
-	d2lAddHeader();
-}
-
-function d2lAddHeader()
-{
-	if(self != top)
-	{
-		// create div at top of page and add the home page, previous, and next page
-		divTop = document.createElement("div");
-		divTop.classList.add("headerDiv");
-		encapObject.prepend(divTop);
-		
-		// add home page link
-		url = window.parent.location.href;
-		classNum = url.match(/\/[0-9]{3,}\//); 
-		redNum = classNum[0].substring(1, classNum[0].length-1); // get number of D2L class
-		homePage = document.createElement("a");
-		homePage.innerHTML = "Home";
-		homePage.href = "https://d2l.msu.edu/d2l/home/" + redNum;
-		homePage.target = "_parent";
-		homePage.classList.add("lessonLink");
-		homePage.classList.add("sameWin");
-		homePage.classList.add("homePage");
-		divTop.appendChild(homePage);
+			// the lesson is encapsulated in the div with the itemprop
+			encapObject = itemPropDiv[0];	
 			
-		// add previous link
-		prevPage = encapObject.querySelectorAll(".previousLesson, .pl");
-		if(prevPage[0])  // a prevPage object exists
-		{
-			text = prevPage[0].innerText;
-			url = window.parent.document.getElementsByClassName("d2l-iterator-button-prev");
-			newPrevPage = document.createElement("a");
-			newPrevPage.innerHTML = "Previously: " + text;
-			newPrevPage.href = url[0].href;
-			newPrevPage.target = "_parent";
-			newPrevPage.classList.add("lessonLink");
-			newPrevPage.classList.add("sameWin");
-			newPrevPage.classList.add("previousLesson");
-			divTop.insertBefore(newPrevPage, homePage);
-			prevPage[0].parentNode.removeChild(prevPage[0]);
+			// create the editing URL
+			// in Joomla it is: URL of page - last section + "?view=form&layout=edit&a_id=" + the page id
+			theURL = window.location.href; 
+			lastSlashIndex = theURL.lastIndexOf("/");
+			editURL = theURL.substring(0, lastSlashIndex);
+			pageID = theURL.substring((lastSlashIndex +1), theURL.indexOf("-"));
+			editURL = editURL + "?view=form&layout=edit&a_id=" + pageID;
 		}
-				
-		// add next link
-		nextPage = encapObject.querySelectorAll(".nextLesson, .nl");
-		if(nextPage[0])  // a nextPage object exists
-		{
-			text = nextPage[0].innerText;
-			url = window.parent.document.getElementsByClassName("d2l-iterator-button-next");
-			newNextPage = document.createElement("a");
-			newNextPage.innerHTML = "Up Next: " + text;
-			newNextPage.href = url[0].href;
-			newNextPage.target = "_parent";
-			newNextPage.classList.add("lessonLink");
-			newNextPage.classList.add("sameWin");
-			newNextPage.classList.add("nextLesson");
-			divTop.insertBefore(newNextPage, homePage);
-			nextPage[0].parentNode.removeChild(nextPage[0]);
-		}	
+		
+		// will need to move this line to make it more general
+		encapObject.style.backgroundColor = "rgb(0,60,60)";	
 	}
-	else
+	else if(window.location.hostname == "d2l.msu.edu")  // we are in D2L
 	{
-		lessonLinks = encapObject.querySelectorAll(".previousLesson, .nextLesson, .nl, .pl");
-		for(i=0; i<lessonLinks.length; i++)
+		oldURL = String(window.parent.location); 
+		editURL = oldURL.split('?')[0];  // get rid of parameters (designated by "?")
+		editURL = editURL.replace("viewContent", "contentFile"); // replace viewContent with contentFile
+		editURL = editURL.replace("View", "EditFile?fm=0"); 	 	// replace View with EditFile?fm=0
+					
+		// remove the header in the D2L page
+		p = parent.document.getElementsByClassName("d2l-page-header");
+		for(i=0; i<p.length; i++)
 		{
-			lessonLinks[i].style.display = "none";
+			p[i].style.display = "none";
+		}
+		
+		p = parent.document.getElementsByClassName("d2l-page-collapsepane-container");
+		for(i=0; i<p.length; i++)
+		{
+			p[i].style.display = "none";
+		}
+		
+		p = parent.document.getElementsByClassName("d2l-page-main-padding");
+		for(i=0; i<p.length; i++)
+		{
+			p[i].style.padding = "0";
+		}
+
+		if(self != top)
+		{
+			// create div at top of page and add the home page, previous, and next page
+			divTop = document.createElement("div");
+			divTop.classList.add("headerDiv");
+			encapObject.prepend(divTop);
+			
+			// add home page link
+			url = window.parent.location.href;
+			classNum = url.match(/\/[0-9]{3,}\//); 
+			redNum = classNum[0].substring(1, classNum[0].length-1); // get number of D2L class
+			homePage = document.createElement("a");
+			homePage.innerHTML = "Home";
+			homePage.href = "https://d2l.msu.edu/d2l/home/" + redNum;
+			homePage.target = "_parent";
+			homePage.classList.add("lessonLink");
+			homePage.classList.add("sameWin");
+			homePage.classList.add("homePage");
+			divTop.appendChild(homePage);
+				
+			// add previous link
+			prevPage = encapObject.querySelectorAll(".previousLesson, .pl");
+			if(prevPage[0])  // a prevPage object exists
+			{
+				text = prevPage[0].innerText;
+				url = window.parent.document.getElementsByClassName("d2l-iterator-button-prev");
+				newPrevPage = document.createElement("a");
+				newPrevPage.innerHTML = "Previously: " + text;
+				newPrevPage.href = url[0].href;
+				newPrevPage.target = "_parent";
+				newPrevPage.classList.add("lessonLink");
+				newPrevPage.classList.add("sameWin");
+				newPrevPage.classList.add("previousLesson");
+				divTop.insertBefore(newPrevPage, homePage);
+				prevPage[0].parentNode.removeChild(prevPage[0]);
+			}
+					
+			// add next link
+			nextPage = encapObject.querySelectorAll(".nextLesson, .nl");
+			if(nextPage[0])  // a nextPage object exists
+			{
+				text = nextPage[0].innerText;
+				url = window.parent.document.getElementsByClassName("d2l-iterator-button-next");
+				newNextPage = document.createElement("a");
+				newNextPage.innerHTML = "Up Next: " + text;
+				newNextPage.href = url[0].href;
+				newNextPage.target = "_parent";
+				newNextPage.classList.add("lessonLink");
+				newNextPage.classList.add("sameWin");
+				newNextPage.classList.add("nextLesson");
+				divTop.insertBefore(newNextPage, homePage);
+				nextPage[0].parentNode.removeChild(nextPage[0]);
+			}	
+		}
+		else
+		{
+			lessonLinks = encapObject.querySelectorAll(".previousLesson, .nextLesson, .nl, .pl");
+			for(i=0; i<lessonLinks.length; i++)
+			{
+				lessonLinks[i].style.display = "none";
+			}
 		}
 	}
-}
-
-function setClassNames()
-{
+		
 	// add class names
 	p = encapObject.getElementsByClassName("p");
 	for(i=0; i<p.length; i++)
@@ -311,10 +283,7 @@ function setClassNames()
 		nn[i].classList.add("nonum");
 		nn[i].classList.add("partial");
 	}
-}
 
-function fixTitle()
-{
 	// set title on webpage -- the first H1 on the page
 	titleObj = encapObject.querySelector("h1");
 	
@@ -336,19 +305,60 @@ function fixTitle()
 	{
 		window.document.title = "No Title";
 	}
+	
+	// allow users to resize images from small to full-size
+	createFlexImages();
+	
+	// adds the caption class to all H5 elements
+	addCaption("H5");
+	
+	createEmailLink();
+	
+	equationNumbering();
+		
+	// structure the page with DIVs based on the headers 
+	addDivs();
+//	addDivs("H2");
+//	addDivs("H3");
+	
+	// add outline to the divs
+	addOutline();
+	
+	// Create a right-click menu
+	makeContextMenu("create");  // needs to happen after divs are created
+
+	addReferences();
+	// set up onclick functionality for "anchor" links (needed because page exists in an iframe)
+	//createInPageLinks();
+	
+	// adds code tags to all content within an [h6] tag
+	// need to add the divs before doing the code tags becuase this includes the div codeblocks
+	addCodeTags("H6");
+	
+	overflowCodeLines();
+	
+	// convert "download" class to a download hyperlink (because D2L does not allow you to specify this trait)
+	addDownloadLinks();	
+	
+	// check the URL to see if there is a request to go to a specific part of the page
+	checkURLForPos();
+	
+	// target all hyperlinks to a new window
+	linksToNewWindow();
 }
 
 /* removes all of the [div] elements in the page and move the content inside the [div]
    up one level */
 function removeDivs()
 {
+	divElements = encapObject.querySelectorAll("DIV:not([class*='MathJax']) DIV:not([id*='MathJax'])");
+
+	// the [div] length changes as [div] are removed -- we need to hold the initial number of [div]
+	// initNumOfDivs = divElements.length;
 	
-	// all DIVs not related to MathJax
-	notMathJax = "DIV:not([class*='MathJax']) DIV:not([id*='MathJax'])"
-	divElements = encapObject.querySelectorAll(notMathJax);
-	
-	// Remove all the divs from the page but keep the content 
-	while(divElements.length > 0)  
+	// Remove all the divs from the page but keep the content -- start with the last div
+	//	to avoid recursion issues
+	while(divElements.length > 0)  //for(i=0; i<initNumOfDivs; i++)   // could do while(divElement[0])
 	{
 		// divElements.length is decreased by one everytime a div is removed 
 			
@@ -359,8 +369,7 @@ function removeDivs()
 		divElements[divElements.length-1].insertAdjacentHTML("beforebegin", divContent);
 		
 		// remove the [div]
-		divElements[divElements.length-1].parentElement.removeChild(
-			divElements[divElements.length-1] );
+		divElements[divElements.length-1].parentElement.removeChild(divElements[divElements.length-1]);
 	}
 }
 
@@ -377,9 +386,9 @@ function createFlexImages()
 	// switch to while (there are flexImages)??
 	for(i=0; i<flexImage.length; i++)	// for each flexSize element
 	{
-		// add an onclick event that calls changeImageSize() to each flexSize image
+		// add an onclick event that calls changeSize() to each flexSize image
 		flexImage[i].addEventListener("click", function()
-												{ changeImageSize(this) }, false); 
+												{ changeSize(this) }, false); 
 		
 		/*** the strange behavior of JS and for loops: final value of the loop  ****/
 		
@@ -390,7 +399,7 @@ function createFlexImages()
 		imageWidth[i] = flexImage[i].naturalWidth;
 		
 		// initalize the flex image to the small size
-		changeImageSize(flexImage[i], "minimize");
+		changeSize(flexImage[i], "minimize");
 	}
 }
 
@@ -400,7 +409,7 @@ changes the size of images between small and large
 
 possible instruction values: minimize and maximize
 */
-function changeImageSize(element, instruction="none")
+function changeSize(element, instruction="none")
 {
 	// get unique index of image
 	imageIndex = element.myIndex;				
@@ -410,8 +419,7 @@ function changeImageSize(element, instruction="none")
 	origWidth = imageWidth[imageIndex];
 	
 	// If image is in small sized mode and insruction is not "minimize"
-	// The reason I do not put instruction == "minimize" 
-	//			has to do with minimize/maximize all call
+	// The reason I do not put instruction == "minimize" has to do with minimize/maximize all call
 	if(element.style.height == smallImageHeight + "px" && instruction != "minimize")
 	{
 		// get the width of the images parent element, which is a [figure]
@@ -446,8 +454,7 @@ function changeImageSize(element, instruction="none")
 }
 
 /* uses the header structure of the page to create a visual style with div elements --
-	user passes in the elementType they want to structure 
-	(H1, H2, and H3 are currently supported */ 
+	user passes in the elementType they want to structure (H1, H2, and H3 are currently supported */ 
 function addDivs()
 {
 	// find all element of the type asked for (H1, H2, and H3 currently supported)
@@ -463,8 +470,7 @@ function addDivs()
 		newDiv = document.createElement("div");	// create a new div
 					
 		// get title from element -- transfer to new div
-		// use data-title instead of title because 
-		//		title will create a tooltip popup (which I don't want)
+		// use data-title instead of title because title will create a tooltip popup (which I don't want)
 		if(elements[i].title != "")
 		{
 			newDiv.dataTitle = elements[i].title
@@ -504,7 +510,7 @@ function addDivs()
 		{
 			nextSibling = currentElement.nextElementSibling;	// get the next element
 			newDiv.appendChild(currentElement);						// add current element to div
-			currentElement = nextSibling;					// set current element to next element
+			currentElement = nextSibling;								// set current element to next element
 		}	
 
 		// add the page title class to the div with H1
@@ -536,8 +542,7 @@ function addDivs()
 			
 			// Check to see if the previous sibling (div with H2 or H3) has class "nonlinear"
 			// if so -- then this div should also be class "nonlinear"
-			if(newDiv.previousElementSibling && 
-				newDiv.previousElementSibling.className != "" &&
+			if(newDiv.previousElementSibling && newDiv.previousElementSibling.className != "" &&
 				(newDiv.previousElementSibling.classList.contains("nonlinear") ))
 			{
 				newDiv.classList.add("nonlinear");
@@ -546,8 +551,7 @@ function addDivs()
 
 		if(currentElement.nextElementSibling == null) // there is no next
 		{
-			// should change at some point -- probably indicates an error
-			newDiv.classList.add("h2NextDiv");	
+			newDiv.classList.add("h2NextDiv");	// should change at some point -- probably indicates an error
 		}
 		else if(currentElement.nextElementSibling.tagName == "H2" ||
 					currentElement.nextElementSibling.classList.contains("h2Div"))
@@ -577,15 +581,13 @@ function addOutline()
 		{
 			level1++;			
 			level2=0;
-			divElement[i].firstChild.innerHTML = level1 + " - " + 
-															divElement[i].firstChild.innerHTML;
+			divElement[i].firstChild.innerHTML = level1+" - " + divElement[i].firstChild.innerHTML;
 			divElement[i].dataTitle = divElement[i].firstChild.textContent;
 		}
 		else if(divElement[i].firstChild && divElement[i].firstChild.tagName == "H3")
 		{
 			level2++;
-			divElement[i].firstChild.innerHTML = level1 + "." + level2 + " - " + 
-															divElement[i].firstChild.innerHTML;
+			divElement[i].firstChild.innerHTML = level1+"."+level2+" - " + divElement[i].firstChild.innerHTML;
 			divElement[i].dataTitle = divElement[i].firstChild.textContent;
 			
 			// find H4 elements within H3
@@ -595,8 +597,7 @@ function addOutline()
 			for(j=0; j<h4Elements.length; j++)
 			{
 				level3++;
-				h4Elements[j].innerHTML = level1 + "." + level2 + "." + level3 + " - " + 
-													h4Elements[j].innerHTML;
+				h4Elements[j].innerHTML = level1+"."+level2+"."+level3+" - " + h4Elements[j].innerHTML;
 				h4Elements[j].dataTitle = h4Elements[j].textContent;
 			}
 		}
@@ -610,8 +611,8 @@ function changeAllPicSize(param)
 	var flexImage = encapObject.querySelectorAll('.flexSize, .fs');
 	for(i=0; i<flexImage.length; i++)
 	{
-		/* calll changeImageSize passing each flexSize object in an array */
-		changeImageSize(flexImage[i], param)
+		/* calll changeSize passing each flexSize object in an array */
+		changeSize(flexImage[i], param)
 	}
 }
 
@@ -679,10 +680,10 @@ function equationNumbering()
 }
 
 /* adds the class "caption" to all H5 lines */
-function addCaptions()
+function addCaption(elementType)
 {
 	// find all elements of elementType (initially it is H5)
-	var captionLines = encapObject.getElementsByTagName("h5");
+	var captionLines = encapObject.getElementsByTagName(elementType);
 
 	// this is deprecated in DreamWeaver
 	for(i=0; i<captionLines.length; i++)
@@ -706,7 +707,7 @@ function addCaptions()
 }
 
 /* add the tag: [code] to each line inside a [pre] block --
-  the real trick is that there are multiple ways in which D2L will code a set of lines */
+  the real trick is that there are multiple ways in which D2L will code a set of lines*/
 function addCodeTags(elementType)
 {
 	/* this part works if we are using <h6> with class="code" */
@@ -729,8 +730,7 @@ function addCodeTags(elementType)
 		if(codeLines[i].getElementsByTagName("br").length > 0)
 		{ 
 			// count how many lines of code there are, which is the number of <br> + 1
-			// 	because we need to add a break for the last line
-			numLines = codeLines[i].getElementsByTagName("br").length +1; 
+			numLines = codeLines[i].getElementsByTagName("br").length +1; // no break on last line
 
 			var codeText = new Array();
 			for(j=0; j<numLines; j++)
@@ -741,13 +741,11 @@ function addCodeTags(elementType)
 			for(j=0; j<numLines; j++)
 			{
 				newElement = document.createElement(elementType);	// create an [H6] 
-				newElement.innerHTML = codeText[j];						// insert code into [H6]
+				newElement.innerHTML = codeText[j];					// insert line of code into [H6]
 				if(j == 0)
 				{
-					// transfer title information to only the first element
-					newElement.title = codeLines[i].title;	
-					// transfer the class list to the first element					
-					newElement.classList =  codeLines[i].classList; 
+					newElement.title = codeLines[i].title;			// transfer title information to only the first element
+					newElement.classList =  codeLines[i].classList; // transfer the class list to the first element
 				}
 				// add the new code line to the script
 				codeElement.parentElement.insertBefore(newElement, codeElement);  
@@ -758,11 +756,8 @@ function addCodeTags(elementType)
 			/********
 			the number of code tags increased -- so codeLines[] has been updated to match
 			*********/
-			// increase numCodeTags to the current codeline length
-			numCodeTags = codeLines.length; 
-			
-			// increase i by the number of codelines just added (don't need to check those)
-			i = i + numLines -1; 
+			numCodeTags = codeLines.length;  // increase numCodeTags to the current codeline length
+			i = i + numLines -1; // increase i by the number of codelines just added (don't need to check those)
 		}
 	}
 
@@ -773,9 +768,12 @@ function addCodeTags(elementType)
 	{
 		// add "code" class to line
 		codeLines[i].classList.add("code");
+
+		// add two spaces at the beginning of each code line (to fit the curly brackets in)
+	//	codeLines[i].innerHTML = "  " + codeLines[i].innerHTML;  // innerText was stripping [span]
 		
-		/* D2L-only fix: when code is copied and pasted in D2L, the class names can also 
-			be copy/pasted -- removes erroneous class names */
+		/* D2L-only fix: when code is copied and pasted in D2L, the class names can also be copy/pasted --
+			removes erroneous class names */
 		if(codeLines[i].classList.contains("firstLine"))
 		{
 			codeLines[i].classList.remove("firstLine")
@@ -791,20 +789,17 @@ function addCodeTags(elementType)
 			codeBlockDiv = document.createElement("div");
 			
 			// check if the codelines or any of its children (D2L issue) has the class "partial"
-			if(codeLines[i].classList.contains("partial")  || 
-				codeLines[i].querySelectorAll(".partial").length != 0)
+			if(codeLines[i].classList.contains("partial")  || codeLines[i].querySelectorAll(".partial").length != 0)
 			{
 				codeBlockDiv.classList.add("partial");
 			}		
 			// check if the codelines or any of its children (D2L issue) has the class "nonum"
-			if(codeLines[i].classList.contains("nonum")  || 
-				codeLines[i].querySelectorAll(".nonum").length != 0)
+			if(codeLines[i].classList.contains("nonum")  || codeLines[i].querySelectorAll(".nonum").length != 0)
 			{
 				codeBlockDiv.classList.add("nonum");
 			}		
 			// check if the codelines or any of its children (D2L issue) has the class "text"
-			if(codeLines[i].classList.contains("text") || 
-				codeLines[i].querySelectorAll(".text").length != 0) 
+			if(codeLines[i].classList.contains("text") || codeLines[i].querySelectorAll(".text").length != 0) 
 			{
 				codeBlockDiv.classList.add("text");
 			}					
@@ -837,24 +832,20 @@ function addCodeTags(elementType)
 			firstLine = false;
 		}
 
-		// add a space to empty lines -- when copying/pasting it can treat an 
-		//			empty line as not a line (deprecated somewhat)
+		// add a space to empty lines -- when copying/pasting it can treat an empty line as not a line (deprecated somewhat)
 		if(codeLines[i].innerText == "")
 		{
 			codeLines[i].innerText = " ";
 		}	
 					
-		// check if the codeLine has a line number associated with it -- 
-		//		set the line number to it
+		// check if the codeLine has a line number associated with it -- set the line number to it
 		if( codeLines[i].title != "" && !isNaN(codeLines[i].title) )
 		{
 			codeLines[i].style.counterReset = "codeLines " + (codeLines[i].title -1);
 		}
 		
-		// check if the next element after this codeLine is an [H6] -- 
-		//		if not than this is the last line
-		if(codeLines[i].nextElementSibling == null || 
-			codeLines[i].nextElementSibling.tagName != elementType)
+		//check if the next element after this codeLine is an [H6] -- if not than this is the last line
+		if(codeLines[i].nextElementSibling == null || codeLines[i].nextElementSibling.tagName != elementType)
 		{
 			// check if this is a codeblock that needs curly brackets
 			if(codeBlockDiv.classList.contains("brackets"))
@@ -895,8 +886,7 @@ function overflowCodeLines()
 
 	if(codeLines.length > 0)
 	{
-		// get original height of codelines -- only need to do this once in code 
-		//				(maybe? what if page is magnified?)
+		// get original height of codelines -- only need to do this once in code (maybe? what if page is magnified?)
 		elem = encapObject.querySelector('.code');
 		style = getComputedStyle(elem);
 		lineHeight = parseInt(style.lineHeight);
@@ -952,8 +942,7 @@ function makeContextMenu(funct, param = null)
 	// for Firefox 
 	if (navigator.userAgent.indexOf("Firefox") != -1)
 	{
-		// when the user clicks the right button, the rightClickMenu 
-		//			(create in this function) appears
+		// when the user clicks the right button, the rightClickMenu (create in this function) appears
 		encapObject.setAttribute("contextmenu", "rightClickMenu");
 
 		// creating a right-click context menu
@@ -1213,8 +1202,7 @@ function addReferences()
 			if(references[i].classList.contains("label"))
 			{
 				// add section num to the link
-				references[i].innerText = references[i].innerText + 
-													" (Sect " + sectNum + ")";	
+				references[i].innerText = references[i].innerText + " (Sect " + sectNum + ")";	
 			}
 			
 			// create a link that scrolls to the section
@@ -1277,15 +1265,13 @@ function addReferences()
 		else if(isValid(refID) == false)
 		{
 			references[i].classList.add("error");
-			references[i].innerText = "**Invalid characters in ID: " + 
-												references[i].innerText + "** ";
+			references[i].innerText = "**Invalid characters in ID: " + references[i].innerText + "** ";
 		}
 		// check if the ID starts with a number
 		else if(isNaN(refID[0]) == false)
 		{
 			references[i].classList.add("error");
-			references[i].innerText = "**Cannot start ID with number: " + 
-												references[i].innerText + "** ";
+			references[i].innerText = "**Cannot start ID with number: " + references[i].innerText + "** ";
 		}
 		// this is a link to a different page
 		else if(references[i].hasAttribute("href"))
@@ -1304,18 +1290,15 @@ function addReferences()
 		else if(!(encapObject.querySelector("#" + refID)))
 		{
 			references[i].classList.add("error");
-			references[i].innerText = "**Invalid Link: " + 
-												references[i].innerText + "** ";				
+			references[i].innerText = "**Invalid Link: " + references[i].innerText + "** ";				
 		}
 		// there is no content at the link (not sure this is neccessary...)
 		else if (encapObject.querySelector("#" + refID).innerText.trim() == "")
 		{
 			references[i].classList.add("error");
-			references[i].innerText = "**No content at link: "  + 
-												references[i].innerText + "** ";					
+			references[i].innerText = "**No content at link: "  + references[i].innerText + "** ";					
 		}
-		// if this is a reference to an equation -- 
-		//			this handles the situation where H5 is used and not
+		// if this is a reference to an equation -- this handles the situation where H5 is used and not
 		else if(encapObject.querySelector("#" + refID).classList.contains("eqNum")) 
 		{
 			caption = encapObject.querySelector("#" + refID).innerText;
@@ -1333,8 +1316,7 @@ function addReferences()
 				references[i].innerText = str.substring(0,pos) + eqRef + str.substring(pos+2);
 			}
 
-			// make the reference linkable as long as the nolink class is not 
-			//			specified (not working yet...)
+			// make the reference linkable as long as the nolink class is not specified (not working yet...)
 			if( !(references[i].classList.contains("nolink")) )
 			{
 				references[i].onclick = scrollToElementReturn(refID);
@@ -1357,8 +1339,7 @@ function addReferences()
 				references[i].innerText = str.substring(0,pos) + figRef + str.substring(pos+2);
 			}
 			
-			// make the reference linkable as long as the nolink class is not 
-			//				specified (not working yet...)
+			// make the reference linkable as long as the nolink class is not specified (not working yet...)
 			if( !(references[i].classList.contains("nolink")) )
 			{
 				references[i].onclick = scrollToElementReturn(refID);
@@ -1370,6 +1351,8 @@ function addReferences()
 				  encapObject.querySelector("#" + refID).nodeName.toLowerCase() == "h4") 
 		{
 			// get first number from section ID (div)
+		//	strIndex = encapObject.querySelector("#" + refID).innerText.indexOf("-");  // find the location of the first dash
+		//	sectNum = encapObject.querySelector("#" + refID).innerText.slice(0, (strIndex-2));
 			sectNum = parseFloat(encapObject.querySelector("#" + refID).innerText);
 			
 			refIndex = references[i].innerText.indexOf("##");
@@ -1377,12 +1360,10 @@ function addReferences()
 			{
 				str = references[i].innerText;
 				var pos = str.lastIndexOf('##');
-				references[i].innerText = str.substring(0,pos) + 
-													sectNum + str.substring(pos+2);
+				references[i].innerText = str.substring(0,pos) + sectNum + str.substring(pos+2);
 			}
 			
-			// make the reference linkable as long as the nolink class is not 
-			//		specified (not working yet...)
+			// make the reference linkable as long as the nolink class is not specified (not working yet...)
 			if( !(references[i].classList.contains("nolink")) )
 			{
 				references[i].onclick = scrollToElementReturn(refID);
@@ -1402,21 +1383,20 @@ function addReferences()
 				refNum = parentObj.innerText.slice(0, strIndex);
 			}
 			else if(parentObj && parentObj.firstElementChild &&
-					  parentObj == "div" && 
-								(parentObj.firstElementChild.nodeName.toLowerCase() == "h2" ||
-								 parentObj.firstElementChild.nodeName.toLowerCase() == "h3" ||
-								 parentObj.firstElementChild.nodeName.toLowerCase() == "h4") )
+					  parentObj == "div" && (parentObj.firstElementChild.nodeName.toLowerCase() == "h2" ||
+													 parentObj.firstElementChild.nodeName.toLowerCase() == "h3" ||
+													 parentObj.firstElementChild.nodeName.toLowerCase() == "h4"))
 			{
 				strIndex = caption.indexOf("-");  // find the location of the first dash
 				refNum = parentObj.firstElementChild.innerText.slice(0, (strIndex-2));
+				// refNum = parseFloat(parentObj.firstElementChild.innerText);
 			}
 			else if(parentObj.parentNode)
 			{
 				grandParent = parentObj.parentNode.nodeName.toLowerCase();
-				if(grandParent == "div" && 
-								(grandParent.firstElementChild.nodeName.toLowerCase() == "h2" ||
-								 grandParent.firstElementChild.nodeName.toLowerCase() == "h3" ||
-								 grandParent.firstElementChild.nodeName.toLowerCase() == "h4") )
+				if(grandParent == "div" && (grandParent.firstElementChild.nodeName.toLowerCase() == "h2" ||
+													 grandParent.firstElementChild.nodeName.toLowerCase() == "h3" ||
+													 grandParent.firstElementChild.nodeName.toLowerCase() == "h4"))
 				{
 					strIndex = caption.indexOf("-");  // find the location of the first dash
 					refNum = parentObj.firstElementChild.innerText.slice(0, (strIndex-2));
@@ -1430,8 +1410,7 @@ function addReferences()
 				references[i].innerText = str.substring(0,pos) + eqRef + str.substring(pos+2);
 			}
 			
-			// make the reference linkable as long as the nolink class is not 
-			//				specified (not working yet...)
+			// make the reference linkable as long as the nolink class is not specified (not working yet...)
 			if( !(references[i].classList.contains("nolink")) )
 			{
 				references[i].onclick = scrollToElementReturn(refID);
@@ -1455,14 +1434,13 @@ function checkURLForPos()
 
 function scrollToElement(elementID)
 {		
-	var element = encapObject.querySelector("#" + elementID); 
-	// gives the square location of the element	
-	var bounding = element.getBoundingClientRect();	
+	var element = encapObject.querySelector("#" + elementID);  
+	var bounding = element.getBoundingClientRect();	// gives the square location of the element
 	var elementTop = bounding.top;			// top position of element in pixels
 	var elementBottom = bounding.bottom;	// bottom position of the element in pixels
 	var iframeOffset = 0; 						// default value if the iframe is not found 
 	var scrollTop = 0;							// default value if the page is not scrolled
-	var windowHeight = window.parent.innerHeight;// height of the webpage with the lesson
+	var windowHeight = window.parent.innerHeight;	// height of the webpage with the lesson
 	var windowScroll = window.parent.scrollY; 	// amount window has been scrolled
 	
 	// check if the lesson is in an iframe
@@ -1472,13 +1450,12 @@ function scrollToElement(elementID)
 		parentIFrames = window.parent.document.getElementsByTagName("iframe");
 			
 		// go through iframe to find which has the same source as this lesson  
-		// 	(i.e., the iframe that contains this page)
+		// (i.e., the iframe that contains this page)
 		for(i=0; i<parentIFrames.length; i++)	// most likely there is only one iframe!
 		{
-			// this is the iframe that conatins the lesson
-			if (window.location.href == parentIFrames[i].src) 
+			if (window.location.href == parentIFrames[i].src) // this is the iframe that conatins the lesson
 			{
-				// distance between the top of this iFrame at the top of the parent window
+				// get the distance between the top of this iFrame at the top of the parent window
 				iframeOffset = parentIFrames[i].offsetTop; 
 				break;  // don't need to check any more iframes
 			}
@@ -1507,15 +1484,11 @@ function scrollToElement(elementID)
 		// scroll the parent to the vertical position of the linkTo element
 		window.parent.scrollTo(element.offsetLeft, (elementYPos -offsetPadding) );	
 	}
-	highlightObject(element)
-}
-
-function highlightObject(hlObject)
-{
+	
 	// highlight the linked object for 2 seconds (2000 milliseconds)
-	currentStyle = hlObject.style.backgroundColor;
-	hlObject.style.backgroundColor = "yellow";
-	setTimeout(function(){hlObject.style.backgroundColor = currentStyle;}, 2000);
+	currentStyle = element.style.backgroundColor;
+	element.style.backgroundColor = "yellow";
+	setTimeout(function(){element.style.backgroundColor = currentStyle;}, 2000);
 		
 	// change the right-click menu to show the return link
 	if (navigator.userAgent.indexOf("Firefox") != -1)
@@ -1535,8 +1508,8 @@ function linksToNewWindow()
 	for(i=0; i<links.length; i++)
 	{
 		if(links[i].href.trim() != "" && !(links[i].classList.contains("sameWin")) &&
-					!(links[i].classList.contains("download")) && 
-					(links[i].target == "_self" || !(links[i].target)) )
+			!(links[i].classList.contains("download")) && 
+			(links[i].target == "_self" || !(links[i].target)))
 		{
 			links[i].target = "_blank";
 		}
@@ -1545,9 +1518,9 @@ function linksToNewWindow()
 
 function fixMathJaxEQs()
 {
-	// change the display type of all math objects so they all display 
-	//						in the same way (this is a D2L issue)
+	// change the display type of all math objects so they all display in the same way (this is a D2L issue)
 	// this works if it happens before mathjax javascript is executed 
+	//var m = document.querySelectorAll('math[display="block"]');
 	var m = document.querySelectorAll('math');
 	
 	for(i=0; i<m.length; i++)
@@ -1561,6 +1534,15 @@ function fixMathJaxEQs()
 	//mathPro = document.querySelectorAll(".MathJax_Processing");
 	//mathPro2 = document.querySelectorAll(".MathJax_Processed");
 	
+	for(i=0; i<mathSpan.length; i++)
+	{
+		if (mathSpan[i].nextElementSibling.nodeName == "DIV")
+		{
+			//mathSpan[i].nextElementSibling.removeAttribute("style");				
+			//mathSpan[i].nextElementSibling.removeAttribute("class");
+			//mathSpan[i].nextElementSibling.style.display = "inline";
+		}
+	}
 	// MathJax/IE bug where annotations take up space but are not displayed
 	if(window.navigator.userAgent.indexOf("Edge ") > -1 || 
 		window.navigator.userAgent.indexOf("MSIE "))
@@ -1569,6 +1551,21 @@ function fixMathJaxEQs()
 		for(i=0; i<mathObj.length; i++)
 		{
 			mathObj[i].style.cssText += ";display: none !important;";
+		}
+	}
+	
+	// fix equations so that limits to summations are put above and below the summation (as opposed to on the side)
+	// find all mstyle elements that have an munderover element as a direct child
+	// this will give you the munder and munderover objects -- we want to modify the mstyle parent
+	//var m1 =  document.querySelectorAll("mstyle>munder, mstyle>munderover");
+	
+	// go through each munder and munderover element
+	//for(i=0; i<m1.length; i++)
+	{
+		// parent is mstyle -- checking if it has the attribute "displaystyle"
+	//if(!(m1[i].parentNode.hasAttribute("displaystyle")))
+		{	
+		//	m1[i].setAttribute("displaystyle", "true");
 		}
 	}
 }
@@ -1587,35 +1584,30 @@ function createEmailLink()
 }
 function openEmailWindow()
 {
-	emailWindow = window.open("https://d2l.msu.edu/d2l/le/email/" + 
-										redNum + "/ComposePopup");
+	emailWindow = window.open("https://d2l.msu.edu/d2l/le/email/" + redNum + "/ComposePopup");
 	  
-	emailWindow.onload = function() 
-	{		
-		header = emailWindow.document.body.querySelector(".vui-heading-1");
-		header.innerText = "Send Message to Instructor";
-			
-		addressControl = emailWindow.document.getElementById("ToAddresses$control");
-		addressControl.click();
-		address = emailWindow.document.getElementById("ToAddresses");
-		address.focus(); 
-		address.value = instructorEmail;
-		subject = emailWindow.document.getElementById("Subject");
-		subject.value = window.document.title;
-	};
+  emailWindow.onload = function() 
+					{		
+						header = emailWindow.document.body.querySelector(".vui-heading-1");
+						header.innerText = "Send Message to Instructor";
+							
+						addressControl = emailWindow.document.getElementById("ToAddresses$control");
+						addressControl.click();
+						address = emailWindow.document.getElementById("ToAddresses");
+						address.focus(); 
+						address.value = instructorEmail;
+						subject = emailWindow.document.getElementById("Subject");
+						subject.value = window.document.title;
+					};
 }
 function fixIframeSize()
 {
 	iFrame = window.parent.document.getElementsByClassName("d2l-iframe");
 	if (iFrame[0])
 	{
-		/* This might only be a FireFox Developers Edition issue -- 
-			in which case it can be removed */
+		/* This might only be a FireFox Developers Edition issue -- in which case it can be removed */
 		iFrame[0].style.height = document.documentElement.scrollHeight + "px";
-		setTimeout(function() 
-					{
-						iFrame[0].style.height = document.documentElement.scrollHeight + "px";
-					}, 9000);
+		setTimeout( function(){iFrame[0].style.height = document.documentElement.scrollHeight + "px";}, 9000);
 	}
 }
 
@@ -1675,19 +1667,17 @@ function captionImages()
 		// first make sure that we actally got an element and not end-of-page
 		if(parElement)  
 		{
-			/* need to find a class="caption" element in the next element 
-				sibling's descendants again, same issue as before where you should have
+			/* need to find a class="caption" element in the next element sibling's descendants
+			   again, same issue as before where you should have
 			      [p class="caption"] 
 					but could have
 					[p][span][b][i][span class="caption"]    
 					
 			if(parElement.nextElementSibling)  // if there is a next sibling
 			{
-				// go to the next sibling (likely a [p])
-				capElement = parElement.nextElementSibling;  
+				capElement = parElement.nextElementSibling;  // go to the next sibling (likely a [p])
 			
-				while(capElement.childElementCount != 0 && 
-						!(capElement.classList.contains("caption")) )
+				while(capElement.childElementCount != 0 && !(capElement.classList.contains("caption")))
 				{
 					capElement = capElement.childNodes[0];
 				}
@@ -1696,17 +1686,14 @@ function captionImages()
 				// make sure we found an element with class = "caption"
 				if(capElement.classList.contains("caption"))
 				{
-					// create a [figure] element
-					figure = document.createElement("figure");	
-
-					// create a [figcaption] element					
-					figCaption = document.createElement("figCaption");	
+					figure = document.createElement("figure");			// create a [figure] element
+					figCaption = document.createElement("figCaption");	// create a [figcaption] element
 					
 					// copy caption in [figcaption] element and preprend with the figure number
 					figCaption.innerHTML = capElement.innerText;	
-					figCaption.classList.add("caption");		// add caption class to [figCaption]
-					figure.appendChild(imagesInPage[i]);		// add image to [figure]
-					figure.appendChild(figCaption);				// add [figcaption] to [figure]
+					figCaption.classList.add("caption");					// add caption class to [figCaption]
+					figure.appendChild(imagesInPage[i]);					// add image to [figure]
+					figure.appendChild(figCaption);							// add [figcaption] to [figure]
 					
 					// remove the original caption
 					capElement.parentElement.removeChild(capElement);
