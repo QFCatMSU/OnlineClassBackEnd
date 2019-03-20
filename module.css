@@ -11,38 +11,37 @@ borders do not work if there is no predefined width and height
 - use outline instead (for Code Blocks)
 */
 
-address, pre
+pre, .textBox
 {
-	border-color: red;
 	border-radius: 5px;
-	border-left-style: double;
-	border-right-style: double;
-	border-bottom-style: none;
-	border-top-style: none;
 	border-width: 3px;
-	background-color: rgb(200,200,255);
-	font-style: normal;
-	color: rgb(55,55,0);
+	background-color: rgb(200,200,200);
+	color: rgb(0,0,0);
 	padding: 10px;
 	box-shadow: 10px 10px 5px grey;
-}
-pre
-{
 	border-color: rgb(50,50,50);
 	white-space: pre-wrap;
 	word-wrap: break-word;
-	border-bottom-style: double;
-	border-top-style: double;
+	border-style: double;
 	font-family: arial;
+	font-size: 22px;
+	line-height: 115%;
+	margin-left: 15%;
+	margin-right: 15%;
+	text-align: center;
 }
-address:first-of-type
+address
+{
+	font-style: normal;
+}
+/*address:first-of-type
 {
 	border-top-style: double;
 }
 address:last-of-type
 {
 	border-bottom-style: double;
-}
+}*/
 .MathJaxAlt_Display
 {
 	display: inline;

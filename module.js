@@ -76,6 +76,9 @@ parent.window.onload = function()
 	
 	// target all hyperlinks to a new window
 	linksToNewWindow();
+	
+	// address tag used to create an emphasized textbox
+	createTextBox();
 }
 	
 function resizeIframeContent()
@@ -744,7 +747,7 @@ function addCodeTags(elementType)
 				newElement.innerHTML = codeText[j];						// insert code into [H6]
 				if(j == 0)
 				{
-					// transfer title information to only the first element
+					// transfer fer title information to only the first element
 					newElement.title = codeLines[i].title;	
 					// transfer the class list to the first element					
 					newElement.classList =  codeLines[i].classList; 
@@ -1627,6 +1630,34 @@ function isValid(str)
 function addEqNumbering()
 {
 	mathEqs = document.querySelectorAll(".equation[id]");
+}
+
+function createTextBox()
+{
+	textLine = encapObject.querySelectorAll("address");
+	
+	firstLine = true;
+	lastLine = false;
+	for(i=0; i<textLine.length; i++)
+	{
+		if(firstLine == true)
+		{
+			// start a new div
+			textBoxDiv = document.createElement("div");
+			textBoxDiv.classList.add("textBox");
+			parent = textLine[i].parentNode;
+			parent.insertBefore(textBoxDiv, textLine[i]);
+			firstLine = false;
+		}
+		// check if the next line is an address
+		if(!(textLine[i].nextElementSibling) || textLine[i].nextElementSibling.tagName != "ADDRESS")
+		{
+			firstLine = true;
+		}
+		
+		// add textLine to div
+		textBoxDiv.appendChild(textLine[i]);
+	}
 }
 	
 /* takes

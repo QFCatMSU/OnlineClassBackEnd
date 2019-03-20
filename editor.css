@@ -10,38 +10,27 @@
 	h6>h6::first-child (currently unused) is the only example I know of so far 
 	
 	but h6>h6 works */
-address, pre
+address
 {
-	border-color: red;
-	border-radius: 5px;
-	border-left-style: double;
-	border-right-style: double;
-	border-bottom-style: none;
-	border-top-style: none;
-	border-width: 3px;
-	background-color: rgb(200,200,255);
+	background-color: rgb(200,215,200);
 	font-style: normal;
-	color: rgb(55,55,0);
+	color: rgb(0,0,0);
 	padding: 10px;
-	box-shadow: 10px 10px 5px grey;
-}
-pre
-{
-	border-color: rgb(50,50,50);
-	white-space: pre-wrap;
-	word-wrap: break-word;
-	border-bottom-style: double;
-	border-top-style: double;
 	font-family: arial;
+	font-size: 22px;
+	line-height: 30%;
+	margin-left: 15%;
+	margin-right: 15%;
+	text-align: center;
 }
-address:first-of-type
+/*address:first-of-type
 {
 	border-top-style: double;
 }
 address:last-of-type
 {
 	border-bottom-style: double;
-}
+}*/
 body
 {
 	counter-reset: h2Count figCount eqCount;
