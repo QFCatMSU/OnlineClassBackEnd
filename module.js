@@ -1515,11 +1515,16 @@ function scrollToElement(elementID)
 
 function highlightObject(hlObject)
 {
-	// highlight the linked object for 2 seconds (2000 milliseconds)
-	currentStyle = hlObject.style.backgroundColor;
-	hlObject.style.backgroundColor = "yellow";
-	setTimeout(function(){hlObject.style.backgroundColor = currentStyle;}, 2000);
-		
+
+	if(hlObject.style.backgroundColor != "yellow")  // check for double-click
+	{
+		currentStyle = hlObject.style.backgroundColor;
+			
+		// highlight the linked object for 2 seconds (2000 milliseconds)
+		hlObject.style.backgroundColor = "yellow";
+		setTimeout(function(){hlObject.style.backgroundColor = currentStyle;}, 2000);
+	}
+	
 	// change the right-click menu to show the return link
 	if (navigator.userAgent.indexOf("Firefox") != -1)
 	{
