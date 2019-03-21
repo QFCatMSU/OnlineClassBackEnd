@@ -185,6 +185,19 @@ function postMathJax()
 		// recursive call in 300ms
 		setTimeout("postMathJax()", 300);
 	}
+	else  // fix the width issue
+	{
+		/*var mathObj = document.querySelectorAll('.math');
+	
+
+		for(i=0; i<mathObj.length; i++)
+		{
+			if(mathObj[i].style.width == "100%")
+			{
+				mathObj[i].style.width = "0";
+			}
+		}*/
+	}
 }
 
 function joomlaFixes()
@@ -1650,8 +1663,8 @@ function createTextBox()
 			// start a new div
 			textBoxDiv = document.createElement("div");
 			textBoxDiv.classList.add("textBox");
-			parent = textLine[i].parentNode;
-			parent.insertBefore(textBoxDiv, textLine[i]);
+			textBoxParent = textLine[i].parentNode;
+			textBoxParent.insertBefore(textBoxDiv, textLine[i]);
 			firstLine = false;
 		}
 		// check if the next line is an address
