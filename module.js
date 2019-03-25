@@ -950,6 +950,14 @@ function selectText(element)
 	window.getSelection().addRange(range);
 }
 
+function goToTopOfPage()
+{
+	// save current scroll position
+	scrollTopPosition = window.parent.scrollY;  
+	// scroll to position 0
+	window.parent.scrollTo(window.parent.scrollX, 0);
+	enablePrevious();
+}
 function makeContextMenu(funct, param = null)
 {	
 	// for Firefox 
@@ -970,7 +978,7 @@ function makeContextMenu(funct, param = null)
 		menuItem.id = "topMenuItem";
 		menuItem.onclick = function()
 		{	
-			window.parent.scrollTo(window.parent.scrollX, 0);
+			goToTopOfPage();
 		};
 		contextMenu.appendChild(menuItem);
 		
@@ -1047,7 +1055,7 @@ function makeContextMenu(funct, param = null)
 			elemDiv.classList.add("rcMenu");
 
 			var menuItem10 = document.createElement('a');	
-			menuItem10.href = "javascript: window.parent.scrollTo(window.parent.scrollX, 0);";
+			menuItem10.href = "javascript: goToTopOfPage();";
 			menuItem10.id = "topMenuItem";
 			menuItem10.innerHTML = "Go to Top of Page";
 			menuItem10.style.display = "block";
@@ -1510,21 +1518,19 @@ function scrollToElement(elementID)
 		// scroll the parent to the vertical position of the linkTo element
 		window.parent.scrollTo(element.offsetLeft, (elementYPos -offsetPadding) );	
 	}
-	highlightObject(element)
-}
-
-function highlightObject(hlObject)
-{
-
-	if(hlObject.style.backgroundColor != "yellow")  // check for double-click
+	if(element.style.backgroundColor != "yellow")  // check for double-click
 	{
-		currentStyle = hlObject.style.backgroundColor;
+		currentStyle = element.style.backgroundColor;
 			
 		// highlight the linked object for 2 seconds (2000 milliseconds)
-		hlObject.style.backgroundColor = "yellow";
-		setTimeout(function(){hlObject.style.backgroundColor = currentStyle;}, 2000);
+		element.style.backgroundColor = "yellow";
+		setTimeout(function(){element.style.backgroundColor = currentStyle;}, 2000);
 	}
-	
+	enablePrevious();
+}
+
+function enablePrevious()
+{	
 	// change the right-click menu to show the return link
 	if (navigator.userAgent.indexOf("Firefox") != -1)
 	{
