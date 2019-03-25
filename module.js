@@ -185,19 +185,6 @@ function postMathJax()
 		// recursive call in 300ms
 		setTimeout("postMathJax()", 300);
 	}
-	else  // fix the width issue
-	{
-		/*var mathObj = document.querySelectorAll('.math');
-	
-
-		for(i=0; i<mathObj.length; i++)
-		{
-			if(mathObj[i].style.width == "100%")
-			{
-				mathObj[i].style.width = "0";
-			}
-		}*/
-	}
 }
 
 function joomlaFixes()
