@@ -1500,7 +1500,7 @@ function scrollToElement(elementID)
 	elementYPos = element.offsetParent.offsetTop + element.offsetTop + iframeOffset;
 	
 	// if the element is already in the screen, don't bother scrolling
-	if(elementYPos < windowScroll)
+	if(elementYPos < windowScroll || (windowScroll+(2*windowHeight)))
 	{
 		// add some padding so the object does not appear right at the top of the page
 		if(element.classList.contains("caption"))
@@ -1526,6 +1526,7 @@ function scrollToElement(elementID)
 		// scroll the parent to the vertical position of the linkTo element
 		window.parent.scrollTo(element.offsetLeft, (elementYPos -offsetPadding) );	
 	}
+	
 	if(element.style.backgroundColor != "yellow")  // check for double-click
 	{
 		currentStyle = element.style.backgroundColor;
