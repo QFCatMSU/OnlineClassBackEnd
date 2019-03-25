@@ -331,6 +331,10 @@ td
 {
 	color: orange;
 }
+.code a
+{
+	color: YellowGreen;
+}
 .codeBlock.nonum > .code
 {
 	padding-left: 5.5em;

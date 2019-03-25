@@ -23,14 +23,6 @@ address
 	margin-right: 15%;
 	text-align: center;
 }
-/*address:first-of-type
-{
-	border-top-style: double;
-}
-address:last-of-type
-{
-	border-bottom-style: double;
-}*/
 body
 {
 	counter-reset: h2Count figCount eqCount;
@@ -66,7 +58,6 @@ h5.eqNum::after
   content: "( " counter(eqCount) " )";  
   text-decoration: none; /* does not work -- is there another way? */
 }
-
 h1  
 { 
 	color: rgb(0,0,100); 
@@ -193,6 +184,10 @@ h6 .hl,h6 .highlight, h6.hl, h6.highlight
 h6 .note, h6.note
 {
 	color: orange;
+}
+h6 a
+{
+	color: YellowGreen;
 }
 body
 { 
