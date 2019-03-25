@@ -1500,7 +1500,7 @@ function scrollToElement(elementID)
 	elementYPos = element.offsetParent.offsetTop + element.offsetTop + iframeOffset;
 	
 	// if the element is already in the screen, don't bother scrolling
-	if(elementYPos < windowScroll || elementYPos >  (windowScroll+windowHeight) )
+	if(elementYPos < windowScroll)
 	{
 		// add some padding so the object does not appear right at the top of the page
 		if(element.classList.contains("caption"))
@@ -1515,6 +1515,14 @@ function scrollToElement(elementID)
 		// save the current value of the scroll position so we can return to this spot
 		scrollTopPosition = windowScroll;  
 
+		// scroll the parent to the vertical position of the linkTo element
+		window.parent.scrollTo(element.offsetLeft, (elementYPos -offsetPadding) );	
+	}
+	// if the scrolling-to element is within one page
+	else if(elementYPos >  (windowScroll+windowHeight) && elementYPos < (windowScroll+ (2*windowHeight)))
+	{
+		offsetPadding = windowHeight - 200;
+		
 		// scroll the parent to the vertical position of the linkTo element
 		window.parent.scrollTo(element.offsetLeft, (elementYPos -offsetPadding) );	
 	}
