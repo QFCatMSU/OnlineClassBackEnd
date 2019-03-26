@@ -808,6 +808,13 @@ function addCodeTags(elementType)
 				codeLines[i].querySelectorAll(".text").length != 0) 
 			{
 				codeBlockDiv.classList.add("text");
+			}				
+			// check if the codelines or any of its children (D2L issue) has the class "brackets" or "bx"
+			if(codeLines[i].classList.contains("brackets") || codeLines[i].classList.contains("bx") ||
+				codeLines[i].querySelectorAll(".brackets").length != 0 || 
+				codeLines[i].querySelectorAll(".bx").length != 0) 
+			{
+				codeBlockDiv.classList.add("brackets");
 			}					
 			codeBlockDiv.classList.add("codeBlock");
 			
@@ -826,13 +833,14 @@ function addCodeTags(elementType)
 				startCodeLine.innerText = "{";
 				startCodeLine.classList.add("code");
 				startCodeLine.classList.add("firstLine");
+				startCodeLine.classList.add("noSelect");
 				codeBlockDiv.appendChild(startCodeLine);
 				i++;  // another element was added so we need to increment the index
 				/*****************************************/
 			}
 			else  
 			{
-				// make this codeLine the first line (deprecated with addition of {  } )
+				// make this codeLine the first line 
 				codeLines[i].classList.add("firstLine");	
 			}
 			firstLine = false;
@@ -852,6 +860,11 @@ function addCodeTags(elementType)
 			codeLines[i].style.counterReset = "codeLines " + (codeLines[i].title -1);
 		}
 		
+		if(codeBlockDiv.classList.contains("brackets"))
+		{
+			codeLines[i].innerHTML = "  " + codeLines[i].innerHTML;
+		}
+			
 		// check if the next element after this codeLine is an [H6] -- 
 		//		if not than this is the last line
 		if(codeLines[i].nextElementSibling == null || 
@@ -867,6 +880,7 @@ function addCodeTags(elementType)
 				lastCodeLine.innerText = "}";
 				lastCodeLine.classList.add("code");
 				lastCodeLine.classList.add("lastLine");
+				lastCodeLine.classList.add("noSelect");
 				codeBlockDiv.appendChild(lastCodeLine);
 				i++;  // another element was added so we need to increment the index
 				/*****************************************/
@@ -879,7 +893,7 @@ function addCodeTags(elementType)
 			firstLine = true;
 		}		
 		else // this is not the last line of the codeblock
-		{
+		{			
 			// add the code line to the codeblock */
 			codeBlockDiv.appendChild(codeLines[i]);
 		}
