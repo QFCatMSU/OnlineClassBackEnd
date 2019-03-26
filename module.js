@@ -637,8 +637,6 @@ function goBackToPrevLocation()
 	window.parent.scrollTo(leftPos, scrollTopPosition);
 	return false;	// so the page does not reload (don't ask why!)
 }
-
-
 	
 	/* link to external CSS file 
 		This is in the javascript because D2L will rewrite links in the HTML file */
@@ -1500,7 +1498,7 @@ function scrollToElement(elementID)
 	elementYPos = element.offsetParent.offsetTop + element.offsetTop + iframeOffset;
 	
 	// if the element is already in the screen, don't bother scrolling
-	if(elementYPos < windowScroll || (windowScroll+(2*windowHeight)))
+	if(elementYPos < windowScroll || elementYPos > (windowScroll+(2*windowHeight)))
 	{
 		// add some padding so the object does not appear right at the top of the page
 		if(element.classList.contains("caption"))
