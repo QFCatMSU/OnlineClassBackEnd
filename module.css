@@ -361,6 +361,17 @@ td
 	-webkit-user-select: none; /* Chrome/Safari */        
 	-moz-user-select: none;  	/* Firefox */
 	-ms-user-select: none;		/* IE10+ */
+	background-color: rgb(50,50,50);
+}
+/* doubl;e-clicking on the div will still hightlight the unselectable lines --
+   this make the hightlight colot the same as the background color */
+.noSelect::selection
+{
+	background-color: rgb(50,50,50);
+}
+.noSelect::-moz-selection
+{
+	background-color: rgb(50,50,50);
 }
 .note
 {
