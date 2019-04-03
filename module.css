@@ -467,10 +467,6 @@ div.codeBlock
 {
 	overflow: auto;
 }
-.homePage
-{
-	margin-bottom: 5px;
-}
 .resize:hover
 {	
 	color: rgb(150,150,255);
@@ -516,7 +512,8 @@ img.flexSize, img.fs
 	width: 80px;
 	text-align: center;
 	display: block;
-	margin: auto;
+	margin-right: auto;
+	margin-left: auto;
 }
 /*.title
 {
