@@ -225,10 +225,14 @@ function d2lFixes()
 	// replace View with EditFile?fm=0
 	editURL = editURL.replace("View", "EditFile?fm=0"); 	 	
 				
-	// remove the header in the D2L page
-	parent.document.querySelector(".d2l-page-header").style.display = "none";
-	parent.document.querySelector(".d2l-page-collapsepane-container").style.display = "none";
-	parent.document.querySelector(".d2l-page-main-padding").style.padding = "0";
+	// remove the header in the D2L page (being paranoid in case D2L changes their backend)
+	if(parent.document.querySelector(".d2l-page-header"))  // we might not be in an iframe
+		parent.document.querySelector(".d2l-page-header").style.display = "none";
+	if(parent.document.querySelector(".d2l-page-collapsepane-container"))
+		parent.document.querySelector(".d2l-page-collapsepane-container").style.display = "none";
+	if(parent.document.querySelector(".d2l-page-main-padding"))
+		parent.document.querySelector(".d2l-page-main-padding").style.padding = "0";
+
 
 	d2lAddHeader();
 }
