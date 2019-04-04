@@ -7,6 +7,8 @@ overflowCalled = false;   			// check to see if there is a current check of code
 mathObjCount = 0;						// The number of equations in the lesson
 count=0;prevCount=0;countNum=0;	// used to keep track of the equations
 editURL = "";							// URL for the editting page 
+referencedObject = "";				// object in page highlighted because it is being referenced
+referenceTimer = "";					// timer used to toggle the reference object
 
 // D2L variables (knobs to turn...)
 redNum = -1;						// the number of the class 
@@ -79,6 +81,9 @@ parent.window.onload = function()
 	
 	// address tag used to create an emphasized textbox
 	createTextBox();
+	
+	if(window.location.hash.slice(1) != "") 
+		scrollToElement(window.location.hash.slice(1), true);
 }
 	
 function resizeIframeContent()
@@ -184,6 +189,11 @@ function postMathJax()
 	{
 		// recursive call in 300ms
 		setTimeout("postMathJax()", 300);
+	}
+	else  // we are done -- see if we need to scroll page
+	{	
+		if(window.location.hash.slice(1) != "") 
+			scrollToElement(window.location.hash.slice(1), true);
 	}
 }
 
@@ -1480,7 +1490,7 @@ function checkURLForPos()
 	}
 }
 
-function scrollToElement(elementID)
+function scrollToElement(elementID, outsideCall = false)
 {		
 	var element = encapObject.querySelector("#" + elementID); 
 	// gives the square location of the element	
@@ -1543,17 +1553,26 @@ function scrollToElement(elementID)
 		window.parent.scrollTo(element.offsetLeft, (elementYPos -offsetPadding) );	
 	}
 	
-	if(element.style.backgroundColor != "yellow")  // check for double-click
+	if(referencedObject != "")
 	{
-		currentStyle = element.style.backgroundColor;
-			
-		// highlight the linked object for 2 seconds (2000 milliseconds)
-		element.style.backgroundColor = "yellow";
-		setTimeout(function(){element.style.backgroundColor = currentStyle;}, 2000);
+		clearInterval(referenceTimer);
+		revertHighlight(referencedObject);
 	}
+	referencedObject = element;
+	referencedObject.classList.add("refObjHighlight");
+	if(outsideCall == true)
+		referenceTimer = setTimeout(function() {revertHighlight(referencedObject);}, 4000);
+	else
+		referenceTimer = setTimeout(function() {revertHighlight(referencedObject);}, 2000);
+	
 	enablePrevious();
 }
 
+function revertHighlight(element)
+{
+	element.classList.remove("refObjHighlight");
+	referencedObject = "";
+}
 function enablePrevious()
 {	
 	// change the right-click menu to show the return link
