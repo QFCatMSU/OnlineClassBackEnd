@@ -568,7 +568,7 @@ img.flexSize, img.fs
 	{
 		text-align: left;
 		display: inline-block;
-		margin: 0;
+		/*margin: 0;*/
 	}
 }
 @media only print

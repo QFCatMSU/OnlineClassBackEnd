@@ -26,6 +26,27 @@ address
 body
 {
 	counter-reset: h2Count figCount eqCount;
+	font-size: 14px; 
+}
+body>p:first-child, .pl, .previousLesson
+{
+	background-color: powderblue;
+}
+body>p:first-child::before
+{
+	content: "Previously: "; 
+}
+body>p:first-child:-moz-only-whitespace::after
+{
+	content: "kfdjhal"; 
+}
+body>p:first-child + p, .nl, .nextLesson
+{
+	background-color: powderblue;
+}
+body>p:first-child + p::before
+{
+	content: "Up Next: "; 
 }
 h2::before 
 {
@@ -70,6 +91,10 @@ h2
 	text-align: left; 
 	background-color: rgb(220,220,220); 
 	counter-reset: h3Count;
+}
+h2.extension, h2.trap
+{
+	color: rgb(80,15,15); 
 }
 h3
 { 
@@ -189,10 +214,6 @@ h6 a
 {
 	color: YellowGreen;
 }
-body
-{ 
-	font-size: 14px; 
-}
 img.flexSize, img.fs
 { 
 	height: 100px; 
@@ -268,10 +289,6 @@ h6>br,h6>h6
 .nn, .nonum, h6.nn + h6
 {
 	color: rgb(255,110,110);
-}
-.previousLesson, .nextLesson, .nl, .pl
-{
-	background-color: powderblue;
 }
 .email
 {

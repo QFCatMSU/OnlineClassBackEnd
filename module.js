@@ -10,20 +10,15 @@ editURL = "";							// URL for the editting page
 referencedObject = "";				// object in page highlighted because it is being referenced
 referenceTimer = "";					// timer used to toggle the reference object
 
-// D2L variables (knobs to turn...)
+// D2L variables 
 redNum = -1;						// the number of the class 
 instructorEmail = "Charlie Belinsky <belinsky@msu.edu>;";
 
 // pre-onload functions
-addEqNumbering(); // 
 addStyleSheet();  // can be done before page load since this is called in the [head]
 
 // resize the iframe in the parent window when the page gets resized
 window.parent.addEventListener("resize", resizeIframeContent());
-
-
-// when the HTML loads (DomContent), load the file to manipulate the MathML
-document.addEventListener('onDomContent', loadMathML());
 
 // don't do anything until the parent frame (d2L) loads 
 // this still seems to work if there is no parent -- probably should check for this, though
@@ -34,6 +29,9 @@ parent.window.onload = function()
 	if(document.querySelectorAll('meta[content^="Joomla"]').length > 0) joomlaFixes();
 	
 	if(window.location.hostname == "d2l.msu.edu") d2lFixes();
+	
+	// mathML() adds div to the beginning of the page -- needs to happen after header is set
+	loadMathML();
 	
 	setClassNames();
 	
@@ -67,6 +65,7 @@ parent.window.onload = function()
 	// need to add divs before doing code tags becuase this includes the div codeblocks
 	addCodeTags("H6");
 	
+	// handling wordwrapped codelines 
 	overflowCodeLines();
 	
 	// convert "download" class to a download hyperlink 
@@ -82,6 +81,7 @@ parent.window.onload = function()
 	// address tag used to create an emphasized textbox
 	createTextBox();
 	
+	// if this page was hyperlinked from elsewhere and a hash tag was added to the link
 	if(window.location.hash.slice(1) != "") 
 		scrollToElement(window.location.hash.slice(1), true);
 }
@@ -243,15 +243,38 @@ function d2lFixes()
 	if(parent.document.querySelector(".d2l-page-main-padding"))
 		parent.document.querySelector(".d2l-page-main-padding").style.padding = "0";
 
-
 	d2lAddHeader();
 }
 
+// Add a header to the lesson which include a home, previous, and next page link --
+// currently only works in D2L 
 function d2lAddHeader()
 {
-	if(self != top)
+	// check if there is a previous page link
+	prevPage = document.body.children[0];
+	if(prevPage && prevPage.tagName == "P")
 	{
-		// create div at top of page and add the home page, previous, and next page
+		if(prevPage.innerText.trim() != "")
+		{
+			prevText = "Previously: " + prevPage.innerText;
+		}
+		prevPage.parentNode.removeChild(prevPage);
+	}
+	
+	// check if there is a previous page link
+	nextPage = document.body.children[0];
+	if(nextPage && nextPage.tagName == "P")
+	{
+		if(nextPage.innerText.trim() != "")
+		{
+			nextText = "Up Next: " + nextPage.innerText;
+		}
+		nextPage.parentNode.removeChild(nextPage);
+	}
+		
+	if(self != top)
+	{	
+		// create div at top of page that will hold the home page and page links
 		divTop = document.createElement("div");
 		divTop.classList.add("headerDiv");
 		encapObject.prepend(divTop);
@@ -269,42 +292,37 @@ function d2lAddHeader()
 		homePage.classList.add("homePage");
 		divTop.appendChild(homePage);
 			
-		// add previous link
-		prevPage = encapObject.querySelectorAll(".previousLesson, .pl");
-		if(prevPage[0])  // a prevPage object exists
+		// add the previous page link if it exists
+		if(typeof prevText !== 'undefined')
 		{
-			text = prevPage[0].innerText;
 			url = window.parent.document.getElementsByClassName("d2l-iterator-button-prev");
 			newPrevPage = document.createElement("a");
-			newPrevPage.innerHTML = "Previously: " + text;
+			newPrevPage.innerHTML = prevText;
 			newPrevPage.href = url[0].href;
 			newPrevPage.target = "_parent";
 			newPrevPage.classList.add("lessonLink");
 			newPrevPage.classList.add("sameWin");
 			newPrevPage.classList.add("previousLesson");
 			divTop.insertBefore(newPrevPage, homePage);
-			prevPage[0].parentNode.removeChild(prevPage[0]);
 		}
-				
-		// add next link
-		nextPage = encapObject.querySelectorAll(".nextLesson, .nl");
-		if(nextPage[0])  // a nextPage object exists
+		
+		// add the next page link if it exists
+		if(typeof nextText !== 'undefined')
 		{
-			text = nextPage[0].innerText;
 			url = window.parent.document.getElementsByClassName("d2l-iterator-button-next");
 			newNextPage = document.createElement("a");
-			newNextPage.innerHTML = "Up Next: " + text;
+			newNextPage.innerHTML = nextText;
 			newNextPage.href = url[0].href;
 			newNextPage.target = "_parent";
 			newNextPage.classList.add("lessonLink");
 			newNextPage.classList.add("sameWin");
 			newNextPage.classList.add("nextLesson");
 			divTop.insertBefore(newNextPage, homePage);
-			nextPage[0].parentNode.removeChild(nextPage[0]);
-		}	
+		}		
 	}
 	else
 	{
+		// old system
 		lessonLinks = encapObject.querySelectorAll(".previousLesson, .nextLesson, .nl, .pl");
 		for(i=0; i<lessonLinks.length; i++)
 		{
@@ -1680,11 +1698,6 @@ function fixIframeSize()
 function isValid(str)
 {
 	return !/[~`!#$%\^&*+=\[\]\\';,/{}|\\":<>\?]/g.test(str);
-}
-
-function addEqNumbering()
-{
-	mathEqs = document.querySelectorAll(".equation[id]");
 }
 
 function createTextBox()
