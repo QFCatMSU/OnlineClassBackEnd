@@ -1656,12 +1656,20 @@ function createEmailLink()
 	for(i=0; i<emailLink.length; i++)
 	{
 		emailLink[i].style.textDecoration = "none";
-		emailLink[i].onclick = function() {openEmailWindow();};
+		if(emailLink[i].title)
+		{
+			emailAddress = emailLink[i].title;
+		}
+		else
+		{
+			emailAddress = instructorEmail;
+		}
+		emailLink[i].onclick = function() {openEmailWindow(emailAddress);};
 		emailLink[i].onmouseover = function() {this.style.textDecoration = "underline";};
 		emailLink[i].onmouseout = function() {this.style.textDecoration = "none";};
 	}
 }
-function openEmailWindow()
+function openEmailWindow(emailAddress)
 {
 	emailWindow = window.open("https://d2l.msu.edu/d2l/le/email/" + 
 										redNum + "/ComposePopup");
@@ -1675,7 +1683,8 @@ function openEmailWindow()
 		addressControl.click();
 		address = emailWindow.document.getElementById("ToAddresses");
 		address.focus(); 
-		address.value = instructorEmail;
+		address.value = emailAddress;			
+		
 		subject = emailWindow.document.getElementById("Subject");
 		subject.value = window.document.title;
 	};
