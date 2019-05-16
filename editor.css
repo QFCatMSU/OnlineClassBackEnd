@@ -35,10 +35,9 @@ body>p:first-child, .pl, .previousLesson
 body>p:first-child::before
 {
 	content: "Previously: "; 
-}
-body>p:first-child:-moz-only-whitespace::after
-{
-	content: "kfdjhal"; 
+	font-style: italic;
+	font-weight: bold;
+	color: rgb(50,0,0);
 }
 body>p:first-child + p, .nl, .nextLesson
 {
@@ -47,6 +46,9 @@ body>p:first-child + p, .nl, .nextLesson
 body>p:first-child + p::before
 {
 	content: "Up Next: "; 
+	font-style: italic;
+	font-weight: bold;
+	color: rgb(50,0,0);
 }
 h2::before 
 {
