@@ -10,6 +10,14 @@
 	h6>h6::first-child (currently unused) is the only example I know of so far 
 	
 	but h6>h6 works */
+	
+/* span with the underline style whose first-child is an image with the class equation */
+span[style*="dotum"] > img.equation:first-child
+{
+	border-color: red;
+	border-style: solid;
+	border-width: 1px;
+}
 address
 {
 	background-color: rgb(200,215,200);
@@ -70,7 +78,7 @@ h4::before
   counter-increment: figCount;               
   content: "Fig " counter(figCount) ": ";  
 }
-h5.eqNum::after
+h5.eqNum::after, span[style*="dotum"]::after
 {
   counter-increment: eqCount;               
   content: " ( " counter(eqCount) " )";  
@@ -111,7 +119,7 @@ h4
 	color: rgb(0,70,0); 
 	background-color: rgb(220,220,220); 
 }
-h5, .caption, .figureRef, .eqNum, .eqRef, .sectRef, .ref, .reference
+h5, .caption, .figureRef, .eqNum, .eqRef, .sectRef, .ref, .reference, span[style*="dotum"]::after
 { 
 	font-style: italic; 
 	color: rgb(0,100,0); 

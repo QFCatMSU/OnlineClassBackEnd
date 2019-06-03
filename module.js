@@ -28,7 +28,11 @@ parent.window.onload = function()
 
 	if(document.querySelectorAll('meta[content^="Joomla"]').length > 0) joomlaFixes();
 	
-	if(window.location.hostname == "d2l.msu.edu") d2lFixes();
+	if(window.location.hostname == "d2l.msu.edu") 
+	{
+		d2lFixes();
+		d2lAddHeader();
+	}
 	
 	// mathML() adds div to the beginning of the page -- needs to happen after header is set
 	loadMathML();
@@ -243,7 +247,7 @@ function d2lFixes()
 	if(parent.document.querySelector(".d2l-page-main-padding"))
 		parent.document.querySelector(".d2l-page-main-padding").style.padding = "0";
 
-	d2lAddHeader();
+//	d2lAddHeader();
 }
 
 // Add a header to the lesson which include a home, previous, and next page link --
@@ -270,6 +274,7 @@ function d2lAddHeader()
 			nextText = "Up Next: " + nextPage.innerText;
 		}
 		nextPage.parentNode.removeChild(nextPage);
+		//nextPage.style.display = "none";
 	}
 		
 	if(self != top)
@@ -695,12 +700,19 @@ function addStyleSheet()
 /* adds the class "caption" to all H5 lines */
 function equationNumbering()
 {
+	var newEQs = encapObject.querySelectorAll("span[style*='dotum']");
+	
+	for(i=0; i<newEQs.length; i++)
+	{
+		newEQs[i].classList.add("eqNum");
+	}
+	
 	// find all elements of elementType (initially it is H5)
 	var equations = encapObject.getElementsByClassName("eqNum");
 	
 	for(i=0; i<equations.length; i++)
 	{
-		if(equations[i].tagName == "H5")
+		if(equations[i].tagName == "H5" || equations[i].tagName == "SPAN")
 		{
 			equations[i].innerHTML = equations[i].innerHTML + " ( " + (i+1) + " )";
 		}
@@ -777,7 +789,7 @@ function addCodeTags(elementType)
 				newElement.innerHTML = codeText[j];						// insert code into [H6]
 				if(j == 0)
 				{
-					// transfer fer title information to only the first element
+					// transfer title information to only the first element
 					newElement.title = codeLines[i].title;	
 					// transfer the class list to the first element					
 					newElement.classList =  codeLines[i].classList; 
