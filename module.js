@@ -85,6 +85,9 @@ parent.window.onload = function()
 	// address tag used to create an emphasized textbox
 	createTextBox();
 	
+	// wrap figure and captions together -- for accessibility
+	captionFigures();
+	
 	// if this page was hyperlinked from elsewhere and a hash tag was added to the link
 	if(window.location.hash.slice(1) != "") 
 		scrollToElement(window.location.hash.slice(1), true);
@@ -1748,7 +1751,52 @@ function createTextBox()
 		textBoxDiv.appendChild(textLine[i]);
 	}
 }
+
+function captionFigures()
+{
+	// find all objects with class="caption" (usually H5)
+	captions = encapObject.querySelectorAll(".caption");
 	
+	for(i=0; i<captions.length; i++)
+	{
+		// get the previous sibling for the caption (probably a <p>)
+		prevSibling = captions[i].previousElementSibling;
+		
+		// don't attach a caption to an already existing figure or another caption
+		//  -- no recursive figure-ing!
+		if(prevSibling.tagName.toLowerCase() != "figure" &&
+			!(prevSibling.classList.contains("caption")) )
+		{		
+			// find the first image within the prevSibling (should only be one)
+			//figureObj = prevSibling.querySelector("img");
+				
+			//if(figureObj !== null)
+			{
+				// create a new figure caption -- copy old caption
+				figureCaption = document.createElement("figcaption");	
+				figureCaption.classList = captions[i].classList;
+				figureCaption.innerHTML = captions[i].innerHTML; // need ID?
+				figureCaption.id = captions[i].id; // need ID?
+				
+				// create a new figure -- copy from previous sibling and add caption
+				figureElement = document.createElement("figure");
+				
+				// put new figure element at same position as the caption
+				prevSibling.parentNode.insertBefore(figureElement, prevSibling);
+				
+				//figureElement.innerHTML = prevSibling.innerHTML;
+				figureElement.appendChild(prevSibling);
+				figureElement.appendChild(figureCaption);
+				
+
+				
+				// remove the old caption and the previous element
+				captions[i].parentNode.removeChild(captions[i]);
+			//	prevSibling.parentNode.removeChild(prevSibling);
+			}
+		}
+	}
+}
 /* takes
 <p><img src="ImgSrc"></p>
 <p class="caption">Caption text </p>
