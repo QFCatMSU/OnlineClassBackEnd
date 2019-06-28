@@ -615,6 +615,16 @@ img.flexSize, img.fs
 		/* adjust the font color for a white background 
 		   -- it was designed for a black background */
 	}
+	.codeBlock
+	{
+		border-bottom-width: 1px;
+		border-top-width: 1px;
+		border-top-style: solid;
+		border-bottom-style: solid;
+		border-right-style: none;
+		border-left-style: none;
+		border-color: grey;
+	}
 	.codeBlock:not(.nonum)>.code
 	{
 		margin-left: -25px;
