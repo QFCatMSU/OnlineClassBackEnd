@@ -1233,9 +1233,46 @@ function addDownloadLinks()
 	}
 }
 
+// checks in the references is on a block-displayed object.  If so,
+// we need to create an inline-display object inside and put the 
+// reference there
+function fixBlockReferences()
+{
+	var references = encapObject.querySelectorAll(".ref");
+
+	for(i=0; i<references.length; i++)
+	{
+		// get the display type of the reference element
+		displayType = window.getComputedStyle(references[i], "").display;
+		
+		// if the element is block or list-item -- both take up the whole line
+		if(displayType == "block" || displayType == "list-item")
+		{
+			// create a new <span> and copy the contents of the ref element
+			newRef = document.createElement("span");
+			newRef.innerHTML = references[i].innerHTML;
+			
+			// copy the id and add ref class to <span>
+			newRef.id = references[i].id;
+			newRef.classList.add("ref");
+			
+			// remove all content, id, and ref class from reference element
+			references[i].innerHTML = "";
+			references[i].id = "";
+			references[i].classList.remove("ref");
+			
+			// append the new <span> inside the reference element
+			references[i].appendChild(newRef);	
+		}
+	}
+}
+
 /* finds all section references in the page and add the correct numerical reference */
 function addReferences()
 {
+	fixBlockReferences();
+	
+	////////////////////////////// this section is deprecated
 	var references = encapObject.querySelectorAll(".sectRef, .figureRef, .eqRef, .linkTo");
 
 	for(i=0; i<references.length; i++)
@@ -1325,7 +1362,8 @@ function addReferences()
 			references[i].onclick = scrollToElementReturn(refID);
 		}
 	}
-
+	//////////////////////////////////////  end of deprecated section
+	
 	// new system for references
 	var references = encapObject.querySelectorAll(".ref, .reference");
 	for(i=0; i<references.length; i++)
