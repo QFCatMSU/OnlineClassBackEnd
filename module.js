@@ -291,26 +291,30 @@ function d2lAddHeader()
 		url = window.parent.location.href;
 		classNum = url.match(/\/[0-9]{3,}\//); 
 		redNum = classNum[0].substring(1, classNum[0].length-1); // get number of D2L class
-		homePage = document.createElement("a");
-		homePage.innerHTML = "Home";
-		homePage.href = "https://d2l.msu.edu/d2l/home/" + redNum;
-		homePage.target = "_parent";
+		homePage = document.createElement("span");
 		homePage.classList.add("lessonLink");
 		homePage.classList.add("sameWin");
 		homePage.classList.add("homePage");
+		homeLink =  document.createElement("a");
+		homeLink.innerHTML = "Home";
+		homeLink.href = "https://d2l.msu.edu/d2l/home/" + redNum;
+		homeLink.target = "_parent";
+		homePage.appendChild(homeLink);
 		divTop.appendChild(homePage);
 			
 		// add the previous page link if it exists
 		if(typeof prevText !== 'undefined')
 		{
 			url = window.parent.document.getElementsByClassName("d2l-iterator-button-prev");
-			newPrevPage = document.createElement("a");
-			newPrevPage.innerHTML = prevText;
-			newPrevPage.href = url[0].href;
-			newPrevPage.target = "_parent";
+			newPrevPage = document.createElement("span");
 			newPrevPage.classList.add("lessonLink");
 			newPrevPage.classList.add("sameWin");
 			newPrevPage.classList.add("previousLesson");
+			newPrevPageLink = document.createElement("a");
+			newPrevPageLink.innerHTML = prevText;
+			newPrevPageLink.href = url[0].href;
+			newPrevPageLink.target = "_parent";
+			newPrevPage.appendChild(newPrevPageLink);
 			divTop.insertBefore(newPrevPage, homePage);
 		}
 		
@@ -318,13 +322,15 @@ function d2lAddHeader()
 		if(typeof nextText !== 'undefined')
 		{
 			url = window.parent.document.getElementsByClassName("d2l-iterator-button-next");
-			newNextPage = document.createElement("a");
-			newNextPage.innerHTML = nextText;
-			newNextPage.href = url[0].href;
-			newNextPage.target = "_parent";
+			newNextPage = document.createElement("span");
 			newNextPage.classList.add("lessonLink");
 			newNextPage.classList.add("sameWin");
 			newNextPage.classList.add("nextLesson");
+			newNextPageLink = document.createElement("a");
+			newNextPageLink.innerHTML = nextText;
+			newNextPageLink.href = url[0].href;
+			newNextPageLink.target = "_parent";
+			newNextPage.appendChild(newNextPageLink);
 			divTop.insertBefore(newNextPage, homePage);
 		}		
 	}
