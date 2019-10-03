@@ -573,6 +573,10 @@ img.flexSize, img.fs
 }
 @media only print
 {
+	body, .h1Div, .h2Div, .h3Div, .nonlinear, .title
+	{
+		background-color: transparent;
+	}
 	a
 	{
 		text-decoration: underline !important;  /* why?? what is superceding this? */
