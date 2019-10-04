@@ -4,12 +4,18 @@
 	does not read the stylesheet so these are used to make the
 	editor more user-friendly */
 	
-/* Some editor changes only take place when "Save" is hit in the 
-   HTML editor window and only last for the session!
+/* Would Like to number codelines in the editor for class!="nn" but there are two issues:
+	1) A class is only put on the first codelines
+	2) Codelines can be separate H6 objects or have <br> -- the latter happens on copy/paste
 	
-	h6>h6::first-child (currently unused) is the only example I know of so far 
+	Even if the codelines were all H6, there is no contiguouos style in CSS (i.e., no way to say
+	"apply this style to grouped objects of a certain type").  There is a hacky way to do -- you
+	need to use the h6 h6 h6... for each number of possible contiguous h6 values.  So, if there is
+	a possibility of 100 lines of code, you need 100 object command , the last one being h6 repeated
+	100 times.
 	
-	but h6>h6 works */
+	And, this gets even more complicated by the <br>
+*/
 	
 /* span with the underline style whose first-child is an image with the class equation */
 span[style*="dotum"] > img.equation:first-child
