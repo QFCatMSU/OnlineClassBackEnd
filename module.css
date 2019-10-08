@@ -629,11 +629,16 @@ img.flexSize, img.fs
 	{
 		border-bottom-width: 1px;
 		border-top-width: 1px;
+		border-right-width: 1px;
+		padding-left: 20px;
+		
+		left: -20px;
+		border-left-width: 1px;
 		border-top-style: solid;
 		border-bottom-style: solid;
-		border-right-style: none;
-		border-left-style: none;
-		border-color: grey;
+		border-right-style: solid;
+		border-left-style: solid;
+		border-color: rgb(75,75,75);
 	}
 	.codeBlock:not(.nonum)>.code
 	{
