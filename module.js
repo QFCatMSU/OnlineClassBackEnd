@@ -966,7 +966,7 @@ function addCodeBlockToggle()
 
 	for(i=0; i<codeBlocks.length; i++)
 	{
-		if(codeBlocks[i].childElementCount >= 5)
+		if(codeBlocks[i].childElementCount > 8)
 		{
 			if(codeBlocks.id == "") codeBlocks.id = "codeblock" + i
 			
