@@ -616,7 +616,7 @@ img.flexSize, img.fs
 	{
 		text-decoration: underline !important;  /* why?? what is superceding this? */
 	}
-	.lessonLink, .concept, .resize, iframe
+	.lessonLink, .concept, .resize, iframe, .codeBlock>p, .codeTab
 	{
 		display: none; margin: 0; padding: 0; height: 0; width: 0;
 	}
@@ -660,6 +660,7 @@ img.flexSize, img.fs
 		border-top-width: 1px;
 		border-right-width: 1px;
 		padding-left: 20px;
+		margin-top: 8px;
 		
 		left: -20px;
 		border-left-width: 1px;
