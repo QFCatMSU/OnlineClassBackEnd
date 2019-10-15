@@ -255,7 +255,7 @@ td
 	/* instead of a border -- cannot use border becuase there
 	   is no height set on the code-blocks so the border automatically
 		changes the size of the box (so the box-sizing property does not work */
-	outline: 2px solid rgb(150,250,50);
+	/*outline: 2px solid rgb(150,250,50);*/
 }
 .contentDiv
 {
@@ -356,7 +356,7 @@ td
 	color: rgb(200,200,100);
 	min-width: 25px;
 	text-align: right;
-	user-select: none;			/* standard but not used */
+	user-select: none;			/* standard but not used (might be fully implemented by now...) */
 	-webkit-user-select: none; /* Chrome/Safari */        
 	-moz-user-select: none;  	/* Firefox */
 	-ms-user-select: none;		/* IE10+ */
@@ -364,20 +364,21 @@ td
 .noSelect
 {
 	user-select: none;			/* standard but not used */
-	-webkit-user-select: none; /* Chrome/Safari */        
-	-moz-user-select: none;  	/* Firefox */
-	-ms-user-select: none;		/* IE10+ */
-	background-color: rgb(50,50,50);
+/*	-webkit-user-select: none; /* Chrome/Safari */        
+/*	-moz-user-select: none;  	/* Firefox */
+/*	-ms-user-select: none;		/* IE10+ */
+/*	background-color: rgb(50,50,50);*/
+	outline-style: none;
 }
-/* doubl;e-clicking on the div will still hightlight the unselectable lines --
-   this make the hightlight colot the same as the background color */
+/* double-clicking on the div will still hightlight the unselectable lines --
+   this make the hightlight color the same as the background color */
 .noSelect::selection
 {
-	background-color: rgb(50,50,50);
+/*	background-color: rgb(50,50,50);*/
 }
 .noSelect::-moz-selection
 {
-	background-color: rgb(50,50,50);
+/*	background-color: rgb(50,50,50);*/
 }
 .note
 {
@@ -440,7 +441,7 @@ div.codeBlock
 :not([class*='code']) + .code
 {
 	/* these styles will be applied to the next element (class="code") */
-	padding-top: 7px;  
+	/* padding-top: 7px; -- not sure this is needed anymore... */  
 }
 /*** end of code typesettings ****/
 .rcMenu  /* the right-click menu */
@@ -542,13 +543,41 @@ img.flexSize, img.fs
 .email
 {
 	color: rgb(0,0,150);
-	text-decoration: underline;
 	cursor: pointer;
+}
+.email:hover
+{
+	text-decoration: underline;
 }
 .refObjHighlight
 {
 	background-color: yellow;
 	color: black;
+}
+.codeTab
+{
+	background-color: green;
+	min-width: 60px;
+	text-align: center;
+	display: inline-block;
+	font-size: 17px;
+	line-height: 100%;
+}
+.codeTab:hover
+{
+	background-color: lime;
+}
+.codeTabTop
+{
+	border-radius: 5px 5px 0px 0px;
+	position: relative;
+	top: 2px;   /* wish there was a more elegant way to do this... */
+}
+.codeTabBottom
+{
+	border-radius: 0px 0px 5px 5px;
+	position: relative;
+	top: -1px;
 }
 @media only screen and (max-width: 820px) 
 {

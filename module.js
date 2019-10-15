@@ -1,3 +1,7 @@
+// tabs in codeblocks are messing with the figures
+// tabs are not aligned to the divs because the divs have been shifted
+//    you can align by putting the tab inside the div
+
 smallImageHeight = 100;				// set the height of flex-sized images when small 
 imageHeight = new Array();			// the heights of all flex-sized images in a page
 imageWidth = new Array();			// the widths of all flex-sized images in a page
@@ -68,6 +72,9 @@ parent.window.onload = function()
 	// adds code tags to all content within an [h6] tag
 	// need to add divs before doing code tags becuase this includes the div codeblocks
 	addCodeTags("H6");
+	
+	// allow user to toggle the size of the codeblock
+	addCodeBlockToggle();
 	
 	// handling wordwrapped codelines 
 	overflowCodeLines();
@@ -953,6 +960,79 @@ function addCodeTags(elementType)
 	}
 }
 
+function addCodeBlockToggle()
+{
+	codeBlocks = document.body.querySelectorAll(".codeBlock");
+
+	for(i=0; i<codeBlocks.length; i++)
+	{
+		if(codeBlocks[i].childElementCount >= 5)
+		{
+			if(codeBlocks.id == "") codeBlocks.id = "codeblock" + i
+			
+			par = document.createElement("p");
+			par.classList.add("noSelect");
+			par.style.textAlign = "right";
+			tabSpan = document.createElement("span");
+			tabSpan.classList.add("codeTab");
+			tabSpan.classList.add("codeTabTop");
+			tabSpan.classList.add("noSelect");
+			tabSpan.innerHTML = "\u2013";
+			tabSpan.addEventListener("click", function() {toggleCodeBlock(this, "top");} );
+			par.appendChild(tabSpan);
+			codeBlocks[i].insertBefore(par, codeBlocks[i].children[0]);
+			
+			par = document.createElement("p");
+			par.classList.add("noSelect");
+			par.style.textAlign = "left";
+			tabSpan = document.createElement("span");
+			tabSpan.classList.add("codeTab");
+			tabSpan.classList.add("codeTabBottom");
+			tabSpan.classList.add("noSelect");
+			tabSpan.innerHTML = "\u2013";
+			tabSpan.addEventListener("click", function() {toggleCodeBlock(this, "bottom");} );
+			par.appendChild(tabSpan);
+			codeBlocks[i].appendChild(par);
+		
+		}
+	}
+}
+
+function toggleCodeBlock(tab, position)
+{
+	cb = tab.parentNode.parentNode;
+	codeLines = cb.querySelectorAll(".code");
+
+	if(position == "top")
+	{
+		otherTab = cb.lastElementChild.children[0];
+	}
+	else
+	{
+		otherTab = cb.children[0].children[0];
+	}
+
+	if(tab.innerText != "\u25A1")
+	{
+		tab.innerText =  "\u25A1";	// make a hollow square
+		otherTab.innerText =  "\u25A1";	// make a hollow square
+		
+		for(i=3; i<codeLines.length; i++)  // start at the third line
+		{
+			codeLines[i].style.display = "none";		
+		}
+	}
+	else
+	{
+		tab.innerText =  "\u2013"; 		// make an endash
+		otherTab.innerText =  "\u2013"; // make an endash
+		
+		for(i=3; i<codeLines.length; i++)  // start at the third line
+		{
+			codeLines[i].style.display = "block";		
+		}
+	}
+}
 function overflowCodeLines()
 {
 	// find all code elements (<p> with class = "code")
@@ -1714,7 +1794,6 @@ function createEmailLink()
 	
 	for(i=0; i<emailLink.length; i++)
 	{
-		emailLink[i].style.textDecoration = "none";
 		if(emailLink[i].title)
 		{
 			emailAddress = emailLink[i].title;
@@ -1724,8 +1803,6 @@ function createEmailLink()
 			emailAddress = instructorEmail;
 		}
 		emailLink[i].onclick = function() {openEmailWindow(emailAddress);};
-		emailLink[i].onmouseover = function() {this.style.textDecoration = "underline";};
-		emailLink[i].onmouseout = function() {this.style.textDecoration = "none";};
 	}
 }
 function openEmailWindow(emailAddress)
