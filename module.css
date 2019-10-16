@@ -249,13 +249,15 @@ td
 	position: relative;
 	color: rgb(100,255,255);
 	left: -10px;
+	max-height: 400px;
+	overflow-y: auto;
 }
 .codeBlock:hover
 {
 	/* instead of a border -- cannot use border becuase there
 	   is no height set on the code-blocks so the border automatically
 		changes the size of the box (so the box-sizing property does not work */
-	/*outline: 2px solid rgb(150,250,50);*/
+	outline: 2px solid rgb(150,250,50);
 }
 .contentDiv
 {
@@ -367,7 +369,7 @@ td
 /*	-webkit-user-select: none; /* Chrome/Safari */        
 /*	-moz-user-select: none;  	/* Firefox */
 /*	-ms-user-select: none;		/* IE10+ */
-/*	background-color: rgb(50,50,50);*/
+	background-color: rgb(50,50,50);
 	outline-style: none;
 }
 /* double-clicking on the div will still hightlight the unselectable lines --
@@ -554,7 +556,7 @@ img.flexSize, img.fs
 	background-color: yellow;
 	color: black;
 }
-.codeTab
+/*.codeTab
 {
 	background-color: green;
 	min-width: 60px;
@@ -571,14 +573,14 @@ img.flexSize, img.fs
 {
 	border-radius: 5px 5px 0px 0px;
 	position: relative;
-	top: 2px;   /* wish there was a more elegant way to do this... */
+	top: 2px;   /* wish there was a more elegant way to do this... 
 }
 .codeTabBottom
 {
 	border-radius: 0px 0px 5px 5px;
 	position: relative;
 	top: -1px;
-}
+}*/
 @media only screen and (max-width: 820px) 
 {
 	.lessonLink
@@ -616,7 +618,7 @@ img.flexSize, img.fs
 	{
 		text-decoration: underline !important;  /* why?? what is superceding this? */
 	}
-	.lessonLink, .concept, .resize, iframe, .codeBlock>p, .codeTab
+	.lessonLink, .concept, .resize, iframe, /*.codeBlock>p, .codeTab*/
 	{
 		display: none; margin: 0; padding: 0; height: 0; width: 0;
 	}
@@ -669,6 +671,9 @@ img.flexSize, img.fs
 		border-right-style: solid;
 		border-left-style: solid;
 		border-color: rgb(75,75,75);
+		
+		/* Need to remove scroll from print view */
+		max-height: none;
 	}
 	.codeBlock:not(.nonum)>.code
 	{

@@ -74,7 +74,7 @@ parent.window.onload = function()
 	addCodeTags("H6");
 	
 	// allow user to toggle the size of the codeblock
-	addCodeBlockToggle();
+	//addCodeBlockToggle();
 	
 	// handling wordwrapped codelines 
 	overflowCodeLines();
@@ -962,7 +962,7 @@ function addCodeTags(elementType)
 
 function addCodeBlockToggle()
 {
-	codeBlocks = document.body.querySelectorAll(".codeBlock");
+	/*codeBlocks = document.body.querySelectorAll(".codeBlock");
 
 	for(i=0; i<codeBlocks.length; i++)
 	{
@@ -995,12 +995,12 @@ function addCodeBlockToggle()
 			codeBlocks[i].appendChild(par);
 		
 		}
-	}
+	}*/
 }
 
 function toggleCodeBlock(tab, position)
 {
-	cb = tab.parentNode.parentNode;
+/*	cb = tab.parentNode.parentNode;
 	codeLines = cb.querySelectorAll(".code");
 
 	if(position == "top")
@@ -1031,7 +1031,7 @@ function toggleCodeBlock(tab, position)
 		{
 			codeLines[i].style.display = "block";		
 		}
-	}
+	}*/
 }
 function overflowCodeLines()
 {
