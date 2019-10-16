@@ -443,7 +443,7 @@ div.codeBlock
 :not([class*='code']) + .code
 {
 	/* these styles will be applied to the next element (class="code") */
-	/* padding-top: 7px; -- not sure this is needed anymore... */  
+	 padding-top: 7px;  /* unsure why this is needed */
 }
 /*** end of code typesettings ****/
 .rcMenu  /* the right-click menu */
