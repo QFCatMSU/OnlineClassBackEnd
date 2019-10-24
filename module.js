@@ -74,7 +74,7 @@ parent.window.onload = function()
 	addCodeTags("H6");
 	
 	// allow user to toggle the size of the codeblock
-	//addCodeBlockToggle();
+	addCodeBlockTag();
 	
 	// handling wordwrapped codelines 
 	overflowCodeLines();
@@ -875,7 +875,12 @@ function addCodeTags(elementType)
 				codeLines[i].querySelectorAll(".bx").length != 0) 
 			{
 				codeBlockDiv.classList.add("brackets");
-			}					
+			}
+			// check if the codeline has a title 
+			if(codeLines[i].title.trim() != "" ) 
+			{
+				codeBlockDiv.title = codeLines[i].title;
+			}				
 			codeBlockDiv.classList.add("codeBlock");
 			
 			// when clicked, call the selectText function and pass the element
@@ -894,6 +899,7 @@ function addCodeTags(elementType)
 				startCodeLine.classList.add("code");
 				startCodeLine.classList.add("firstLine");
 				startCodeLine.classList.add("noSelect");
+				startCodeLine.classList.add("noCode");
 				codeBlockDiv.appendChild(startCodeLine);
 				i++;  // another element was added so we need to increment the index
 				/*****************************************/
@@ -941,6 +947,7 @@ function addCodeTags(elementType)
 				lastCodeLine.classList.add("code");
 				lastCodeLine.classList.add("lastLine");
 				lastCodeLine.classList.add("noSelect");
+				lastCodeLine.classList.add("noCode");
 				codeBlockDiv.appendChild(lastCodeLine);
 				i++;  // another element was added so we need to increment the index
 				/*****************************************/
@@ -956,6 +963,29 @@ function addCodeTags(elementType)
 		{			
 			// add the code line to the codeblock */
 			codeBlockDiv.appendChild(codeLines[i]);
+		}
+	}
+}
+
+function addCodeBlockTag()
+{
+	codeBlockDivs = encapObject.querySelectorAll(".codeBlock");
+	
+	for(i=0; i<codeBlockDivs.length; i++)
+	{
+		// if the first child of the codeblock has a title and its not a number (numbers represent a codeline)
+		if(codeBlockDivs[i].title.trim() != "" && isNaN(codeBlockDivs[i].title.trim()))  
+		{
+			par = document.createElement("p");
+			par.classList.add("noSelect");
+			par.style.textAlign = "left";
+			tabSpan = document.createElement("span");
+			tabSpan.classList.add("codeBlockTab");
+			tabSpan.classList.add("noSelect");
+			tabSpan.classList.add("noCode");
+			tabSpan.innerHTML = codeBlockDivs[i].title;
+			par.appendChild(tabSpan);
+			codeBlockDivs[i].insertBefore(par, codeBlockDivs[i].children[0]);
 		}
 	}
 }
