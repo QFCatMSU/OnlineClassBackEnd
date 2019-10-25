@@ -48,9 +48,17 @@ address:last-of-type
 {
 	border-bottom-style: double;
 }*/
-.MathJaxAlt_Display
+.MathJaxAlt_Display, math
 {
 	display: inline;
+}
+math, .MathJax, .eq, .equation
+{
+	color: rgb(79,49,9);
+}
+.eq, .equation
+{
+	font-family: MathJax_Main;  /* match the font used by MathJax */
 }
 body
 {
@@ -69,11 +77,7 @@ p, ul, ol, li
 	color: rgb(0,0,0);
 	line-height: 135%;
 }
-math, .MathJax
-{
-	color: rgb(79,49,9);
-	display: inline;
-}
+
 figure
 {
 	margin: 0;
@@ -369,8 +373,11 @@ td
 /*	-webkit-user-select: none; /* Chrome/Safari */        
 /*	-moz-user-select: none;  	/* Firefox */
 /*	-ms-user-select: none;		/* IE10+ */
-	background-color: rgb(50,50,50);
 	outline-style: none;
+}
+.noCode
+{
+	background-color: rgb(50,50,50);	
 }
 /* double-clicking on the div will still hightlight the unselectable lines --
    this make the hightlight color the same as the background color */
@@ -443,7 +450,7 @@ div.codeBlock
 :not([class*='code']) + .code
 {
 	/* these styles will be applied to the next element (class="code") */
-	 padding-top: 7px;  /* unsure why this is needed */
+	/* padding-top: 7px;  /* unsure why this is needed */
 }
 /*** end of code typesettings ****/
 .rcMenu  /* the right-click menu */
@@ -556,15 +563,21 @@ img.flexSize, img.fs
 	background-color: yellow;
 	color: black;
 }
-/*.codeTab
+.codeBlockTab
 {
-	background-color: green;
-	min-width: 60px;
+	background-color: rgb(50,50,50);
+	color: rgb(240,240,240);
 	text-align: center;
 	display: inline-block;
-	font-size: 17px;
-	line-height: 100%;
-}
+	font-size: 14px;
+	border-radius: 4px 4px 0px 0px;
+	/*top: 1px;*/
+	min-width: 100px;
+	position: relative;
+	padding-left: 10px;
+	padding-right: 10px;
+	font-family: calibri;
+}/*
 .codeTab:hover
 {
 	background-color: lime;
