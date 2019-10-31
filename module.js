@@ -190,7 +190,7 @@ function postMathJax()
 			mathDis[i].classList.length == 1)
 		{
 			// When display=block is set, MathJax overcpmpensates and 
-			// sets all style display to block.  Switching this to inline makes the formula 
+			// sets all style display to block !important.  Switching this to inline makes the formula 
 			// more flexible and matches the style in the D2L editor
 			mathDis[i].setAttribute("style", "display: inline !important;");
 			count++;
@@ -208,6 +208,74 @@ function postMathJax()
 	{	
 		if(window.location.hash.slice(1) != "") 
 			scrollToElement(window.location.hash.slice(1), true);
+		
+		moveEqNum();
+	}
+}
+
+/* For all equations that have a number --
+   moves the number to an appropriate spot if the equation has multiple lines.
+	This is hacky! **/
+function moveEqNum()
+{
+	// get all elements with class = eqNum
+	eqNumObj = document.querySelectorAll("span.eqNum");
+
+	// find all elements that use the clip style
+	for(i=0; i<eqNumObj.length; i++)
+	{	
+		// remove the font-family style using in the D2L editor (Dotum)
+		eqNumObj[i].style.fontFamily = null;
+		
+		// get the parent node of the eqNum object
+		eqNumParent = eqNumObj[i].parentNode;
+		
+		// get through each child element of eqNum 
+		for(j=0; j<eqNumObj[i].childElementCount; j++)
+		{
+			// move children up one level (basically, this makes eqNum a last sibling instead of a parent)
+			eqNumParent.insertBefore(eqNumObj[i].firstChild, eqNumObj[i]);
+		}
+		
+		// find all multiple-line equations -- which all use the style MathJax_FullWidth 
+		// multiple-line equations cause problems with the eqNum object
+		if(FW = eqNumObj[i].parentNode.querySelector("span.MathJax_FullWidth"))
+		{
+			/**** setting the top position of the equation number ****/
+			// set the eqNum position to relativ to allow it to move
+			eqNumObj[i].style.position = "relative";
+			
+			// get the bounding rectangles of the equation and the equation number
+			eqNumRect = eqNumObj[i].getBoundingClientRect();
+			eqRect = FW.getBoundingClientRect() 
+
+			// use the height and top values to move the equation number 
+			eqNumObj[i].style.top = ( eqRect.top - eqNumRect.top ) + 
+											(eqRect.height/2 - eqNumRect.height) + "px";
+
+
+			/**** setting the left position of the equation number 
+					issue: need to find the widest line in the multi-line equation ****/	
+			// the bounding box of each line in the equation uniquely has a margin-left style
+			spanClips = eqNumParent.querySelectorAll("span[style*=margin-left]");
+			
+			maxLineWidth = 0;  // initial state value
+			
+			// go through each span clip to find which is the widest
+			for(j=0; j<spanClips.length; j++)
+			{
+				lineWidth = spanClips[j].getBoundingClientRect().width; // get width of current EQ line
+
+				if(lineWidth > maxLineWidth)
+				{
+					maxLineWidth = lineWidth;
+					eqLeftPos = spanClips[j].getBoundingClientRect().left; // get left of current EQ line
+				}
+			}	
+			
+			// use the height and top values to move the equation number to the appropriate left pos
+			eqNumObj[i].style.left = ( maxLineWidth + eqLeftPos - eqNumRect.left + 10) + "px";
+		}
 	}
 }
 
@@ -713,7 +781,7 @@ function addStyleSheet()
 	document.getElementsByTagName("head")[0].appendChild(CSSFile);
 }
 
-/* adds the class "caption" to all H5 lines */
+/* adds the class "eqNum" to all H5 lines that have the dotum font (it's a hack for D2L) */
 function equationNumbering()
 {
 	var newEQs = encapObject.querySelectorAll("span[style*='dotum']");
@@ -990,79 +1058,6 @@ function addCodeBlockTag()
 	}
 }
 
-function addCodeBlockToggle()
-{
-	/*codeBlocks = document.body.querySelectorAll(".codeBlock");
-
-	for(i=0; i<codeBlocks.length; i++)
-	{
-		if(codeBlocks[i].childElementCount > 8)
-		{
-			if(codeBlocks.id == "") codeBlocks.id = "codeblock" + i
-			
-			par = document.createElement("p");
-			par.classList.add("noSelect");
-			par.style.textAlign = "right";
-			tabSpan = document.createElement("span");
-			tabSpan.classList.add("codeTab");
-			tabSpan.classList.add("codeTabTop");
-			tabSpan.classList.add("noSelect");
-			tabSpan.innerHTML = "\u2013";
-			tabSpan.addEventListener("click", function() {toggleCodeBlock(this, "top");} );
-			par.appendChild(tabSpan);
-			codeBlocks[i].insertBefore(par, codeBlocks[i].children[0]);
-			
-			par = document.createElement("p");
-			par.classList.add("noSelect");
-			par.style.textAlign = "left";
-			tabSpan = document.createElement("span");
-			tabSpan.classList.add("codeTab");
-			tabSpan.classList.add("codeTabBottom");
-			tabSpan.classList.add("noSelect");
-			tabSpan.innerHTML = "\u2013";
-			tabSpan.addEventListener("click", function() {toggleCodeBlock(this, "bottom");} );
-			par.appendChild(tabSpan);
-			codeBlocks[i].appendChild(par);
-		
-		}
-	}*/
-}
-
-function toggleCodeBlock(tab, position)
-{
-/*	cb = tab.parentNode.parentNode;
-	codeLines = cb.querySelectorAll(".code");
-
-	if(position == "top")
-	{
-		otherTab = cb.lastElementChild.children[0];
-	}
-	else
-	{
-		otherTab = cb.children[0].children[0];
-	}
-
-	if(tab.innerText != "\u25A1")
-	{
-		tab.innerText =  "\u25A1";	// make a hollow square
-		otherTab.innerText =  "\u25A1";	// make a hollow square
-		
-		for(i=3; i<codeLines.length; i++)  // start at the third line
-		{
-			codeLines[i].style.display = "none";		
-		}
-	}
-	else
-	{
-		tab.innerText =  "\u2013"; 		// make an endash
-		otherTab.innerText =  "\u2013"; // make an endash
-		
-		for(i=3; i<codeLines.length; i++)  // start at the third line
-		{
-			codeLines[i].style.display = "block";		
-		}
-	}*/
-}
 function overflowCodeLines()
 {
 	// find all code elements (<p> with class = "code")
@@ -1797,7 +1792,7 @@ function fixMathJaxEQs()
 	
 	for(i=0; i<m.length; i++)
 	{
-		m[i].setAttribute("display", "block");
+		m[i].setAttribute("display", "block");   // still needed??
 	}
 	
 	// this works if it happens after mathjax javascript is executed 
@@ -1807,6 +1802,7 @@ function fixMathJaxEQs()
 	//mathPro2 = document.querySelectorAll(".MathJax_Processed");
 	
 	// MathJax/IE bug where annotations take up space but are not displayed
+	// Might not be needed anymore 
 	if(window.navigator.userAgent.indexOf("Edge ") > -1 || 
 		window.navigator.userAgent.indexOf("MSIE "))
 	{
@@ -2037,5 +2033,81 @@ function captionImages()
 		}
 	}
 }
+
+
+function addCodeBlockToggle()
+{
+	codeBlocks = document.body.querySelectorAll(".codeBlock");
+
+	for(i=0; i<codeBlocks.length; i++)
+	{
+		if(codeBlocks[i].childElementCount > 8)
+		{
+			if(codeBlocks.id == "") codeBlocks.id = "codeblock" + i
+			
+			par = document.createElement("p");
+			par.classList.add("noSelect");
+			par.style.textAlign = "right";
+			tabSpan = document.createElement("span");
+			tabSpan.classList.add("codeTab");
+			tabSpan.classList.add("codeTabTop");
+			tabSpan.classList.add("noSelect");
+			tabSpan.innerHTML = "\u2013";
+			tabSpan.addEventListener("click", function() {toggleCodeBlock(this, "top");} );
+			par.appendChild(tabSpan);
+			codeBlocks[i].insertBefore(par, codeBlocks[i].children[0]);
+			
+			par = document.createElement("p");
+			par.classList.add("noSelect");
+			par.style.textAlign = "left";
+			tabSpan = document.createElement("span");
+			tabSpan.classList.add("codeTab");
+			tabSpan.classList.add("codeTabBottom");
+			tabSpan.classList.add("noSelect");
+			tabSpan.innerHTML = "\u2013";
+			tabSpan.addEventListener("click", function() {toggleCodeBlock(this, "bottom");} );
+			par.appendChild(tabSpan);
+			codeBlocks[i].appendChild(par);
+		
+		}
+	}
+}
+
+function toggleCodeBlock(tab, position)
+{
+	cb = tab.parentNode.parentNode;
+	codeLines = cb.querySelectorAll(".code");
+
+	if(position == "top")
+	{
+		otherTab = cb.lastElementChild.children[0];
+	}
+	else
+	{
+		otherTab = cb.children[0].children[0];
+	}
+
+	if(tab.innerText != "\u25A1")
+	{
+		tab.innerText =  "\u25A1";	// make a hollow square
+		otherTab.innerText =  "\u25A1";	// make a hollow square
+		
+		for(i=3; i<codeLines.length; i++)  // start at the third line
+		{
+			codeLines[i].style.display = "none";		
+		}
+	}
+	else
+	{
+		tab.innerText =  "\u2013"; 		// make an endash
+		otherTab.innerText =  "\u2013"; // make an endash
+		
+		for(i=3; i<codeLines.length; i++)  // start at the third line
+		{
+			codeLines[i].style.display = "block";		
+		}
+	}
+}
+
 */
 	
