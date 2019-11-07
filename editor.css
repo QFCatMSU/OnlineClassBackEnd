@@ -218,6 +218,10 @@ ol>li:before
 	color: darkred;
 	font-style: italic;
 }
+h6[title]
+{
+	color: white;
+}
 h6 .hl,h6 .highlight, h6.hl, h6.highlight
 {
 	color: yellow;
