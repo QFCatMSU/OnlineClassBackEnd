@@ -1838,7 +1838,7 @@ function openEmailWindow(emailAddress)
 		addressControl.click();
 		address = emailWindow.document.getElementById("ToAddresses");
 		address.focus(); 
-		if(emailAddress == "") emailAddress = instructorEmail;
+		if(emailAddress == "") emailAddress = instructorEmail;  // no email given -- go to default
 		address.value = emailAddress;			
 		
 		subject = emailWindow.document.getElementById("Subject");
