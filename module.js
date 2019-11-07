@@ -76,8 +76,8 @@ parent.window.onload = function()
 	// allow user to toggle the size of the codeblock
 	addCodeBlockTag();
 	
-	// handling wordwrapped codelines 
-	overflowCodeLines();
+	// handling wordwrapped codelines (A little buggy -- avoiding for now)
+	// overflowCodeLines();
 	
 	// convert "download" class to a download hyperlink 
 	//		(because D2L does not allow you to specify this trait)
@@ -1817,18 +1817,11 @@ function fixMathJaxEQs()
 function createEmailLink()
 {
 	emailLink = encapObject.getElementsByClassName("email");
-	
+
 	for(i=0; i<emailLink.length; i++)
 	{
-		if(emailLink[i].title)
-		{
-			emailAddress = emailLink[i].title;
-		}
-		else
-		{
-			emailAddress = instructorEmail;
-		}
-		emailLink[i].onclick = function() {openEmailWindow(emailAddress);};
+		// the title of the element should be an email address
+		emailLink[i].onclick = function() {openEmailWindow(this.title);};
 	}
 }
 function openEmailWindow(emailAddress)
@@ -1845,6 +1838,7 @@ function openEmailWindow(emailAddress)
 		addressControl.click();
 		address = emailWindow.document.getElementById("ToAddresses");
 		address.focus(); 
+		if(emailAddress == "") emailAddress = instructorEmail;
 		address.value = emailAddress;			
 		
 		subject = emailWindow.document.getElementById("Subject");
