@@ -41,6 +41,8 @@ parent.window.onload = function()
 	// mathML() adds div to the beginning of the page -- needs to happen after header is set
 	loadMathML();
 	
+	getClassInfoD2L(); // emails, lessons (works only in D2L for now)
+	
 	setClassNames();
 	
 	fixTitle();
@@ -100,6 +102,20 @@ parent.window.onload = function()
 		scrollToElement(window.location.hash.slice(1), true);
 }
 	
+function getClassInfoD2L()
+{
+	// find the information for the class
+	if(redNum == 755411 || redNum == 704361 || redNum == 457124) 
+		instructorEmail = "Charlie Belinsky <belinsky@msu.edu>;";
+	else if(redNum == 748323)
+		instructorEmail = "Travis Brenden <brenden@msu.edu>;";
+	else if(redNum == 942384)
+		instructorEmail = "Jim Bence <bence@msu.edu>;";		
+	else if(redNum == 931321)
+		instructorEmail = "Mike Jones <jonesm30@msu.edu>;";		
+	else if(redNum == 952618)
+		instructorEmail = "Juan Steibel <steibelj@msu.edu>;";		
+}
 function resizeIframeContent()
 {
 	// When the parent page gets resized, it causes the content in the iframe to get resized.
