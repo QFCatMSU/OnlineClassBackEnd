@@ -1,7 +1,6 @@
 // tabs in codeblocks are messing with the figures
 // tabs are not aligned to the divs because the divs have been shifted
 //    you can align by putting the tab inside the div
-
 smallImageHeight = 100;				// set the height of flex-sized images when small 
 imageHeight = new Array();			// the heights of all flex-sized images in a page
 imageWidth = new Array();			// the widths of all flex-sized images in a page
@@ -17,6 +16,7 @@ referenceTimer = "";					// timer used to toggle the reference object
 // D2L variables 
 redNum = -1;						// the number of the class 
 instructorEmail = "Charlie Belinsky <belinsky@msu.edu>;";
+lessonFolder = "";
 
 // pre-onload functions
 addStyleSheet();  // can be done before page load since this is called in the [head]
@@ -1534,6 +1534,16 @@ function addReferences()
 			{
 				references[i].href = references[i].href + "?ref=" + refID;		
 			}
+		}
+		// there is a title in this ref -- it is a ref to an outside lesson
+		else if (references[i].title != "")
+		{
+			url = window.location.protocol + "//" + window.location.hostname + 
+					window.location.pathname;
+			n = url.lastIndexOf("/");  // find the last front slash
+			lessonFolder = url.substr(0, n+1);
+			newLessonURL = lessonFolder + references[i].title + "#" + refID;
+			references[i].onclick = function() {window.open(newLessonURL)};
 		}
 		// reference link does not exist
 		else if(!(encapObject.querySelector("#" + refID)))
