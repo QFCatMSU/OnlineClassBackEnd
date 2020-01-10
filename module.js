@@ -967,8 +967,8 @@ function addCodeTags(elementType)
 			}				
 			codeBlockDiv.classList.add("codeBlock");
 			
-			// when clicked, call the selectText function and pass the element
-			codeBlockDiv.ondblclick = function(){ selectText(this) };
+			// when double-clicked, select all the children (text) within the codeblock
+			codeBlockDiv.ondblclick = function(){ window.getSelection().selectAllChildren(this)};
 			
 			// add the codeBock div as a parent to the codeLine
 			codeLines[i].parentElement.insertBefore(codeBlockDiv, codeLines[i]);
@@ -1126,14 +1126,6 @@ function overflowCodeLines()
 		}
 	}
 	overFlowTimer = false;
-}
-
-/* Selects all text within the HTML element */
-function selectText(element)
-{
-	var range = document.createRange();
-	range.selectNode(element);
-	window.getSelection().addRange(range);
 }
 
 function goToTopOfPage()
