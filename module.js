@@ -88,7 +88,7 @@ parent.window.onload = function()
 	// check the URL to see if there is a request to go to a specific part of the page
 	checkURLForPos();
 	
-	// target all hyperlinks to a new window
+	// target most hyperlinks to a new window
 	linksToNewWindow();
 	
 	// address tag used to create an emphasized textbox
@@ -1237,6 +1237,7 @@ function makeContextMenu(funct, param = null)
 			menuItem10.id = "topMenuItem";
 			menuItem10.innerHTML = "Go to Top of Page";
 			menuItem10.style.display = "block";
+			menuItem10.classList.add("sameWin");
 			elemDiv.appendChild(menuItem10);
 			
 			var menuItem9 = document.createElement('a');	
@@ -1244,18 +1245,21 @@ function makeContextMenu(funct, param = null)
 			menuItem9.id = "previousLocMenuItem";
 			menuItem9.innerHTML = "Return to previous location";
 			menuItem9.style.display = "none";
+			menuItem9.classList.add("sameWin");
 			elemDiv.appendChild(menuItem9);
 			
 			var menuItem7 = document.createElement('a');	
 			menuItem7.href = "javascript:copySelectedText()"
 			menuItem7.innerHTML = "Copy Selected Text";
 			menuItem7.style.display = "block";
+			menuItem7.classList.add("sameWin");
 			elemDiv.appendChild(menuItem7);
 			
 			var menuItem8 = document.createElement('a');	
 			menuItem8.href = "javascript:window.print()"
 			menuItem8.innerHTML = "Print/ Save as PDF";
 			menuItem8.style.display = "block";
+			menuItem8.classList.add("sameWin");
 			elemDiv.appendChild(menuItem8);
 
 			roles = parent.document.querySelector("#RoleContainer"); 
@@ -1266,7 +1270,7 @@ function makeContextMenu(funct, param = null)
 				newURL = oldURL.replace("viewContent", "contentFile"); 
 				newURL = newURL.replace("View", "EditFile?fm=0"); 
 				menuItem4.href = newURL; //newURL;
-				menuItem4.target = "_parent";
+				menuItem4.target = "_blank";
 				menuItem4.innerHTML = "Edit Page";
 				menuItem4.style.display = "block";
 				elemDiv.appendChild(menuItem4);
@@ -1276,22 +1280,25 @@ function makeContextMenu(funct, param = null)
 			menuItem5.href = "javascript:changeAllPicSize('maximize')"
 			menuItem5.innerHTML = "Maximize all pictures"
 			menuItem5.style.display = "block";
+			menuItem5.classList.add("sameWin");
 			elemDiv.appendChild(menuItem5);
 			
 			var menuItem6 = document.createElement('a');	
 			menuItem6.href = "javascript:changeAllPicSize('minimize')"
 			menuItem6.innerHTML = "Minimize all pictures"
 			menuItem6.style.display = "block";
+			menuItem6.classList.add("sameWin");
 			elemDiv.appendChild(menuItem6);
-			
+			/*
 			// add an map of the lesson to the context menu
 			menuItem7 = document.createElement("a");
 			menuItem7.href = "";
 			menuItem7.innerHTML = "Page Map";
+			menuItem7.classList.add("sameWin");
 			menuItem7.style.display = "block";
 
 			elemDiv.appendChild(menuItem7);
-		
+		*/
 			encapObject.appendChild(elemDiv);
 			
 			encapObject.oncontextmenu=function(event)
