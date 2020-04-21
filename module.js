@@ -1,3 +1,9 @@
+/*
+Future:
+- remove formatting from copied codeblock
+- add page map to long-click menu
+*/
+
 // tabs in codeblocks are messing with the figures
 // tabs are not aligned to the divs because the divs have been shifted
 //    you can align by putting the tab inside the div
@@ -23,6 +29,101 @@ addStyleSheet();  // can be done before page load since this is called in the [h
 
 // resize the iframe in the parent window when the page gets resized
 window.parent.addEventListener("resize", resizeIframeContent());
+
+/*** Handling the long-press menu ****/
+longClickTimer = null;
+overRCMenu = false;
+mouseX = 0; mouseY = 0;  // allow a little wiggle of the mouse
+
+window.onmousedown = function(event)
+{
+	if(event.which == 1)  // left button click
+	{
+		longClickTimer = setTimeout(function() 
+		{
+			activateElement(event, document.getElementById("longClickMenu"));
+			overRCMenu = true;
+			document.body.style.userSelect = "none";
+			document.body.style.msUserSelect = "none";
+		}, 350);
+		
+		// get current mouse pointer position -- used to allow for wiggle in the mouse
+		mouseX = parseInt(event.clientX);
+		mouseY = parseInt(event.clientY);
+	}
+}
+
+window.onmouseup = function()
+{
+	clearInterval(longClickTimer);
+
+	//	tried to avoid this with stopPropogation -- that did not work
+	if(!overRCMenu)
+	{
+		document.getElementById("longClickMenu").style.visibility = "hidden"; 
+		document.body.style.userSelect = "";
+		document.body.style.msUserSelect = "";
+	}
+}
+
+window.onmousemove = function(event)
+{
+	mouseMoveX = Math.abs(parseInt(event.clientX) - mouseX);
+	mouseMoveY = Math.abs(parseInt(event.clientY) - mouseY);
+	
+	// If the mouse has strayed more than 10 pixels in any direction
+	if(mouseMoveX > 10 || mouseMoveY > 10)
+	{
+		clearInterval(longClickTimer);
+	}
+}
+
+// will combine the following two functions later...
+function activateNotification(e)
+{
+	if(!encapObject.querySelector("#notification"))
+	{
+		notifDiv = document.createElement("div");
+		notifDiv.id = "notification";
+		notifDiv.classList.add("rcMenu");
+		notifDiv.innerHTML = "Codeblock copied to clipboard";
+		document.body.appendChild(notifDiv);
+	}
+	else
+	{
+		clearInterval(notifTimer);
+	}
+	activateElement(e, notifDiv, -2);
+	notifTimer = setTimeout(function(){notifDiv.style.visibility = 'hidden';}, 1000);
+}
+
+function activateElement(e, element, offset = 5)
+{				
+	rcMenuDim = element.getBoundingClientRect();
+	rcMenuHeight = rcMenuDim.height;
+	rcMenuWidth = rcMenuDim.width;
+	windowHeight = window.innerHeight;
+	windowWidth = window.innerWidth;
+	
+	if(windowWidth - e.clientX < rcMenuWidth)  
+	{
+		element.style.left = (e.clientX - rcMenuWidth + offset) + "px";
+	}
+	else
+	{
+		element.style.left = (e.clientX - offset) + "px";
+	}
+	if(windowHeight - e.clientY < rcMenuHeight)
+	{
+		element.style.top = (e.clientY - rcMenuHeight + offset) + "px";
+	}
+	else
+	{
+		element.style.top = (e.clientY - offset) + "px";
+	}
+	
+	element.style.visibility = "visible"; 
+}
 
 // don't do anything until the parent frame (d2L) loads 
 // this still seems to work if there is no parent -- probably should check for this, though
@@ -64,7 +165,7 @@ parent.window.onload = function()
 	addOutline();
 	
 	// Create a right-click menu
-	makeContextMenu("create");  // needs to happen after divs are created
+	makeContextMenu();  // needs to happen after divs are created
 
 	addReferences();
 	
@@ -764,7 +865,7 @@ function goBackToPrevLocation()
 	{
 		encapObject.querySelector("menuitem[id='previousLocMenuItem']").disabled = "disabled";
 	}
-	else
+	//else
 	{
 		encapObject.querySelector("a[id='previousLocMenuItem']").style.display = "none";
 	}
@@ -772,7 +873,7 @@ function goBackToPrevLocation()
 	// scroll the page vertically to the position the page was
 	// at when the link was originally clicked (stored as a global variable)
 	window.parent.scrollTo(leftPos, scrollTopPosition);
-	return false;	// so the page does not reload (don't ask why!)
+	//return false;	// so the page does not reload (don't ask why!)
 }
 	
 	/* link to external CSS file 
@@ -968,7 +1069,11 @@ function addCodeTags(elementType)
 			codeBlockDiv.classList.add("codeBlock");
 			
 			// when double-clicked, select all the children (text) within the codeblock
-			codeBlockDiv.ondblclick = function(){ window.getSelection().selectAllChildren(this)};
+			codeBlockDiv.ondblclick = function(event){ 
+				document.getSelection().selectAllChildren(this); 
+				document.execCommand("copy"); 	
+				activateNotification(event);
+			};
 			
 			// add the codeBock div as a parent to the codeLine
 			codeLines[i].parentElement.insertBefore(codeBlockDiv, codeLines[i]);
@@ -979,11 +1084,13 @@ function addCodeTags(elementType)
 				/**** added formatting to put in {} ************/
 				// create a line that just has a start curly bracket ( { )
 				startCodeLine = document.createElement(elementType);
-				startCodeLine.innerText = "{";
+			//	startCodeLine.innerText = "{";
+				startCodeLine.setAttribute("data-text", "{");
 				startCodeLine.classList.add("code");
 				startCodeLine.classList.add("firstLine");
 				startCodeLine.classList.add("noSelect");
 				startCodeLine.classList.add("noCode");
+
 				codeBlockDiv.appendChild(startCodeLine);
 				i++;  // another element was added so we need to increment the index
 				/*****************************************/
@@ -1027,7 +1134,8 @@ function addCodeTags(elementType)
 				/**** added formatting to put in curly brackets {} **********/
 				// create a line that just has a start curly bracket ( { )
 				lastCodeLine = document.createElement(elementType);
-				lastCodeLine.innerText = "}";
+			//	lastCodeLine.innerText = "}";
+				lastCodeLine.setAttribute("data-text", "}");
 				lastCodeLine.classList.add("code");
 				lastCodeLine.classList.add("lastLine");
 				lastCodeLine.classList.add("noSelect");
@@ -1067,7 +1175,8 @@ function addCodeBlockTag()
 			tabSpan.classList.add("codeBlockTab");
 			tabSpan.classList.add("noSelect");
 			tabSpan.classList.add("noCode");
-			tabSpan.innerHTML = codeBlockDivs[i].title;
+			//tabSpan.innerHTML = codeBlockDivs[i].title;
+			tabSpan.setAttribute("data-text", codeBlockDivs[i].title);
 			par.appendChild(tabSpan);
 			codeBlockDivs[i].insertBefore(par, codeBlockDivs[i].children[0]);
 		}
@@ -1224,108 +1333,60 @@ function makeContextMenu(funct, param = null)
 		encapObject.querySelector("menuitem[id='previousLocMenuItem']").disabled = "disabled";
 
 	}
-	else // for all other browsers -- eventually would like to combine with above code
+
+	var elemDiv = document.createElement('div');
+	elemDiv.id = "longClickMenu";
+	elemDiv.classList.add("rcMenu");
+	//elemDiv.setAttribute("onmouseup", "event.stopPropagation()"); 
+	//elemDiv.setAttribute("onmousedown", "event.stopPropagation()"); 
+	elemDiv.setAttribute("onmouseenter", "overRCMenu = true;"); 
+	elemDiv.setAttribute("onmouseleave", "overRCMenu = false;"); 
+	
+	var scTitle = document.createElement('a');
+	elemDiv.innerHTML = "<b>Shortcut Menu</b>";
+	elemDiv.style.display = "block";
+	elemDiv.classList.add("sameWin");
+	elemDiv.classList.add("noSelect");
+	elemDiv.appendChild(scTitle);
+	
+	// check if the user is has editing privileges
+	roles = parent.document.querySelector("#RoleContainer"); 
+	if(editURL != "" && roles && roles.innerHTML.includes("Editor"))
 	{
-		if(funct == "create")
-		{
-			var elemDiv = document.createElement('div');
-			elemDiv.id = "rightClickDiv";
-			elemDiv.classList.add("rcMenu");
-
-			var menuItem10 = document.createElement('a');	
-			menuItem10.href = "javascript: goToTopOfPage();";
-			menuItem10.id = "topMenuItem";
-			menuItem10.innerHTML = "Go to Top of Page";
-			menuItem10.style.display = "block";
-			menuItem10.classList.add("sameWin");
-			elemDiv.appendChild(menuItem10);
-			
-			var menuItem9 = document.createElement('a');	
-			menuItem9.href = "javascript: goBackToPrevLocation()";
-			menuItem9.id = "previousLocMenuItem";
-			menuItem9.innerHTML = "Return to previous location";
-			menuItem9.style.display = "none";
-			menuItem9.classList.add("sameWin");
-			elemDiv.appendChild(menuItem9);
-			
-			var menuItem7 = document.createElement('a');	
-			menuItem7.href = "javascript:copySelectedText()"
-			menuItem7.innerHTML = "Copy Selected Text";
-			menuItem7.style.display = "block";
-			menuItem7.classList.add("sameWin");
-			elemDiv.appendChild(menuItem7);
-			
-			var menuItem8 = document.createElement('a');	
-			menuItem8.href = "javascript:window.print()"
-			menuItem8.innerHTML = "Print/ Save as PDF";
-			menuItem8.style.display = "block";
-			menuItem8.classList.add("sameWin");
-			elemDiv.appendChild(menuItem8);
-
-			roles = parent.document.querySelector("#RoleContainer"); 
-			if(editURL != "" && roles && roles.innerHTML.includes("Editor"))
-			{
-				var menuItem4 = document.createElement('a');	
-				oldURL = String(window.parent.location);  // otherwise you will edit the URL
-				newURL = oldURL.replace("viewContent", "contentFile"); 
-				newURL = newURL.replace("View", "EditFile?fm=0"); 
-				menuItem4.href = newURL; //newURL;
-				menuItem4.target = "_blank";
-				menuItem4.innerHTML = "Edit Page";
-				menuItem4.style.display = "block";
-				elemDiv.appendChild(menuItem4);
-			}
-			
-			var menuItem5 = document.createElement('a');	
-			menuItem5.href = "javascript:changeAllPicSize('maximize')"
-			menuItem5.innerHTML = "Maximize all pictures"
-			menuItem5.style.display = "block";
-			menuItem5.classList.add("sameWin");
-			elemDiv.appendChild(menuItem5);
-			
-			var menuItem6 = document.createElement('a');	
-			menuItem6.href = "javascript:changeAllPicSize('minimize')"
-			menuItem6.innerHTML = "Minimize all pictures"
-			menuItem6.style.display = "block";
-			menuItem6.classList.add("sameWin");
-			elemDiv.appendChild(menuItem6);
-			/*
-			// add an map of the lesson to the context menu
-			menuItem7 = document.createElement("a");
-			menuItem7.href = "";
-			menuItem7.innerHTML = "Page Map";
-			menuItem7.classList.add("sameWin");
-			menuItem7.style.display = "block";
-
-			elemDiv.appendChild(menuItem7);
-		*/
-			encapObject.appendChild(elemDiv);
-			
-			encapObject.oncontextmenu=function(event)
-			{
-				makeContextMenu('show', event); return false;
-			}
-			encapObject.onclick=function()
-			{
-				makeContextMenu('hide');
-			}
-		}
-		else if(funct == "show")
-		{
-			document.getElementById("rightClickDiv").style.display = "block"; 
-			document.getElementById("rightClickDiv").style.top = param.pageY + "px"; 
-			document.getElementById("rightClickDiv").style.left = param.pageX + "px";			
-		}
-		else if(funct == "color")
-		{
-			encapObject.style.backgroundColor = param;
-			funct = "hide";
-		}
-		if(funct == "hide")
-		{
-			document.getElementById("rightClickDiv").style.display = "none"; 	
-		}
+		oldURL = String(window.parent.location);  // otherwise you will edit the URL
+		newURL = oldURL.replace("viewContent", "contentFile"); 
+		newURL = newURL.replace("View", "EditFile?fm=0"); 
+		menuLinks(elemDiv, "Edit Page", function(){window.open(newURL, '_blank')}, "editPage");
 	}
+	menuLinks(elemDiv, "Go to Top of Page", goToTopOfPage, "topMenuItem");
+	menuLinks(elemDiv, "Return to previous location", goBackToPrevLocation, "previousLocMenuItem");
+	menuLinks(elemDiv, "Print/ Save as PDF", window.print, "printToPDF");
+	menuLinks(elemDiv, "Maximize All Images", function() {changeAllPicSize('maximize')}, "maxAllImages");
+	menuLinks(elemDiv, "Minimize All Images", function() {changeAllPicSize('minimize')}, "minAllImages");
+	
+	encapObject.appendChild(elemDiv);
+}
+
+function menuLinks(menu, text, command, linkid="")  
+{
+	link = document.createElement('a');
+	link.id = linkid;
+	link.style.display = "block";
+	link.innerText = text;
+	link.classList.add("sameWin");
+	link.classList.add("jsLink");
+	link.addEventListener("mouseover", function() {}); //this.style.backgroundColor = "red";});
+	link.addEventListener("mouseup", 
+								 function(event) 
+								 { 
+									this.style.backgroundColor = ""; 
+									command(); 	
+									document.getElementById("longClickMenu").style.visibility = "hidden"; 
+									//event.stopPropagation();
+								 });
+	link.addEventListener("mouseleave", function() {}); //this.style.backgroundColor = "";});	
+
+	menu.appendChild(link);
 }
 
 function scrollToElementReturn(elementID)
@@ -1787,7 +1848,7 @@ function enablePrevious()
 	{
 		encapObject.querySelector("menuitem[id='previousLocMenuItem']").disabled = false;
 	}
-	else
+	//else
 	{
 		encapObject.querySelector("a[id='previousLocMenuItem']").style.display = "block";
 	}
@@ -1953,8 +2014,6 @@ function captionFigures()
 				//figureElement.innerHTML = prevSibling.innerHTML;
 				figureElement.appendChild(prevSibling);
 				figureElement.appendChild(figureCaption);
-				
-
 				
 				// remove the old caption and the previous element
 				captions[i].parentNode.removeChild(captions[i]);

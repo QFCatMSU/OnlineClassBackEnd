@@ -17,6 +17,10 @@ allow one to apply style classes.
 Extend flexSize to all types of objects (would need to change the execution)
 */
 
+.code::after, .codeBlockTab::after
+{	/* This is a hack for IE so unselectable text will not be copied */
+	content: attr(data-text);
+}
 pre, .textBox
 {
 	border-radius: 5px;
@@ -103,10 +107,10 @@ figure
 	margin: 0;
 	padding: 0;
 }
-a:link,a:visited
+a:link,a:visited, .jsLink
 {
 	text-decoration: none;
-	color: rgb(125,64,0);
+	color: rgb(90,45,0);
 }
 a:hover
 {
@@ -291,7 +295,7 @@ td
 	padding-bottom: 15px;
 	margin-top: 5px;
 	margin-bottom: 5px;
-	overflow: auto;	
+	/*overflow: auto;*/	
 }
 .h2Div
 {
@@ -391,9 +395,9 @@ td
 .noSelect
 {
 	user-select: none;			/* standard but not used */
-/*	-webkit-user-select: none; /* Chrome/Safari */        
-/*	-moz-user-select: none;  	/* Firefox */
-/*	-ms-user-select: none;		/* IE10+ */
+	-webkit-user-select: none; /* Chrome/Safari */        
+	-moz-user-select: none;  	/* Firefox */
+	-ms-user-select: none;		/* IE10+ */
 	outline-style: none;
 }
 .noCode
@@ -476,11 +480,17 @@ div.codeBlock
 /*** end of code typesettings ****/
 .rcMenu  /* the right-click menu */
 {
-	display: none;
+	display: block;
+	visibility: hidden; 
 	position: absolute;
 	padding: 10px;
-	background-color: rgba(130,130,130,.9);
+	background-color: rgb(230,230,230);
 	z-index: 100;
+	box-shadow: 4px 4px 3px #555555;
+	border-radius: 3px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: rgb(130,130,130);
 }
 .linkback
 {
@@ -739,7 +749,7 @@ img.flexSize, img.fs
 		border-style: solid;
 		border-radius: 5px;
 	}
-	.rightClickDiv, .title>a
+	.title>a
 	{
 		display: none;
 	}
