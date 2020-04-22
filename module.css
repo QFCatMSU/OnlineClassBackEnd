@@ -480,9 +480,12 @@ div.codeBlock
 /*** end of code typesettings ****/
 .rcMenu  /* the right-click menu */
 {
+	/* should it start as display: none; ?? */
 	display: block;
 	visibility: hidden; 
 	position: absolute;
+	top: 0px;
+	left: 0px;
 	padding: 10px;
 	background-color: rgb(230,230,230);
 	z-index: 100;
