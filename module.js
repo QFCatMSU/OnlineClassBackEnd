@@ -61,6 +61,7 @@ window.onmouseup = function()
 	if(!overRCMenu)
 	{
 		document.getElementById("longClickMenu").style.visibility = "hidden"; 
+		document.getElementById("longClickMenu").style.top = "0px"; 
 		document.body.style.userSelect = "";
 		document.body.style.msUserSelect = "";
 	}
@@ -94,7 +95,11 @@ function activateNotification(e)
 		clearInterval(notifTimer);
 	}
 	activateElement(e, notifDiv, -2);
-	notifTimer = setTimeout(function(){notifDiv.style.visibility = 'hidden';}, 1000);
+	notifTimer = setTimeout(function()
+	{
+		notifDiv.style.visibility = 'hidden';
+		notifDiv.style.top = '0px';
+	}, 1000);
 }
 
 function activateElement(e, element, offset = 5)
@@ -1382,6 +1387,7 @@ function menuLinks(menu, text, command, linkid="")
 									this.style.backgroundColor = ""; 
 									command(); 	
 									document.getElementById("longClickMenu").style.visibility = "hidden"; 
+									document.getElementById("longClickMenu").style.top = "0px"; 
 									//event.stopPropagation();
 								 });
 	link.addEventListener("mouseleave", function() {}); //this.style.backgroundColor = "";});	
