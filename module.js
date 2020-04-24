@@ -1,7 +1,20 @@
 /*
 Future:
 - remove formatting from copied codeblock
-- add page map to long-click menu
+- add page map to long-click / right-click menu
+- remove depecated referencing (sectRef...)
+- break up code functions
+- switch to addEventListener()
+- use encapObject whenever possible
+- hold position of page when resized
+- prevPage and nextPage: combine code
+- <done> combine right-click and long-click in one function 
+- fix overflow code
+- fix wayward div in page
+- check MathJax version
+- set equation color?
+- <done> cannot put an email link inside H2,H3,H4 -- click event gets removed
+    - switched innerHTML for insertAdjacentHTML
 */
 
 // tabs in codeblocks are messing with the figures
@@ -16,7 +29,6 @@ overflowCalled = false;   			// check to see if there is a current check of code
 mathObjCount = 0;						// The number of equations in the lesson
 count=0;prevCount=0;countNum=0;	// used to keep track of the equations
 editURL = "";							// URL for the editting page 
-referencedObject = "";				// object in page highlighted because it is being referenced
 referenceTimer = "";					// timer used to toggle the reference object
 
 // D2L variables 
@@ -35,7 +47,7 @@ longClickTimer = null;
 overRCMenu = false;
 mouseX = 0; mouseY = 0;  // allow a little wiggle of the mouse
 
-window.onmousedown = function(event)
+window.addEventListener("mousedown", function(event)
 {
 	if(event.which == 1)  // left button click
 	{
@@ -51,9 +63,9 @@ window.onmousedown = function(event)
 		mouseX = parseInt(event.clientX);
 		mouseY = parseInt(event.clientY);
 	}
-}
+});
 
-window.onmouseup = function()
+window.addEventListener("mouseup", function()
 {
 	clearInterval(longClickTimer);
 
@@ -65,9 +77,9 @@ window.onmouseup = function()
 		document.body.style.userSelect = "";
 		document.body.style.msUserSelect = "";
 	}
-}
+});
 
-window.onmousemove = function(event)
+window.addEventListener("mousemove", function(event)
 {
 	mouseMoveX = Math.abs(parseInt(event.clientX) - mouseX);
 	mouseMoveY = Math.abs(parseInt(event.clientY) - mouseY);
@@ -77,7 +89,7 @@ window.onmousemove = function(event)
 	{
 		clearInterval(longClickTimer);
 	}
-}
+});
 
 // will combine the following two functions later...
 function activateNotification(e)
@@ -174,10 +186,7 @@ parent.window.onload = function()
 	makeContextMenu();  // needs to happen after divs are created
 
 	addReferences();
-	
-	// set up onclick functionality for "anchor" links (page exists in an iframe)
-	// createInPageLinks();
-	
+		
 	// adds code tags to all content within an [h6] tag
 	// need to add divs before doing code tags becuase this includes the div codeblocks
 	addCodeTags("H6");
@@ -490,8 +499,6 @@ function d2lAddHeader()
 		redNum = classNum[0].substring(1, classNum[0].length-1); // get number of D2L class
 		homePage = document.createElement("span");
 		homePage.classList.add("lessonLink", "sameWin", "homePage");
-		//homePage.classList.add("sameWin");
-		//homePage.classList.add("homePage");
 		homeLink =  document.createElement("a");
 		homeLink.innerHTML = "Home";
 		homeLink.href = "https://d2l.msu.edu/d2l/home/" + redNum;
@@ -505,8 +512,6 @@ function d2lAddHeader()
 			url = window.parent.document.getElementsByClassName("d2l-iterator-button-prev");
 			newPrevPage = document.createElement("span");
 			newPrevPage.classList.add("lessonLink", "sameWin", "previousLesson");
-		//	newPrevPage.classList.add("sameWin");
-		//	newPrevPage.classList.add("previousLesson");
 			newPrevPageLink = document.createElement("a");
 			newPrevPageLink.innerHTML = prevText;
 			newPrevPageLink.href = url[0].href;
@@ -521,8 +526,6 @@ function d2lAddHeader()
 			url = window.parent.document.getElementsByClassName("d2l-iterator-button-next");
 			newNextPage = document.createElement("span");
 			newNextPage.classList.add("lessonLink", "sameWin", "nextLesson");
-			//newNextPage.classList.add("sameWin");
-			//newNextPage.classList.add("nextLesson");
 			newNextPageLink = document.createElement("a");
 			newNextPageLink.innerHTML = nextText;
 			newNextPageLink.href = url[0].href;
@@ -542,6 +545,7 @@ function d2lAddHeader()
 	}
 }
 
+// add the full name of a class when the user has entered in the abbreviated name
 function setClassNames()
 {
 	// add class names
@@ -554,8 +558,7 @@ function setClassNames()
 	nn = encapObject.getElementsByClassName("nn");
 	for(i=0; i<nn.length; i++)
 	{
-		nn[i].classList.add("nonum");
-		nn[i].classList.add("partial");
+		nn[i].classList.add("nonum", "partial");
 	}
 }
 
@@ -612,7 +615,7 @@ function removeDivs()
 
 /*
 Find all images within the page that have the "flexSize" class
-and add onclick events that give the user the ability to change 
+and add click events that give the user the ability to change 
 the size of the image.  Called on page load.
 */
 function createFlexImages()
@@ -623,7 +626,7 @@ function createFlexImages()
 	// switch to while (there are flexImages)??
 	for(i=0; i<flexImage.length; i++)	// for each flexSize element
 	{
-		// add an onclick event that calls changeImageSize() to each flexSize image
+		// add a click event that calls changeImageSize() to each flexSize image
 		flexImage[i].addEventListener("click", function()
 												{ changeImageSize(this) }, false); 
 		
@@ -757,13 +760,11 @@ function addDivs()
 		if(elements[i].tagName == "H1")
 		{	
 			newDiv.classList.add("h1Div");
-			//newDiv.classList.add("contentDiv");			// add a class name to the div
 		}
 		else if(elements[i].tagName == "H2")
 		{	
 			// add the class "h2Div" to div with H2
-			newDiv.classList.add("h2Div");
-			newDiv.classList.add("contentDiv");			// add a class name to the div
+			newDiv.classList.add("h2Div", "contentDiv");
 			
 			// add "nonlinear" class for div that contain non-linear content
 			if((elements[i].className != "" ) &&
@@ -777,8 +778,7 @@ function addDivs()
 		else if(elements[i].tagName == "H3")
 		{	
 			// add the class "h3Div" to div with "H3"
-			newDiv.classList.add("h3Div");
-			newDiv.classList.add("contentDiv");			// add a class name to the div
+			newDiv.classList.add("h3Div", "contentDiv");
 			
 			// Check to see if the previous sibling (div with H2 or H3) has class "nonlinear"
 			// if so -- then this div should also be class "nonlinear"
@@ -823,15 +823,13 @@ function addOutline()
 		{
 			level1++;			
 			level2=0;
-			divElement[i].firstChild.innerHTML = level1 + " - " + 
-															divElement[i].firstChild.innerHTML;
+			divElement[i].firstChild.insertAdjacentHTML("afterbegin", level1 + " - ");
 			divElement[i].dataTitle = divElement[i].firstChild.textContent;
 		}
 		else if(divElement[i].firstChild && divElement[i].firstChild.tagName == "H3")
 		{
 			level2++;
-			divElement[i].firstChild.innerHTML = level1 + "." + level2 + " - " + 
-															divElement[i].firstChild.innerHTML;
+			divElement[i].firstChild.insertAdjacentHTML("afterbegin", level1 + "." + level2 + " - ");
 			divElement[i].dataTitle = divElement[i].firstChild.textContent;
 			
 			// find H4 elements within H3
@@ -841,15 +839,14 @@ function addOutline()
 			for(j=0; j<h4Elements.length; j++)
 			{
 				level3++;
-				h4Elements[j].innerHTML = level1 + "." + level2 + "." + level3 + " - " + 
-													h4Elements[j].innerHTML;
+				h4Elements[j].insertAdjacentHTML("afterbegin", level1 + "." + level2 + "." + level3 + " - ");
 				h4Elements[j].dataTitle = h4Elements[j].textContent;
 			}
 		}
 	}
 }
 
-/* onclick call from right-click menu in page to either minimize or maximize (param)
+/* call from right-click menu in page to either minimize or maximize (param)
 	all the flex-sized images in the page */
 function changeAllPicSize(param)
 {
@@ -903,6 +900,7 @@ function addStyleSheet()
 /* adds the class "eqNum" to all H5 lines that have the dotum font (it's a hack for D2L) */
 function equationNumbering()
 {
+	// currently using font family: dotum; to indicate equation number (thanks, D2L!)
 	var newEQs = encapObject.querySelectorAll("span[style*='dotum']");
 	
 	for(i=0; i<newEQs.length; i++)
@@ -917,7 +915,7 @@ function equationNumbering()
 	{
 		if(equations[i].tagName == "H5" || equations[i].tagName == "SPAN")
 		{
-			equations[i].innerHTML = equations[i].innerHTML + " ( " + (i+1) + " )";
+			equations[i].insertAdjacentHTML("beforeend", " ( " + (i+1) + " )");
 		}
 		else if(equations[i].innerText.trim() != "")  // there is text in the caption
 		{
@@ -948,7 +946,7 @@ function addCaptions()
 	{
 		if(captionLines[i].innerText.trim() != "")  // there is text in the caption
 		{
-			captionLines[i].innerHTML = "Fig " + (i+1) + ": " + captionLines[i].innerHTML;
+			captionLines[i].insertAdjacentHTML("afterbegin", "Fig " + (i+1) + ": ");
 		}	
 	}
 }
@@ -1086,12 +1084,8 @@ function addCodeTags(elementType)
 				/**** added formatting to put in {} ************/
 				// create a line that just has a start curly bracket ( { )
 				startCodeLine = document.createElement(elementType);
-			//	startCodeLine.innerText = "{";
-				startCodeLine.setAttribute("data-text", "{");
-				startCodeLine.classList.add("code");
-				startCodeLine.classList.add("firstLine");
-				startCodeLine.classList.add("noSelect");
-				startCodeLine.classList.add("noCode");
+				startCodeLine.setAttribute("data-text", "{");  // so it does not appear as text when selected
+				startCodeLine.classList.add("code", "firstLine", "noSelect", "noCode");
 
 				codeBlockDiv.appendChild(startCodeLine);
 				i++;  // another element was added so we need to increment the index
@@ -1121,7 +1115,7 @@ function addCodeTags(elementType)
 		
 		if(codeBlockDiv.classList.contains("brackets"))
 		{
-			codeLines[i].innerHTML = "  " + codeLines[i].innerHTML;
+			codeLines[i].insertAdjacentHTML("afterbegin", "  ");
 		}
 			
 		// check if the next element after this codeLine is an [H6] -- 
@@ -1136,12 +1130,8 @@ function addCodeTags(elementType)
 				/**** added formatting to put in curly brackets {} **********/
 				// create a line that just has a start curly bracket ( { )
 				lastCodeLine = document.createElement(elementType);
-			//	lastCodeLine.innerText = "}";
 				lastCodeLine.setAttribute("data-text", "}");
-				lastCodeLine.classList.add("code");
-				lastCodeLine.classList.add("lastLine");
-				lastCodeLine.classList.add("noSelect");
-				lastCodeLine.classList.add("noCode");
+				lastCodeLine.classList.add("code", "lastLine", "noSelect", "noCode");
 				codeBlockDiv.appendChild(lastCodeLine);
 				i++;  // another element was added so we need to increment the index
 				/*****************************************/
@@ -1174,10 +1164,7 @@ function addCodeBlockTag()
 			par.classList.add("noSelect");
 			par.style.textAlign = "left";
 			tabSpan = document.createElement("span");
-			tabSpan.classList.add("codeBlockTab");
-			tabSpan.classList.add("noSelect");
-			tabSpan.classList.add("noCode");
-			//tabSpan.innerHTML = codeBlockDivs[i].title;
+			tabSpan.classList.add("codeBlockTab", "noSelect", "noCode");
 			tabSpan.setAttribute("data-text", codeBlockDivs[i].title);
 			par.appendChild(tabSpan);
 			codeBlockDivs[i].insertBefore(par, codeBlockDivs[i].children[0]);
@@ -1253,66 +1240,13 @@ function makeContextMenu(funct, param = null)
 	// for Firefox 
 	if (navigator.userAgent.indexOf("Firefox") != -1)
 	{
-		// when the user clicks the right button, the rightClickMenu 
-		//			(create in this function) appears
+		// when the user clicks the right button, the rightClickMenu appears
 		encapObject.setAttribute("contextmenu", "rightClickMenu");
 
 		// creating a right-click context menu
 		contextMenu = document.createElement("menu");
 		contextMenu.type = "context";
 		contextMenu.id = "rightClickMenu";
-
-		// add a Go to Top button
-		menuItem = document.createElement("menuitem");
-		menuItem.label = "Go to Top of Page";
-		menuItem.id = "topMenuItem";
-		menuItem.onclick = function()
-		{	
-			goToTopOfPage();
-		};
-		contextMenu.appendChild(menuItem);
-		
-		// add a Return to Previous location button
-		menuItem = document.createElement("menuitem");
-		menuItem.label = "Go to Previous Location";
-		menuItem.id = "previousLocMenuItem";
-		menuItem.onclick = 	function()
-		{	
-			goBackToPrevLocation();
-			return false; 
-		};
-		contextMenu.appendChild(menuItem);
-		
-		// add a Print lesson button to the context menu
-		menuItem = document.createElement("menuitem");
-		menuItem.label = "Print";
-		menuItem.onclick = function()
-		{ 
-			window.print(); 
-		};
-		contextMenu.appendChild(menuItem);
-
-		// add a Maximize All (flexSize) Pics button to the context menu
-		menuItem = document.createElement("menuitem");
-		menuItem.label = "Maximize All Pictures...";
-		menuItem.onclick = function(){ changeAllPicSize('maximize') };
-		contextMenu.appendChild(menuItem);
-
-		// add a Minimize All (flexSize) Pics button to the context menu
-		menuItem = document.createElement("menuitem");
-		menuItem.label = "Minimize All Pictures...";
-		menuItem.onclick = function(){ changeAllPicSize('minimize') };
-		contextMenu.appendChild(menuItem);
-
-		// Add an Edit Page option if we are within a CMS environment
-		roles = parent.document.querySelector("#RoleContainer"); 
-		if(editURL != "" && roles && roles.innerHTML.includes("Editor"))
-		{
-			menuItem = document.createElement("menuitem");
-			menuItem.label = "Edit Page";
-			menuItem.onclick = function() { window.open(editURL, "_blank") };
-			contextMenu.appendChild(menuItem);
-		}
 
 		// add an map of the lesson to the context menu
 		submenu = document.createElement("menu");
@@ -1327,29 +1261,24 @@ function makeContextMenu(funct, param = null)
 			{
 				sectionsInPage[i].id = "_sect" + i;
 			}
-			mapItem.onclick = scrollToElementReturn(sectionsInPage[i].id);
+			mapItem.addEventListener("click", scrollToElementReturn(sectionsInPage[i].id));
 			submenu.appendChild(mapItem);		
 		}
 
 		contextMenu.appendChild(submenu);
 		encapObject.appendChild(contextMenu);
-		encapObject.querySelector("menuitem[id='previousLocMenuItem']").disabled = "disabled";
-
 	}
 
 	var elemDiv = document.createElement('div');
 	elemDiv.id = "longClickMenu";
 	elemDiv.classList.add("rcMenu");
-	//elemDiv.setAttribute("onmouseup", "event.stopPropagation()"); 
-	//elemDiv.setAttribute("onmousedown", "event.stopPropagation()"); 
-	elemDiv.setAttribute("onmouseenter", "overRCMenu = true;"); 
-	elemDiv.setAttribute("onmouseleave", "overRCMenu = false;"); 
+	elemDiv.addEventListener("mouseenter", function() {overRCMenu = true;}); 
+	elemDiv.addEventListener("mouseleave", function() {overRCMenu = false;}); 
 	
 	var scTitle = document.createElement('a');
 	elemDiv.innerHTML = "<b>Shortcut Menu</b>";
 	elemDiv.style.display = "block";
-	elemDiv.classList.add("sameWin");
-	elemDiv.classList.add("noSelect");
+	elemDiv.classList.add("sameWin", "noSelect");
 	elemDiv.appendChild(scTitle);
 	
 	// check if the user is has editing privileges
@@ -1362,7 +1291,7 @@ function makeContextMenu(funct, param = null)
 		menuLinks(elemDiv, "Edit Page", function(){window.open(newURL, '_blank')}, "editPage");
 	}
 	menuLinks(elemDiv, "Go to Top of Page", goToTopOfPage, "topMenuItem");
-	menuLinks(elemDiv, "Return to previous location", goBackToPrevLocation, "previousLocMenuItem");
+	menuLinks(elemDiv, "Return to previous location", goBackToPrevLocation, "previousLocMenuItem", false);
 	menuLinks(elemDiv, "Print/ Save as PDF", window.print, "printToPDF");
 	menuLinks(elemDiv, "Maximize All Images", function() {changeAllPicSize('maximize')}, "maxAllImages");
 	menuLinks(elemDiv, "Minimize All Images", function() {changeAllPicSize('minimize')}, "minAllImages");
@@ -1370,27 +1299,33 @@ function makeContextMenu(funct, param = null)
 	encapObject.appendChild(elemDiv);
 }
 
-function menuLinks(menu, text, command, linkid="")  
+function menuLinks(menu, text, command, linkid="", enable=true)  
 {
 	link = document.createElement('a');
 	link.id = linkid;
-	link.style.display = "block";
+	if(enable) link.style.display = "block";
+	else link.style.display = "none";
 	link.innerText = text;
-	link.classList.add("sameWin");
-	link.classList.add("jsLink");
-	link.addEventListener("mouseover", function() {}); //this.style.backgroundColor = "red";});
+	link.classList.add("sameWin", "jsLink");
 	link.addEventListener("mouseup", 
 								 function(event) 
 								 { 
-									this.style.backgroundColor = ""; 
 									command(); 	
 									document.getElementById("longClickMenu").style.visibility = "hidden"; 
 									document.getElementById("longClickMenu").style.top = "0px"; 
-									//event.stopPropagation();
 								 });
-	link.addEventListener("mouseleave", function() {}); //this.style.backgroundColor = "";});	
 
 	menu.appendChild(link);
+	
+	if(navigator.userAgent.indexOf("Firefox") != -1)
+	{
+		menuItem = document.createElement("menuitem");
+		menuItem.label = text;
+		menuItem.id = linkid;
+		if(enable==false) menuItem.disabled = "disabled";
+		menuItem.addEventListener("click", function(){command();} );
+		encapObject.querySelector("#rightClickMenu").appendChild(menuItem);
+	}
 }
 
 function scrollToElementReturn(elementID)
@@ -1803,21 +1738,24 @@ function scrollToElement(elementID, outsideCall = false)
 		window.parent.scrollTo(element.offsetLeft, (elementYPos -offsetPadding) );	
 	}
 	
-	/**** highlighting the linked object -- should put in separate function ****/
-	// referenced object is a global variable
-	if(referencedObject != "")
-	{
-		clearInterval(referenceTimer);
-		revertHighlight(referencedObject);
-	}
-	referencedObject = element;
-	referencedObject.classList.add("refObjHighlight");
-	if(outsideCall == true)
-		referenceTimer = setTimeout(function() {revertHighlight(referencedObject);}, 4000);
-	else
-		referenceTimer = setTimeout(function() {revertHighlight(referencedObject);}, 2000);
-	
+	highLightObject(element, 2000);
 	enablePrevious();
+}
+
+function highLightObject(element, time=2000)
+{
+	// check if there already is an object being highlighted
+	if(encapObject.querySelector(".refObjHighlight"))
+	{
+		encapObject.querySelector(".refObjHighlight").classList.remove("refObjHighlight");
+		clearInterval(referenceTimer);
+	}
+
+	element.classList.add("refObjHighlight");
+	referenceTimer = setTimeout(function() 
+	{
+		element.classList.remove("refObjHighlight");
+	}, time);
 }
 
 // get the top and left position of the iframe within the parent window
@@ -1848,13 +1786,6 @@ function getIframeOffset()
 	}
 	
 	return[offsetLeft, offsetTop];
-}
-
-
-function revertHighlight(element)
-{
-	element.classList.remove("refObjHighlight");
-	referencedObject = "";
 }
 
 function enablePrevious()
@@ -1920,7 +1851,7 @@ function createEmailLink()
 	for(i=0; i<emailLink.length; i++)
 	{
 		// the title of the element should be an email address
-		emailLink[i].onclick = function() {openEmailWindow(this.title);};
+		emailLink[i].addEventListener("click", function() {openEmailWindow(this.title);});
 	}
 }
 
@@ -2011,29 +1942,25 @@ function captionFigures()
 		{		
 			// find the first image within the prevSibling (should only be one)
 			//figureObj = prevSibling.querySelector("img");
-				
-			//if(figureObj !== null)
-			{
-				// create a new figure caption -- copy old caption
-				figureCaption = document.createElement("figcaption");	
-				figureCaption.classList = captions[i].classList;
-				figureCaption.innerHTML = captions[i].innerHTML; // need ID?
-				figureCaption.id = captions[i].id; // need ID?
-				
-				// create a new figure -- copy from previous sibling and add caption
-				figureElement = document.createElement("figure");
-				
-				// put new figure element at same position as the caption
-				prevSibling.parentNode.insertBefore(figureElement, prevSibling);
-				
-				//figureElement.innerHTML = prevSibling.innerHTML;
-				figureElement.appendChild(prevSibling);
-				figureElement.appendChild(figureCaption);
-				
-				// remove the old caption and the previous element
-				captions[i].parentNode.removeChild(captions[i]);
-			//	prevSibling.parentNode.removeChild(prevSibling);
-			}
+
+			// create a new figure caption -- copy old caption
+			figureCaption = document.createElement("figcaption");	
+			figureCaption.classList = captions[i].classList;
+			figureCaption.innerHTML = captions[i].innerHTML; // need ID?
+			figureCaption.id = captions[i].id; // need ID?
+			
+			// create a new figure -- copy from previous sibling and add caption
+			figureElement = document.createElement("figure");
+			
+			// put new figure element at same position as the caption
+			prevSibling.parentNode.insertBefore(figureElement, prevSibling);
+			
+			//figureElement.innerHTML = prevSibling.innerHTML;
+			figureElement.appendChild(prevSibling);
+			figureElement.appendChild(figureCaption);
+			
+			// remove the old caption and the previous element
+			captions[i].parentNode.removeChild(captions[i]);
 		}
 	}
 }
