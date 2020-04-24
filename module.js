@@ -4,7 +4,7 @@ Future:
 - add page map to long-click / right-click menu
 - remove depecated referencing (sectRef...)
 - break up code functions
-- switch to addEventListener()
+- <done> switch to addEventListener()
 - use encapObject whenever possible
 - hold position of page when resized
 - prevPage and nextPage: combine code
@@ -1543,7 +1543,7 @@ function addReferences()
 			n = url.lastIndexOf("/");  // find the last front slash
 			lessonFolder = url.substr(0, n+1);
 			newLessonURL = lessonFolder + references[i].title + "#" + refID;
-			references[i].onclick = function() {window.open(newLessonURL)};
+			references[i].addEventListener("click", function() {window.open(newLessonURL)});
 		}
 		// reference link does not exist
 		else if(!(encapObject.querySelector("#" + refID)))
@@ -1582,7 +1582,7 @@ function addReferences()
 			//			specified (not working yet...)
 			if( !(references[i].classList.contains("nolink")) )
 			{
-				references[i].onclick = scrollToElementReturn(refID);
+				references[i].addEventListener("click", scrollToElementReturn(refID));
 			}
 		}
 		// if this is a figure ref (has h5 tag and does not have eqNum class)
@@ -1606,7 +1606,7 @@ function addReferences()
 			//				specified (not working yet...)
 			if( !(references[i].classList.contains("nolink")) )
 			{
-				references[i].onclick = scrollToElementReturn(refID);
+				references[i].addEventListener("click", scrollToElementReturn(refID));
 			}
 		}
 		// this links to a section header (h2-h4)
@@ -1630,7 +1630,7 @@ function addReferences()
 			//		specified (not working yet...)
 			if( !(references[i].classList.contains("nolink")) )
 			{
-				references[i].onclick = scrollToElementReturn(refID);
+				references[i].addEventListener("click", scrollToElementReturn(refID));
 			}
 		}
 		// for all other elements in the page
@@ -1679,7 +1679,7 @@ function addReferences()
 			//				specified (not working yet...)
 			if( !(references[i].classList.contains("nolink")) )
 			{
-				references[i].onclick = scrollToElementReturn(refID);
+				references[i].addEventListener("click", scrollToElementReturn(refID));
 			}
 		}
 	}
