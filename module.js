@@ -103,28 +103,29 @@ function activateNotification(e)
 }
 
 function activateElement(e, element, offset = 5)
-{				
+{			
+	const[offsetLeft, offsetTop] = getIframeOffset();
 	rcMenuDim = element.getBoundingClientRect();
-	rcMenuHeight = rcMenuDim.height;
-	rcMenuWidth = rcMenuDim.width;
-	windowHeight = window.innerHeight;
-	windowWidth = window.innerWidth;
 	
-	if(windowWidth - e.clientX < rcMenuWidth)  
+	if(window.innerWidth - e.clientX < rcMenuDim.width)  
 	{
-		element.style.left = (e.clientX - rcMenuWidth + offset) + "px";
+		element.style.left = (window.scrollX + e.clientX - rcMenuDim.width + offset) + "px";
 	}
 	else
 	{
-		element.style.left = (e.clientX - offset) + "px";
+		element.style.left = (window.scrollX + e.clientX - offset) + "px";
 	}
-	if(windowHeight - e.clientY < rcMenuHeight)
+	
+	// need to check if the mouse click happened right above the bottom of the screen
+	// or the bottom of the iframe window if in an iframe
+	if( ( window.innerHeight - e.clientY < rcMenuDim.height) ||
+	    ( window.parent.scrollY + window.parent.innerHeight - offsetTop - e.clientY < rcMenuDim.height ) )
 	{
-		element.style.top = (e.clientY - rcMenuHeight + offset) + "px";
+		element.style.top = (window.scrollY + e.clientY - rcMenuDim.height + offset) + "px";
 	}
 	else
 	{
-		element.style.top = (e.clientY - offset) + "px";
+		element.style.top = (window.scrollY + e.clientY - offset) + "px";
 	}
 	
 	element.style.visibility = "visible"; 
@@ -474,7 +475,6 @@ function d2lAddHeader()
 			nextText = "Up Next: " + nextPage.innerText;
 		}
 		nextPage.parentNode.removeChild(nextPage);
-		//nextPage.style.display = "none";
 	}
 		
 	if(self != top)
@@ -489,9 +489,9 @@ function d2lAddHeader()
 		classNum = url.match(/\/[0-9]{3,}\//); 
 		redNum = classNum[0].substring(1, classNum[0].length-1); // get number of D2L class
 		homePage = document.createElement("span");
-		homePage.classList.add("lessonLink");
-		homePage.classList.add("sameWin");
-		homePage.classList.add("homePage");
+		homePage.classList.add("lessonLink", "sameWin", "homePage");
+		//homePage.classList.add("sameWin");
+		//homePage.classList.add("homePage");
 		homeLink =  document.createElement("a");
 		homeLink.innerHTML = "Home";
 		homeLink.href = "https://d2l.msu.edu/d2l/home/" + redNum;
@@ -504,9 +504,9 @@ function d2lAddHeader()
 		{
 			url = window.parent.document.getElementsByClassName("d2l-iterator-button-prev");
 			newPrevPage = document.createElement("span");
-			newPrevPage.classList.add("lessonLink");
-			newPrevPage.classList.add("sameWin");
-			newPrevPage.classList.add("previousLesson");
+			newPrevPage.classList.add("lessonLink", "sameWin", "previousLesson");
+		//	newPrevPage.classList.add("sameWin");
+		//	newPrevPage.classList.add("previousLesson");
 			newPrevPageLink = document.createElement("a");
 			newPrevPageLink.innerHTML = prevText;
 			newPrevPageLink.href = url[0].href;
@@ -520,9 +520,9 @@ function d2lAddHeader()
 		{
 			url = window.parent.document.getElementsByClassName("d2l-iterator-button-next");
 			newNextPage = document.createElement("span");
-			newNextPage.classList.add("lessonLink");
-			newNextPage.classList.add("sameWin");
-			newNextPage.classList.add("nextLesson");
+			newNextPage.classList.add("lessonLink", "sameWin", "nextLesson");
+			//newNextPage.classList.add("sameWin");
+			//newNextPage.classList.add("nextLesson");
 			newNextPageLink = document.createElement("a");
 			newNextPageLink.innerHTML = nextText;
 			newNextPageLink.href = url[0].href;
@@ -865,15 +865,12 @@ function changeAllPicSize(param)
 function goBackToPrevLocation()
 {
 	leftPos = window.parent.scrollX; 	// get the left position of the scroll
-	// returnLink.style.display = "none";	// make the return link disappear
+
 	if (navigator.userAgent.indexOf("Firefox") != -1)
 	{
 		encapObject.querySelector("menuitem[id='previousLocMenuItem']").disabled = "disabled";
 	}
-	//else
-	{
-		encapObject.querySelector("a[id='previousLocMenuItem']").style.display = "none";
-	}
+	encapObject.querySelector("a[id='previousLocMenuItem']").style.display = "none";
 	
 	// scroll the page vertically to the position the page was
 	// at when the link was originally clicked (stored as a global variable)
@@ -1250,6 +1247,7 @@ function goToTopOfPage()
 	window.parent.scrollTo(window.parent.scrollX, 0);
 	enablePrevious();
 }
+
 function makeContextMenu(funct, param = null)
 {	
 	// for Firefox 
@@ -1404,6 +1402,7 @@ function scrollToElementReturn(elementID)
 		scrollToElement(elementID);	
 	}
 }
+
 function copySelectedText()
 {
 	var text = "";
@@ -1767,39 +1766,16 @@ function checkURLForPos()
 function scrollToElement(elementID, outsideCall = false)
 {		
 	var element = encapObject.querySelector("#" + elementID); 
-	// gives the square location of the element	
-	var bounding = element.getBoundingClientRect();	
-	var elementTop = bounding.top;			// top position of element in pixels
-	var elementBottom = bounding.bottom;	// bottom position of the element in pixels
-	var iframeOffset = 0; 						// default value if the iframe is not found 
-	var scrollTop = 0;							// default value if the page is not scrolled
 	var windowHeight = window.parent.innerHeight;// height of the webpage with the lesson
 	var windowScroll = window.parent.scrollY; 	// amount window has been scrolled
 	
-	// check if the lesson is in an iframe
-	if (window.self !== window.top)  // we are in an iframe
-	{
-		// get iframes from the parent windows:
-		parentIFrames = window.parent.document.getElementsByTagName("iframe");
-			
-		// go through iframe to find which has the same source as this lesson  
-		// 	(i.e., the iframe that contains this page)
-		for(i=0; i<parentIFrames.length; i++)	// most likely there is only one iframe!
-		{
-			// this is the iframe that conatins the lesson
-			if (window.location.href == parentIFrames[i].src) 
-			{
-				// distance between the top of this iFrame at the top of the parent window
-				iframeOffset = parentIFrames[i].offsetTop; 
-				break;  // don't need to check any more iframes
-			}
-		}
-	}
+	// find the position of the iframe -- if content is not in iframe this will return 0,0
+	const [offsetLeft, offsetTop] = getIframeOffset();
 	
-	// calc the vertical position of the linkTo element in the parent page
-	elementYPos = element.offsetParent.offsetTop + element.offsetTop + iframeOffset;
+	// calc the vertical position of the linked element in the parent page
+	elementYPos = element.offsetParent.offsetTop + element.offsetTop + offsetTop; 
 	
-	// if the element is already in the screen, don't bother scrolling
+	// if the element is not on the screen
 	if(elementYPos < windowScroll || elementYPos > (windowScroll+(2*windowHeight)))
 	{
 		// add some padding so the object does not appear right at the top of the page
@@ -1827,6 +1803,8 @@ function scrollToElement(elementID, outsideCall = false)
 		window.parent.scrollTo(element.offsetLeft, (elementYPos -offsetPadding) );	
 	}
 	
+	/**** highlighting the linked object -- should put in separate function ****/
+	// referenced object is a global variable
 	if(referencedObject != "")
 	{
 		clearInterval(referenceTimer);
@@ -1842,11 +1820,43 @@ function scrollToElement(elementID, outsideCall = false)
 	enablePrevious();
 }
 
+// get the top and left position of the iframe within the parent window
+function getIframeOffset()
+{
+	offsetLeft = 0;
+	offsetTop = 0;	
+	
+	// check if the lesson is in an iframe
+	if (window.self !== window.top)  // we are in an iframe
+	{
+		// get iframes from the parent windows:
+		parentIFrames = window.parent.document.getElementsByTagName("iframe");
+			
+		// go through iframe to find which has the same source as this lesson  
+		// 	(i.e., the iframe that contains this page)
+		for(i=0; i<parentIFrames.length; i++)	// most likely there is only one iframe!
+		{
+			// this is the iframe that conatins the lesson
+			if (window.location.href == parentIFrames[i].src) 
+			{
+				// distance between the top of this iFrame at the top of the parent window
+				offsetLeft = parentIFrames[i].offsetLeft; 	
+				offsetTop = parentIFrames[i].offsetTop; 
+				break;  // don't need to check any more iframes
+			}
+		}
+	}
+	
+	return[offsetLeft, offsetTop];
+}
+
+
 function revertHighlight(element)
 {
 	element.classList.remove("refObjHighlight");
 	referencedObject = "";
 }
+
 function enablePrevious()
 {	
 	// change the right-click menu to show the return link
@@ -1854,10 +1864,7 @@ function enablePrevious()
 	{
 		encapObject.querySelector("menuitem[id='previousLocMenuItem']").disabled = false;
 	}
-	//else
-	{
-		encapObject.querySelector("a[id='previousLocMenuItem']").style.display = "block";
-	}
+	encapObject.querySelector("a[id='previousLocMenuItem']").style.display = "block";
 }
 
 function linksToNewWindow()
@@ -1916,6 +1923,7 @@ function createEmailLink()
 		emailLink[i].onclick = function() {openEmailWindow(this.title);};
 	}
 }
+
 function openEmailWindow(emailAddress)
 {
 	emailWindow = window.open("https://d2l.msu.edu/d2l/le/email/" + 
@@ -1937,6 +1945,7 @@ function openEmailWindow(emailAddress)
 		subject.value = window.document.title;
 	};
 }
+
 function fixIframeSize()
 {
 	iFrame = window.parent.document.getElementsByClassName("d2l-iframe");
