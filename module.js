@@ -1,11 +1,11 @@
 /*
 Future:
 - remove formatting from copied codeblock
-- add page map to long-click / right-click menu
-- remove depecated referencing (sectRef...)
+- <right-click works> add page map to long-click / right-click menu
+- <almost done> remove depecated referencing (sectRef...)
 - break up code functions
 - <done> switch to addEventListener()
-- use encapObject whenever possible
+- <started> use encapObject whenever possible
 - hold position of page when resized
 - prevPage and nextPage: combine code
 - <done> combine right-click and long-click in one function 
@@ -15,6 +15,7 @@ Future:
 - set equation color?
 - <done> cannot put an email link inside H2,H3,H4 -- click event gets removed
     - switched innerHTML for insertAdjacentHTML
+- MathJax is activating long-click menu
 */
 
 // tabs in codeblocks are messing with the figures
@@ -47,16 +48,18 @@ longClickTimer = null;
 overRCMenu = false;
 mouseX = 0; mouseY = 0;  // allow a little wiggle of the mouse
 
+
 window.addEventListener("mousedown", function(event)
 {
-	if(event.which == 1)  // left button click
+	// make sure it's a left-click and the MathJax Frame is not showing
+	if(event.which == 1 && !document.querySelector("#MathJax_MenuFrame"))
 	{
 		longClickTimer = setTimeout(function() 
 		{
-			activateElement(event, document.getElementById("longClickMenu"));
+			activateElement(event, encapObject.querySelector("#longClickMenu"));
 			overRCMenu = true;
-			document.body.style.userSelect = "none";
-			document.body.style.msUserSelect = "none";
+			encapObject.style.userSelect = "none";
+			encapObject.style.msUserSelect = "none";
 		}, 350);
 		
 		// get current mouse pointer position -- used to allow for wiggle in the mouse
@@ -72,10 +75,10 @@ window.addEventListener("mouseup", function()
 	//	tried to avoid this with stopPropogation -- that did not work
 	if(!overRCMenu)
 	{
-		document.getElementById("longClickMenu").style.visibility = "hidden"; 
-		document.getElementById("longClickMenu").style.top = "0px"; 
-		document.body.style.userSelect = "";
-		document.body.style.msUserSelect = "";
+		encapObject.querySelector("#longClickMenu").style.visibility = "hidden";
+		encapObject.querySelector("#longClickMenu").style.top = "0px";
+		encapObject.style.userSelect = "";
+		encapObject.style.msUserSelect = "";
 	}
 });
 
@@ -100,7 +103,7 @@ function activateNotification(e)
 		notifDiv.id = "notification";
 		notifDiv.classList.add("rcMenu");
 		notifDiv.innerHTML = "Codeblock copied to clipboard";
-		document.body.appendChild(notifDiv);
+		encapObject.appendChild(notifDiv);
 	}
 	else
 	{
@@ -457,7 +460,6 @@ function d2lFixes()
 	if(parent.document.querySelector(".d2l-page-main-padding"))
 		parent.document.querySelector(".d2l-page-main-padding").style.padding = "0";
 
-//	d2lAddHeader();
 }
 
 // Add a header to the lesson which include a home, previous, and next page link --
@@ -1069,11 +1071,21 @@ function addCodeTags(elementType)
 			codeBlockDiv.classList.add("codeBlock");
 			
 			// when double-clicked, select all the children (text) within the codeblock
-			codeBlockDiv.ondblclick = function(event){ 
+			codeBlockDiv.addEventListener("dblclick", function(event){ 
 				document.getSelection().selectAllChildren(this); 
-				document.execCommand("copy"); 	
+			//	document.getSelection().toString();
+				document.execCommand("copy"); 
 				activateNotification(event);
-			};
+			});
+			
+			// do this only for codeblocks
+			codeBlockDiv.addEventListener("copy", function(e) {
+			  const text_only = document.getSelection().toString();
+			  const clipdata = e.clipboardData; // || window.clipboardData;  
+			  clipdata.setData("text/plain", text_only);
+			 // clipdata.setData("text/html", text_only);
+			  e.preventDefault();
+			});
 			
 			// add the codeBock div as a parent to the codeLine
 			codeLines[i].parentElement.insertBefore(codeBlockDiv, codeLines[i]);
@@ -1401,7 +1413,12 @@ function addReferences()
 	
 	////////////////////////////// this section is deprecated
 	var references = encapObject.querySelectorAll(".sectRef, .figureRef, .eqRef, .linkTo");
-
+	for(i=0; i<references.length; i++)
+	{
+		// old system to new system
+		references[i].classList.add("ref");
+	}
+/*
 	for(i=0; i<references.length; i++)
 	{
 		fullRefID = references[i].id;
@@ -1462,7 +1479,7 @@ function addReferences()
 
 			/* find the last "(" in the line -- represents ( EQ# )
 			   split the line right after the "("
-				grab the number */
+				grab the number 
 			eqRef = parseInt(caption.slice( (caption.lastIndexOf("("))+1 ));
 			references[i].innerText = "Eq. " + eqRef;	
 
@@ -1488,7 +1505,7 @@ function addReferences()
 			// go to scrollToElement() function when the anchor is clicked
 			references[i].onclick = scrollToElementReturn(refID);
 		}
-	}
+	}*/
 	//////////////////////////////////////  end of deprecated section
 	
 	// new system for references
