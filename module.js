@@ -1187,7 +1187,7 @@ function addCodeBlockTag()
 		{
 			// if not, check the children elements to see if there is a title (this is a D2L bug)
 			cbChild = codeBlockDivs[i].querySelector("[title]");
-			if(cbChild && cbChild.title != "")
+			if(cbChild && cbChild.title.trim() != "" && isNaN(cbChild.title.trim()))
 			{
 				codeBlockTitle = cbChild.title;
 			}
