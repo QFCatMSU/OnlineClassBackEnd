@@ -1,9 +1,13 @@
 /*
 Future:
 - remove formatting from copied codeblock
+   - Chrome adds a line feed, Edge keps format, FF works, Safari ??
 - <right-click works> add page map to long-click / right-click menu
 - <almost done> remove depecated referencing (sectRef...)
 - break up code functions
+- look for Span within H6 for Title
+- Title in H6 means no numbers
+- Class to add numbers
 - <done> switch to addEventListener()
 - <started> use encapObject whenever possible
 - hold position of page when resized
@@ -15,7 +19,7 @@ Future:
 - set equation color?
 - <done> cannot put an email link inside H2,H3,H4 -- click event gets removed
     - switched innerHTML for insertAdjacentHTML
-- MathJax is activating long-click menu
+- <done - checking for Math element> MathJax is activating long-click menu
 */
 
 // tabs in codeblocks are messing with the figures
@@ -1167,17 +1171,37 @@ function addCodeBlockTag()
 {
 	codeBlockDivs = encapObject.querySelectorAll(".codeBlock");
 	
+	
+
+	
+	
 	for(i=0; i<codeBlockDivs.length; i++)
 	{
-		// if the first child of the codeblock has a title and its not a number (numbers represent a codeline)
-		if(codeBlockDivs[i].title.trim() != "" && isNaN(codeBlockDivs[i].title.trim()))  
+		// need to check if there is a title in the first element of the codeblock
+		codeBlockTitle = "";
+		if(codeBlockDivs[i].title.trim() != "" && isNaN(codeBlockDivs[i].title.trim())) 			
+		{
+			codeBlockTitle = codeBlockDivs[i].title;
+		}
+		else 
+		{
+			// if not, check the children elements to see if there is a title (this is a D2L bug)
+			cbChild = codeBlockDivs[i].querySelector("[title]");
+			if(cbChild && cbChild.title != "")
+			{
+				codeBlockTitle = cbChild.title;
+			}
+		}
+
+		// add a tab to the codeblock
+		if(codeBlockTitle != "")	
 		{
 			par = document.createElement("p");
 			par.classList.add("noSelect");
 			par.style.textAlign = "left";
 			tabSpan = document.createElement("span");
 			tabSpan.classList.add("codeBlockTab", "noSelect", "noCode");
-			tabSpan.setAttribute("data-text", codeBlockDivs[i].title);
+			tabSpan.setAttribute("data-text", codeBlockTitle);
 			par.appendChild(tabSpan);
 			codeBlockDivs[i].insertBefore(par, codeBlockDivs[i].children[0]);
 		}
