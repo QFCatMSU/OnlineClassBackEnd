@@ -1170,11 +1170,7 @@ function addCodeTags(elementType)
 function addCodeBlockTag()
 {
 	codeBlockDivs = encapObject.querySelectorAll(".codeBlock");
-	
-	
-
-	
-	
+		
 	for(i=0; i<codeBlockDivs.length; i++)
 	{
 		// need to check if there is a title in the first element of the codeblock
@@ -1200,7 +1196,7 @@ function addCodeBlockTag()
 			par.classList.add("noSelect");
 			par.style.textAlign = "left";
 			tabSpan = document.createElement("span");
-			tabSpan.classList.add("codeBlockTab", "noSelect", "noCode");
+			tabSpan.classList.add("codeBlockTab", "noSelect", "noCode", "nonum");
 			tabSpan.setAttribute("data-text", codeBlockTitle);
 			par.appendChild(tabSpan);
 			codeBlockDivs[i].insertBefore(par, codeBlockDivs[i].children[0]);

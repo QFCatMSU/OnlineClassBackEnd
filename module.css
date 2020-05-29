@@ -376,7 +376,7 @@ td
 {
 	padding-left: 5.5em;
 }
-.codeBlock:not(.nonum) > .code:before
+.codeBlock:not(.nonum) > .code:before, .codeBlock.num > .code:before
 {	
 	counter-increment: codeLines;
 	content: counter(codeLines);
