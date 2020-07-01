@@ -1,8 +1,8 @@
 /*
 Future:
-- remove formatting from copied codeblock
+- <alomst> remove formatting from copied codeblock
    - Chrome adds a line feed, Edge keps format, FF works, Safari ??
-- <right-click works> add page map to long-click / right-click menu
+- <done> add page map to long-click / right-click menu
 - <almost done> remove depecated referencing (sectRef...)
 - break up code functions
 - look for Span within H6 for Title
@@ -52,7 +52,13 @@ longClickTimer = null;
 overRCMenu = false;
 mouseX = 0; mouseY = 0;  // allow a little wiggle of the mouse
 
-
+var script = document.createElement('script');
+script.type = "text/javascript";
+script.id = "MathJax-script";
+script.src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-svg.js";
+script.async = "async";
+document.head.appendChild(script); //or something of the likes
+	
 window.addEventListener("mousedown", function(event)
 {
 	// make sure it's a left-click and the MathJax Frame is not showing
@@ -164,8 +170,8 @@ parent.window.onload = function()
 		d2lAddHeader();
 	}
 	
-	// mathML() adds div to the beginning of the page -- needs to happen after header is set
-	loadMathML();
+	// mathML() adds div to the beginning of the page -- needs to happen after header is set -- deprcated with MathJax 3.0
+	//loadMathML();
 	
 	getClassInfoD2L(); // emails, lessons (works only in D2L for now)
 	
