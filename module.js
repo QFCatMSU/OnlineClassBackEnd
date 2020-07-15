@@ -15,7 +15,7 @@ Future:
 - <done> combine right-click and long-click in one function 
 - fix overflow code
 - fix wayward div in page
-- check MathJax version
+- <done> check MathJax version
 - set equation color?
 - <done> cannot put an email link inside H2,H3,H4 -- click event gets removed
     - switched innerHTML for insertAdjacentHTML
@@ -28,6 +28,8 @@ Future:
 smallImageHeight = 100;				// set the height of flex-sized images when small 
 imageHeight = new Array();			// the heights of all flex-sized images in a page
 imageWidth = new Array();			// the widths of all flex-sized images in a page
+videoHeight = new Array();			// the heights of all flex-sized images in a page
+videoWidth = new Array();			// the widths of all flex-sized images in a page
 minImageWidth = 700;					// minimum width for a flexSize image in expanded mode
 scrollTopPosition = 0; 				// value saved for links-return-links within a page
 overflowCalled = false;   			// check to see if there is a current check of code lines
@@ -283,80 +285,7 @@ function loadMathML()
 	document.head.appendChild(script); //or something of the likes
 }
 
-function mathEdit()
-{
-	// get all Math object in the page
-	var mathObj = document.querySelectorAll('math');
-	mathObjCount = mathObj.length;
-	
-	// switch the display to block for each math element
-	// note: this is not the same as the CSS style block
-	//     display = inline means math characters are resized to fit inline
-	//     diaplay = block means math characters are styled naturally
-	for(i=0; i<mathObj.length; i++)
-	{
-		mathObj[i].setAttribute("display", "block");
-	}
-	
-	// if there are math objects, then
-	if(mathObjCount > 0)
-	{
-		// execute the MathJax code
-		D2LMathML2.DesktopInit(
-			'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/latest.js?config=MML_HTMLorMML',
-			'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/latest.js?config=TeX-AMS-MML_HTMLorMML%2cSafe'); 
-		
-		// do post mathJax manipulation
-		postMathJax();
-	}
-}
 
-/**** Changes to D2L MathJax code
-  1) Need to stop loading 		
-		D2LMathML.DesktopInit('https://s.brightspace.com/lib/mathjax/2.6.1/MathJax.js?config=MML_HTMLorMML',
-		'https://s.brightspace.com/lib/mathjax/2.6.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML%2cSafe');
-     onDOMContent -- same as my code.
-  2) MathJS error b.parentNode prevents move from MathJax_Preview -> MathJax_Display
-****/	
-function postMathJax()
-{
-	// MathJax will change all math objects into class="MathJax_Display" --
-	// find all mathJaxDisplay objects --
-	// note: MathJax is running asynchronously, 
-	//			so these objects will appear at different times
-	mathDis = document.querySelectorAll(".MathJax_Display");
-	countNum++;
-	
-	// For each MathJax_Display object
-	for(i=0; i<mathDis.length; i++)
-	{
-		// if it has not been changed to display:inline, change it to display:inline
-		if(mathDis[i].getAttribute("style") != "display: inline !important;" &&
-			mathDis[i].classList.length == 1)
-		{
-			// When display=block is set, MathJax overcpmpensates and 
-			// sets all style display to block !important.  Switching this to inline makes the formula 
-			// more flexible and matches the style in the D2L editor
-			mathDis[i].setAttribute("style", "display: inline !important;");
-			count++;
-		}
-	}
-	prevCount = count;
-	
-	// We are still waiting for MathJax to change all math objects
-	if(count < mathObjCount)
-	{
-		// recursive call in 300ms
-		setTimeout("postMathJax()", 300);
-	}
-	else  // we are done -- see if we need to scroll page
-	{	
-		if(window.location.hash.slice(1) != "") 
-			scrollToElement(window.location.hash.slice(1), true);
-		
-		moveEqNum();
-	}
-}
 
 /* For all equations that have a number --
    moves the number to an appropriate spot if the equation has multiple lines.
@@ -634,6 +563,7 @@ function createFlexImages()
 {
 	// find all images that have the class name "flexSize" or "fs"
 	var flexImage = encapObject.querySelectorAll('img.flexSize, img.fs');
+	var flexVideo = encapObject.querySelectorAll('video.flexSize, video.fs');
 
 	// switch to while (there are flexImages)??
 	for(i=0; i<flexImage.length; i++)	// for each flexSize element
@@ -652,6 +582,17 @@ function createFlexImages()
 		
 		// initalize the flex image to the small size
 		changeImageSize(flexImage[i], "minimize");
+	}
+	
+	// switch to while (there are flexImages)??
+	for(let i=0; i<flexVideo.length; i++)	// for each flexSize element
+	{
+		videoHeight[i] = flexVideo[i].height;
+		videoWidth[i] = flexVideo[i].width;
+		flexVideo[i].width = 100;
+		flexVideo[i].height = 100;
+		flexVideo[i].addEventListener("play", function(){this.width=videoWidth[i]; this.height=videoHeight[i];});
+		flexVideo[i].addEventListener("ended", function(){this.width=100; this.height=100;});
 	}
 }
 
@@ -1437,102 +1378,13 @@ function addReferences()
 {
 	fixBlockReferences();
 	
-	////////////////////////////// this section is deprecated
+	/**** convert old system of references to the new system ****/
 	var references = encapObject.querySelectorAll(".sectRef, .figureRef, .eqRef, .linkTo");
 	for(i=0; i<references.length; i++)
 	{
 		// old system to new system
 		references[i].classList.add("ref");
 	}
-/*
-	for(i=0; i<references.length; i++)
-	{
-		fullRefID = references[i].id;
-		refID = fullRefID.slice(2);
-	
-		// check if the reference has no ID
-		if(fullRefID == "")  
-		{
-			// right now, this situation is handled in editor.CSS
-		}
-		// no text associated with the reference
-		else if (references[i].innerText.trim() == "")
-		{
-			// right now, this situation is handled in editor.CSS			
-		}
-		// check if ID has any invalid characters
-		else if(isValid(refID) == false)
-		{
-			references[i].innerText = "***Invalid characters in ID***";
-		}
-		// check if first character in ID is a number
-		else if(isNaN(refID[0]) == false)
-		{
-			references[i].innerText = "***Cannot start ID with number***";
-		}
-		// reference link does not exist
-		else if(!(encapObject.querySelector("#" + refID)))
-		{
-			references[i].innerText = "***Invalid Link***";				
-		}
-		// there is no content at the link (not sure this is neccessary...)
-		else if (encapObject.querySelector("#" + refID).innerText.trim() == "")
-		{
-			references[i].innerText = "***No content at link***";					
-		}
-		// ref ID is a valid element with content 		
-		// if this is a section ref
-		else if(references[i].classList.contains("sectRef")) 
-		{
-			// get first number from section ID (div)
-			sectNum = parseInt(encapObject.querySelector("#" + refID).innerText);
-			
-			if(references[i].classList.contains("label"))
-			{
-				// add section num to the link
-				references[i].innerText = references[i].innerText + 
-													" (Sect " + sectNum + ")";	
-			}
-			
-			// create a link that scrolls to the section
-			divID = "div" + String(sectNum).replace(".", "-");
-			references[i].onclick = scrollToElementReturn(divID);
-		}
-		// if this is a equation ref
-		else if(references[i].classList.contains("eqRef")) 
-		{
-			caption = encapObject.querySelector("#" + refID).innerText;
-
-			/* find the last "(" in the line -- represents ( EQ# )
-			   split the line right after the "("
-				grab the number 
-			eqRef = parseInt(caption.slice( (caption.lastIndexOf("("))+1 ));
-			references[i].innerText = "Eq. " + eqRef;	
-
-			// create a link that scrolls to the equation
-			references[i].onclick = scrollToElementReturn(refID);
-		}
-		// if this is a figure ref
-		else if(references[i].classList.contains("figureRef")) 
-		{
-			caption = encapObject.querySelector("#" + refID).innerText;
-			strIndex = caption.indexOf(":");  // find the location of the first semicolon
-			
-			figRef = caption.slice(0, strIndex); // get "Fig. #"
-			
-			references[i].innerText = figRef;	
-			
-			// create a link that scrolls to the figure
-			references[i].onclick = scrollToElementReturn(refID);
-		}
-		// this is an extensioin or trap link
-		else if(references[i].classList.contains("linkTo")) 
-		{
-			// go to scrollToElement() function when the anchor is clicked
-			references[i].onclick = scrollToElementReturn(refID);
-		}
-	}*/
-	//////////////////////////////////////  end of deprecated section
 	
 	// new system for references
 	var references = encapObject.querySelectorAll(".ref, .reference");
@@ -1856,37 +1708,6 @@ function linksToNewWindow()
 	}
 }
 
-function fixMathJaxEQs()
-{
-	// change the display type of all math objects so they all display 
-	//						in the same way (this is a D2L issue)
-	// this works if it happens before mathjax javascript is executed 
-	var m = document.querySelectorAll('math');
-	
-	for(i=0; i<m.length; i++)
-	{
-		m[i].setAttribute("display", "block");   // still needed??
-	}
-	
-	// this works if it happens after mathjax javascript is executed 
-	mathSpan = document.querySelectorAll("span.MathJax_Preview");
-	//mathDis = document.querySelectorAll(".MathJax_Display");
-	//mathPro = document.querySelectorAll(".MathJax_Processing");
-	//mathPro2 = document.querySelectorAll(".MathJax_Processed");
-	
-	// MathJax/IE bug where annotations take up space but are not displayed
-	// Might not be needed anymore 
-	if(window.navigator.userAgent.indexOf("Edge ") > -1 || 
-		window.navigator.userAgent.indexOf("MSIE "))
-	{
-		mathObj = document.getElementsByClassName("MJX_Assistive_MathML");
-		for(i=0; i<mathObj.length; i++)
-		{
-			mathObj[i].style.cssText += ";display: none !important;";
-		}
-	}
-}
-
 function createEmailLink()
 {
 	emailLink = encapObject.getElementsByClassName("email");
@@ -2007,6 +1828,116 @@ function captionFigures()
 		}
 	}
 }
+
+
+/**** DEPRECATED FUNCTIONS ****/
+/*function fixMathJaxEQs()
+{
+	// change the display type of all math objects so they all display 
+	//						in the same way (this is a D2L issue)
+	// this works if it happens before mathjax javascript is executed 
+	var m = document.querySelectorAll('math');
+	
+	for(i=0; i<m.length; i++)
+	{
+		m[i].setAttribute("display", "block");   // still needed??
+	}
+	
+	// this works if it happens after mathjax javascript is executed 
+	mathSpan = document.querySelectorAll("span.MathJax_Preview");
+	//mathDis = document.querySelectorAll(".MathJax_Display");
+	//mathPro = document.querySelectorAll(".MathJax_Processing");
+	//mathPro2 = document.querySelectorAll(".MathJax_Processed");
+	
+	// MathJax/IE bug where annotations take up space but are not displayed
+	// Might not be needed anymore 
+	if(window.navigator.userAgent.indexOf("Edge ") > -1 || 
+		window.navigator.userAgent.indexOf("MSIE "))
+	{
+		mathObj = document.getElementsByClassName("MJX_Assistive_MathML");
+		for(i=0; i<mathObj.length; i++)
+		{
+			mathObj[i].style.cssText += ";display: none !important;";
+		}
+	}
+}*/
+
+/*
+function mathEdit()
+{
+	// get all Math object in the page
+	var mathObj = document.querySelectorAll('math');
+	mathObjCount = mathObj.length;
+	
+	// switch the display to block for each math element
+	// note: this is not the same as the CSS style block
+	//     display = inline means math characters are resized to fit inline
+	//     diaplay = block means math characters are styled naturally
+	for(i=0; i<mathObj.length; i++)
+	{
+		mathObj[i].setAttribute("display", "block");
+	}
+	
+	// if there are math objects, then
+	if(mathObjCount > 0)
+	{
+		// execute the MathJax code
+		D2LMathML2.DesktopInit(
+			'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/latest.js?config=MML_HTMLorMML',
+			'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/latest.js?config=TeX-AMS-MML_HTMLorMML%2cSafe'); 
+		
+		// do post mathJax manipulation
+		postMathJax();
+	}
+}*/
+
+/**** Changes to D2L MathJax code
+  1) Need to stop loading 		
+		D2LMathML.DesktopInit('https://s.brightspace.com/lib/mathjax/2.6.1/MathJax.js?config=MML_HTMLorMML',
+		'https://s.brightspace.com/lib/mathjax/2.6.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML%2cSafe');
+     onDOMContent -- same as my code.
+  2) MathJS error b.parentNode prevents move from MathJax_Preview -> MathJax_Display
+****/	
+/*
+function postMathJax()
+{
+	// MathJax will change all math objects into class="MathJax_Display" --
+	// find all mathJaxDisplay objects --
+	// note: MathJax is running asynchronously, 
+	//			so these objects will appear at different times
+	mathDis = document.querySelectorAll(".MathJax_Display");
+	countNum++;
+	
+	// For each MathJax_Display object
+	for(i=0; i<mathDis.length; i++)
+	{
+		// if it has not been changed to display:inline, change it to display:inline
+		if(mathDis[i].getAttribute("style") != "display: inline !important;" &&
+			mathDis[i].classList.length == 1)
+		{
+			// When display=block is set, MathJax overcpmpensates and 
+			// sets all style display to block !important.  Switching this to inline makes the formula 
+			// more flexible and matches the style in the D2L editor
+			mathDis[i].setAttribute("style", "display: inline !important;");
+			count++;
+		}
+	}
+	prevCount = count;
+	
+	// We are still waiting for MathJax to change all math objects
+	if(count < mathObjCount)
+	{
+		// recursive call in 300ms
+		setTimeout("postMathJax()", 300);
+	}
+	else  // we are done -- see if we need to scroll page
+	{	
+		if(window.location.hash.slice(1) != "") 
+			scrollToElement(window.location.hash.slice(1), true);
+		
+		moveEqNum();
+	}
+}*/
 /* takes
 <p><img src="ImgSrc"></p>
 <p class="caption">Caption text </p>
