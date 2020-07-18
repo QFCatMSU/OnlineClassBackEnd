@@ -28,13 +28,11 @@ Future:
 smallImageHeight = 100;				// set the height of flex-sized images when small 
 imageHeight = new Array();			// the heights of all flex-sized images in a page
 imageWidth = new Array();			// the widths of all flex-sized images in a page
-videoHeight = new Array();			// the heights of all flex-sized images in a page
-videoWidth = new Array();			// the widths of all flex-sized images in a page
 minImageWidth = 700;					// minimum width for a flexSize image in expanded mode
 scrollTopPosition = 0; 				// value saved for links-return-links within a page
 overflowCalled = false;   			// check to see if there is a current check of code lines
-mathObjCount = 0;						// The number of equations in the lesson
-count=0;prevCount=0;countNum=0;	// used to keep track of the equations
+//mathObjCount = 0;						// The number of equations in the lesson
+//count=0;prevCount=0;countNum=0;	// used to keep track of the equations
 editURL = "";							// URL for the editting page 
 referenceTimer = "";					// timer used to toggle the reference object
 
@@ -564,6 +562,7 @@ function createFlexImages()
 	// find all images that have the class name "flexSize" or "fs"
 	var flexImage = encapObject.querySelectorAll('img.flexSize, img.fs');
 	var flexVideo = encapObject.querySelectorAll('video.flexSize, video.fs');
+	var flexIframe = encapObject.querySelectorAll("p.fs > iframe, p.flexsize > iframe");
 
 	// switch to while (there are flexImages)??
 	for(i=0; i<flexImage.length; i++)	// for each flexSize element
@@ -584,15 +583,52 @@ function createFlexImages()
 		changeImageSize(flexImage[i], "minimize");
 	}
 	
-	// switch to while (there are flexImages)??
+	// go through all the videos...
 	for(let i=0; i<flexVideo.length; i++)	// for each flexSize element
 	{
-		videoHeight[i] = flexVideo[i].height;
-		videoWidth[i] = flexVideo[i].width;
-		flexVideo[i].width = 100;
-		flexVideo[i].height = 100;
-		flexVideo[i].addEventListener("play", function(){this.width=videoWidth[i]; this.height=videoHeight[i];});
-		flexVideo[i].addEventListener("ended", function(){this.width=100; this.height=100;});
+		let videoHeight = flexVideo[i].height;
+		let videoWidth = flexVideo[i].width;
+		flexVideo[i].width = smallImageHeight * videoWidth / videoHeight;
+		flexVideo[i].height = smallImageHeight;
+		flexVideo[i].addEventListener("play", 
+			function()
+			{
+				this.width=videoWidth; 
+				this.height=videoHeight;
+			});
+		flexVideo[i].addEventListener("ended", 
+			function()
+			{
+				this.width=smallImageHeight * videoWidth / videoHeight;
+				this.height=smallImageHeight;
+			});
+	}
+		
+	//for(let i=0; i<flexP.length; i++)
+	for(let i=0; i<flexIframe.length; i++)
+	{
+		flexIframe[i].style.borderRightColor = "orange";
+		flexIframe[i].style.borderRightWidth = "25px";
+		flexIframe[i].style.borderRightStyle = "ridge";
+		let iframeHeight = flexIframe[i].height; 
+		let iframeWidth = flexIframe[i].width; 
+		flexIframe[i].height = smallImageHeight;
+		flexIframe[i].width = smallImageHeight * iframeWidth / iframeHeight;
+		flexIframe[i].addEventListener("click", 
+			function()
+			{
+				if(flexIframe[i].width != iframeWidth)
+				{
+					flexIframe[i].width = iframeWidth; 
+					flexIframe[i].height = iframeHeight; 
+					flexIframe[i].src = flexIframe[i].src;
+				}
+				else
+				{
+					flexIframe[i].width = smallImageHeight * iframeWidth / iframeHeight; 
+					flexIframe[i].height = smallImageHeight;
+				}
+			});
 	}
 }
 
