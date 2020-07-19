@@ -537,9 +537,7 @@ function removeDivs()
 	
 	// Remove all the divs from the page but keep the content 
 	while(divElements.length > 0)  
-	{
-		// divElements.length is decreased by one everytime a div is removed 
-			
+	{		
 		// get information inside the div and save it to a temp variable
 		divContent = divElements[divElements.length-1].innerHTML
 		
@@ -604,17 +602,19 @@ function createFlexImages()
 			});
 	}
 		
-	//for(let i=0; i<flexP.length; i++)
 	for(let i=0; i<flexIframe.length; i++)
 	{
-		flexIframe[i].style.borderRightColor = "orange";
-		flexIframe[i].style.borderRightWidth = "25px";
-		flexIframe[i].style.borderRightStyle = "ridge";
 		let iframeHeight = flexIframe[i].height; 
 		let iframeWidth = flexIframe[i].width; 
 		flexIframe[i].height = smallImageHeight;
 		flexIframe[i].width = smallImageHeight * iframeWidth / iframeHeight;
-		flexIframe[i].addEventListener("click", 
+
+		// create a small span button 
+		resizeButton = document.createElement("span");
+		resizeButton.classList.add("flexButton");
+		resizeButton.classList.add("noSelect");
+		resizeButton.innerText = "\u2192";
+		resizeButton.addEventListener("click", 
 			function()
 			{
 				if(flexIframe[i].width != iframeWidth)
@@ -622,13 +622,16 @@ function createFlexImages()
 					flexIframe[i].width = iframeWidth; 
 					flexIframe[i].height = iframeHeight; 
 					flexIframe[i].src = flexIframe[i].src;
+					this.innerText = "\u2190";
 				}
 				else
 				{
 					flexIframe[i].width = smallImageHeight * iframeWidth / iframeHeight; 
 					flexIframe[i].height = smallImageHeight;
+					this.innerText = "\u2192";
 				}
 			});
+		flexIframe[i].parentElement.appendChild(resizeButton);
 	}
 }
 

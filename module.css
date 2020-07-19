@@ -503,6 +503,11 @@ div.codeBlock
 	top: 50%;
 	right: 0;*/
 }
+.flexButton
+{
+	background-color: orange;
+	font-size: 30px;
+}
 .resize
 {
 	position: fixed; /* the trouble is that the lesson is in an iframe so this really does nothing */
