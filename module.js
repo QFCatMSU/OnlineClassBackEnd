@@ -613,7 +613,7 @@ function createFlexImages()
 		resizeButton = document.createElement("span");
 		resizeButton.classList.add("flexButton");
 		resizeButton.classList.add("noSelect");
-		resizeButton.innerText = "\u2192";
+		resizeButton.innerText = "\u{1f846}";
 		resizeButton.addEventListener("click", 
 			function()
 			{
@@ -622,13 +622,13 @@ function createFlexImages()
 					flexIframe[i].width = iframeWidth; 
 					flexIframe[i].height = iframeHeight; 
 					flexIframe[i].src = flexIframe[i].src;
-					this.innerText = "\u2190";
+					this.innerText = "\u{1f844}";
 				}
 				else
 				{
 					flexIframe[i].width = smallImageHeight * iframeWidth / iframeHeight; 
 					flexIframe[i].height = smallImageHeight;
-					this.innerText = "\u2192";
+					this.innerText = "\u{1f846}";
 				}
 			});
 		flexIframe[i].parentElement.appendChild(resizeButton);
@@ -694,7 +694,7 @@ function addDivs()
 	// find all element of the type asked for (H1, H2, and H3 currently supported)
 	elements = encapObject.querySelectorAll("H1, H2, H3");
 	
-	// for each element
+	// for each header element
 	for(i=0; i<elements.length; i++)
 	{
 		// create a temporary element at the same location of the Header element

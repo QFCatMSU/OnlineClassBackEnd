@@ -507,6 +507,11 @@ div.codeBlock
 {
 	background-color: orange;
 	font-size: 30px;
+	vertical-align: 30%;
+}
+.flexButton:hover
+{
+	color: rgb(50,50,255);
 }
 .resize
 {
