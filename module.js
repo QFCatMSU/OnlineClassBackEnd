@@ -55,7 +55,7 @@ mouseX = 0; mouseY = 0;  // allow a little wiggle of the mouse
 var script = document.createElement('script');
 script.type = "text/javascript";
 script.id = "MathJax-script";
-script.src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-svg.js";
+script.src = "https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-svg.js";
 script.async = "async";
 document.head.appendChild(script); //or something of the likes
 	
@@ -1070,7 +1070,7 @@ function addCodeTags(elementType)
 			
 			// do this only for codeblocks
 			codeBlockDiv.addEventListener("copy", function(e) {
-			  const text_only = document.getSelection().toString();
+			  const text_only = document.getSelection().trimEnd().toString();  // trimEnd() converts weird spaces to regular spaces
 			  const clipdata = e.clipboardData; // || window.clipboardData;  
 			  clipdata.setData("text/plain", text_only);
 			 // clipdata.setData("text/html", text_only);
