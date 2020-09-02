@@ -52,10 +52,11 @@ longClickTimer = null;
 overRCMenu = false;
 mouseX = 0; mouseY = 0;  // allow a little wiggle of the mouse
 
+/***** Adding MathJax 3 *****/
 var script = document.createElement('script');
 script.type = "text/javascript";
 script.id = "MathJax-script";
-script.src = "https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-svg.js";
+script.src = "https://cdn.jsdelivr.net/npm/mathjax@3.1.0/es5/tex-mml-svg.js";
 script.async = "async";
 document.head.appendChild(script); //or something of the likes
 	
@@ -283,11 +284,10 @@ function loadMathML()
 	document.head.appendChild(script); //or something of the likes
 }
 
-
-
 /* For all equations that have a number --
    moves the number to an appropriate spot if the equation has multiple lines.
-	This is hacky! **/
+	This is hacky! 
+	I belive this has now been deprecated by display: inline-flex and other stuff
 function moveEqNum()
 {
 	// get all elements with class = eqNum
@@ -313,7 +313,7 @@ function moveEqNum()
 		// multiple-line equations cause problems with the eqNum object
 		if(FW = eqNumObj[i].parentNode.querySelector("span.MathJax_FullWidth"))
 		{
-			/**** setting the top position of the equation number ****/
+			/**** setting the top position of the equation number ***
 			// set the eqNum position to relativ to allow it to move
 			eqNumObj[i].style.position = "relative";
 			
@@ -327,7 +327,7 @@ function moveEqNum()
 
 
 			/**** setting the left position of the equation number 
-					issue: need to find the widest line in the multi-line equation ****/	
+					issue: need to find the widest line in the multi-line equation ***
 			// the bounding box of each line in the equation uniquely has a margin-left style
 			spanClips = eqNumParent.querySelectorAll("span[style*=margin-left]");
 			
@@ -350,7 +350,7 @@ function moveEqNum()
 		}
 	}
 }
-
+*/
 function joomlaFixes()
 {
 	// In Joomla, the article is in a div of class "container"
@@ -903,7 +903,7 @@ function equationNumbering()
 	// find all elements of elementType (initially it is H5)
 	var equations = encapObject.getElementsByClassName("eqNum");
 	
-	for(i=0; i<equations.length; i++)
+/*	for(i=0; i<equations.length; i++)
 	{
 		if(equations[i].tagName == "H5" || equations[i].tagName == "SPAN")
 		{
@@ -913,6 +913,21 @@ function equationNumbering()
 		{
 			equations[i].innerHTML = " ( " + (i+1) + " )";
 		}	
+	}*/
+	for(i=0; i<equations.length; i++)
+	{
+		if(equations[i].textContent.trim() != "")
+		{		
+			equations[i].style.display = "inline-flex";
+			
+			eqNumber = document.createElement("span");
+			eqNumber.textContent =  "\u00a0( " + (i+1) + " )";
+			eqNumber.style.fontSize = "14px";
+			eqNumber.style.alignSelf = "center";
+			eqNumber.style.whiteSpace = "nowrap";
+
+			equations[i].appendChild(eqNumber);
+		}
 	}
 }
 
