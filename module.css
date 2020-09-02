@@ -79,6 +79,7 @@ p:not([style*="text-align: center;"]) .math
 math, .MathJax, .eq, .equation
 {
 	color: rgb(79,49,9);
+	display: inline !important;
 }
 .eq, .equation
 {
@@ -667,6 +668,10 @@ img.flexSize, img.fs
 }
 @media only print
 {
+	body
+	{
+		text-rendering: optimizeLegibility;
+	}
 	body, .h1Div, .h2Div, .h3Div, .nonlinear, .title
 	{
 		background-color: transparent;
