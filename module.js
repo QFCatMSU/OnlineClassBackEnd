@@ -52,13 +52,13 @@ longClickTimer = null;
 overRCMenu = false;
 mouseX = 0; mouseY = 0;  // allow a little wiggle of the mouse
 
-/***** Adding MathJax 3 *****/
+/***** Adding MathJax 3 ****/
 var script = document.createElement('script');
 script.type = "text/javascript";
 script.id = "MathJax-script";
 script.src = "https://cdn.jsdelivr.net/npm/mathjax@3.1.0/es5/tex-mml-svg.js";
 script.async = "async";
-document.head.appendChild(script); //or something of the likes
+document.head.appendChild(script); 
 	
 window.addEventListener("mousedown", function(event)
 {
@@ -97,7 +97,7 @@ window.addEventListener("mousemove", function(event)
 {
 	mouseMoveX = Math.abs(parseInt(event.clientX) - mouseX);
 	mouseMoveY = Math.abs(parseInt(event.clientY) - mouseY);
-	
+		
 	// If the mouse has strayed more than 10 pixels in any direction
 	if(mouseMoveX > 10 || mouseMoveY > 10)
 	{
@@ -198,8 +198,6 @@ parent.window.onload = function()
 	
 	// Create a right-click menu
 	makeContextMenu();  // needs to happen after divs are created
-
-	addReferences();
 		
 	// adds code tags to all content within an [h6] tag
 	// need to add divs before doing code tags becuase this includes the div codeblocks
@@ -208,6 +206,8 @@ parent.window.onload = function()
 	// allow user to toggle the size of the codeblock
 	addCodeBlockTag();
 	
+	addReferences();
+		
 	// handling wordwrapped codelines (A little buggy -- avoiding for now)
 	// overflowCodeLines();
 	
@@ -918,6 +918,7 @@ function equationNumbering()
 	{
 		if(equations[i].textContent.trim() != "")
 		{		
+			// should move most of this to module.css
 			equations[i].style.display = "inline-flex";
 			
 			eqNumber = document.createElement("span");
@@ -1081,6 +1082,11 @@ function addCodeTags(elementType)
 			//	document.getSelection().toString();
 				document.execCommand("copy"); 
 				activateNotification(event);
+			});
+			
+			// disable short-cut menu on scroll (mousemoves are not triggered on scroll)
+			codeBlockDiv.addEventListener("scroll", function(event){ 
+				clearInterval(longClickTimer);
 			});
 			
 			// do this only for codeblocks
@@ -1450,12 +1456,12 @@ function addReferences()
 		// check if the reference has no ID
 		if(fullRefID == "")  
 		{
-			// right now, this situation is handled in editor.CSS
+			// this situation is currently handled in editor.CSS
 		}
 		// no text associated with the reference
 		else if (references[i].innerText.trim() == "")
 		{
-			// right now, this situation is handled in editor.CSS			
+			// this situation is currently handled in editor.CSS			
 		}
 		// check if ID has any invalid characters
 		else if(isValid(refID) == false)
@@ -1471,20 +1477,21 @@ function addReferences()
 			references[i].innerText = "**Cannot start ID with number: " + 
 												references[i].innerText + "** ";
 		}
-		// this is a link to a different page
+		// this is a URL link to a different page
 		else if(references[i].hasAttribute("href"))
 		{
-			// check to see if the href already has a "?" in it
-			if(references[i].href.includes("?"))
+			// check to see if the href already has a "?" in it --
+			// the ? indicates there are already parameters attached to the URL
+			if(references[i].href.includes("?"))  // add another param called ref
 			{
 				references[i].href = references[i].href + "&ref=" + refID;
 			}
-			else
+			else  // add first param called ref
 			{
 				references[i].href = references[i].href + "?ref=" + refID;		
 			}
 		}
-		// there is a title in this ref -- it is a ref to an outside lesson
+		// uses the title instead of a URL to indicate a ref to an outside lesson
 		else if (references[i].title != "")
 		{
 			url = window.location.protocol + "//" + window.location.hostname + 
@@ -1494,7 +1501,7 @@ function addReferences()
 			newLessonURL = lessonFolder + references[i].title + "#" + refID;
 			references[i].addEventListener("click", function() {window.open(newLessonURL)});
 		}
-		// reference link does not exist
+		// reference link does not exist in the page
 		else if(!(encapObject.querySelector("#" + refID)))
 		{
 			references[i].classList.add("error");
@@ -1519,20 +1526,7 @@ function addReferences()
 				grab the number from the split of section */
 			eqRef = parseInt(caption.slice( (caption.lastIndexOf("("))+1 ));
 			
-			refIndex = references[i].innerText.indexOf("##");
-			if(refIndex != -1)
-			{
-				str = references[i].innerText;
-				var pos = str.lastIndexOf('##');
-				references[i].innerText = str.substring(0,pos) + eqRef + str.substring(pos+2);
-			}
-
-			// make the reference linkable as long as the nolink class is not 
-			//			specified (not working yet...)
-			if( !(references[i].classList.contains("nolink")) )
-			{
-				references[i].addEventListener("click", scrollToElementReturn(refID));
-			}
+			addNumToReference(references[i], eqRef);
 		}
 		// if this is a figure ref (has h5 tag and does not have eqNum class)
 		else if(encapObject.querySelector("#" + refID).nodeName.toLowerCase() == "h5") 
@@ -1543,20 +1537,7 @@ function addReferences()
 			//cheap fix -- use grep to check for numbers (future fix)
 			figRef = caption.slice(4, strIndex); // get "Fig. #"
 			
-			refIndex = references[i].innerText.indexOf("##");
-			if(refIndex != -1)
-			{
-				str = references[i].innerText;
-				var pos = str.lastIndexOf('##');
-				references[i].innerText = str.substring(0,pos) + figRef + str.substring(pos+2);
-			}
-			
-			// make the reference linkable as long as the nolink class is not 
-			//				specified (not working yet...)
-			if( !(references[i].classList.contains("nolink")) )
-			{
-				references[i].addEventListener("click", scrollToElementReturn(refID));
-			}
+			addNumToReference(references[i], figRef);
 		}
 		// this links to a section header (h2-h4)
 		else if(encapObject.querySelector("#" + refID).nodeName.toLowerCase() == "h2" ||
@@ -1566,30 +1547,31 @@ function addReferences()
 			// get first number from section ID (div)
 			sectNum = parseFloat(encapObject.querySelector("#" + refID).innerText);
 			
-			refIndex = references[i].innerText.indexOf("##");
-			if(refIndex != -1)
-			{
-				str = references[i].innerText;
-				var pos = str.lastIndexOf('##');
-				references[i].innerText = str.substring(0,pos) + 
-													sectNum + str.substring(pos+2);
-			}
-			
-			// make the reference linkable as long as the nolink class is not 
-			//		specified (not working yet...)
-			if( !(references[i].classList.contains("nolink")) )
-			{
-				references[i].addEventListener("click", scrollToElementReturn(refID));
-			}
+			addNumToReference(references[i], sectNum);
 		}
-		// for all other elements in the page
+		// for codelines
+		else if(encapObject.querySelector("#" + refID).nodeName.toLowerCase() == "h6")
+		{
+		//	Note: there is no way to access the CSS pseudo counter in JavaScript
+		// Fix: Need to check for offset number
+		// Fix: Need to check if codeline needs to be scrolled to be seen
+		
+			cl = encapObject.querySelector("#" + refID);
+			clParent = cl.parentNode;
+			lineNum = Array.prototype.indexOf.call(clParent.children, cl);
+
+			addNumToReference(references[i], lineNum);
+		}
+		// for all other elements referenced in the page -- often these elements
+		// are <span> inside another element (a D2L bug) -- so we need to check parent
+		// elements 
 		else 
 		{
 			refObject = encapObject.querySelector("#" + refID);
 			parentObj = refObject.parentNode.nodeName.toLowerCase();
 			refNum = -1;
 			
-			/* make sure to check for parent */
+			// if the parent object is an H5 -- so it is a figure reference
 			if(parentObj && parentObj == "h5")
 			{
 				strIndex = caption.indexOf(":");  // find the location of the first semicolon
@@ -1616,7 +1598,7 @@ function addReferences()
 					refNum = parentObj.firstElementChild.innerText.slice(0, (strIndex-2));
 				}
 			}
-
+			
 			if(refNum != -1)
 			{
 				str = references[i].innerText;
@@ -1631,6 +1613,26 @@ function addReferences()
 				references[i].addEventListener("click", scrollToElementReturn(refID));
 			}
 		}
+	}
+}
+
+function addNumToReference(refObj, refNum)
+{
+	refIndex = refObj.innerText.indexOf("##");
+	
+	if(refIndex != -1)
+	{
+		str = refObj.innerText;
+		var pos = str.lastIndexOf('##');
+		refObj.innerText = str.substring(0,pos) + 
+								 refNum + str.substring(pos+2);
+	}
+	
+	// make the reference linkable as long as the nolink class is not 
+	//		specified (not working yet...)
+	if( !(refObj.classList.contains("nolink")) )
+	{
+		refObj.addEventListener("click", scrollToElementReturn(refID));
 	}
 }
 
@@ -1655,6 +1657,15 @@ function scrollToElement(elementID, outsideCall = false)
 	
 	// find the position of the iframe -- if content is not in iframe this will return 0,0
 	const [offsetLeft, offsetTop] = getIframeOffset();
+	
+	// check if the referenced element is a codeline in a div that has a scrollbar
+	if(element.classList.contains("code") && 
+		(element.parentNode.scrollHeight > element.parentNode.clientHeight) &&
+		(element.offsetTop < element.parentNode.scrollTop || 
+		 element.offsetTop > element.parentNode.scrollTop + element.parentNode.offsetHeight) )
+	{
+		element.parentNode.scrollTop = element.offsetTop - 20;
+	}
 	
 	// calc the vertical position of the linked element in the parent page
 	elementYPos = element.offsetParent.offsetTop + element.offsetTop + offsetTop; 
@@ -1687,6 +1698,8 @@ function scrollToElement(elementID, outsideCall = false)
 		window.parent.scrollTo(element.offsetLeft, (elementYPos -offsetPadding) );	
 	}
 	
+
+			
 	highLightObject(element, 2000);
 	enablePrevious();
 }

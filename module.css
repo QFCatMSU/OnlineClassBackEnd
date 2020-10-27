@@ -365,6 +365,10 @@ td
 {
 	color: yellow;
 }
+.code .email, .code.email
+{
+	color: pink;
+}
 .code .note, .code.note
 {
 	color: orange;
@@ -377,10 +381,21 @@ td
 {
 	padding-left: 5.5em;
 }
-.codeBlock:not(.nonum) > .code:before, .codeBlock.num > .code:before
+
+.codeBlock:not(.nonum) > .code:not(.noSelect):before, .codeBlock.num > .code:not(.noSelect):before
 {	
 	counter-increment: codeLines;
 	content: counter(codeLines);
+}
+
+.codeBlock:not(.nonum) > .code.noSelect:before, .codeBlock.num > .code.noSelect:before
+{	
+	counter-increment: codeLines;  /* comment this out?? */
+	content: counter(codeLines);   /* content: " ";  */
+}
+
+.codeBlock:not(.nonum) > .code:before, .codeBlock.num > .code:before
+{	
 	display: inline-block;
 	border-right: 1px solid rgb(200,200,100);
 	padding-right: 6px; /* space between line number and horizontal line */
