@@ -1654,21 +1654,25 @@ function scrollToElement(elementID, outsideCall = false)
 	var element = encapObject.querySelector("#" + elementID); 
 	var windowHeight = window.parent.innerHeight;// height of the webpage with the lesson
 	var windowScroll = window.parent.scrollY; 	// amount window has been scrolled
-	
+	var divWindowScroll = 0;
 	// find the position of the iframe -- if content is not in iframe this will return 0,0
 	const [offsetLeft, offsetTop] = getIframeOffset();
 	
 	// check if the referenced element is a codeline in a div that has a scrollbar
-	if(element.classList.contains("code") && 
-		(element.parentNode.scrollHeight > element.parentNode.clientHeight) &&
-		(element.offsetTop < element.parentNode.scrollTop || 
-		 element.offsetTop > element.parentNode.scrollTop + element.parentNode.offsetHeight) )
+	if(element.classList.contains("code")  &&   // part of a codeBlock
+		element.parentNode.scrollHeight > element.parentNode.clientHeight) // scrollbar on codeblock
 	{
-		element.parentNode.scrollTop = element.offsetTop - 20;
+		// line is scrolled out of view
+		if(element.offsetTop < element.parentNode.scrollTop || 
+			element.offsetTop > element.parentNode.scrollTop + element.parentNode.offsetHeight) 
+		{
+			element.parentNode.scrollTop = element.offsetTop - 20;  // scroll line back into view
+		}
+		divWindowScroll = element.parentNode.scrollTop;  // get the current scroll position
 	}
-	
+
 	// calc the vertical position of the linked element in the parent page
-	elementYPos = element.offsetParent.offsetTop + element.offsetTop + offsetTop; 
+	elementYPos = element.offsetParent.offsetTop + element.offsetTop + offsetTop - divWindowScroll; 
 	
 	// if the element is not on the screen
 	if(elementYPos < windowScroll || elementYPos > (windowScroll+(2*windowHeight)))
