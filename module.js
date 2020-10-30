@@ -1120,9 +1120,9 @@ function addCodeTags(elementType)
 				codeLines[i].classList.add("firstLine");	
 			}
 			
+			// numbering
 			if( codeBlockDiv.title != "" && !isNaN(codeLines[i].title) )
 			{
-				//codeLines[i].style.counterReset = "codeLines " + (codeLines[i].title -1);
 				codeBlockDiv.style.counterReset = "codeLines " + (codeLines[i].title -1);
 			}
 			firstLine = false;
@@ -1135,13 +1135,6 @@ function addCodeTags(elementType)
 			codeLines[i].innerText = " ";
 		}	
 					
-		// check if the codeLine has a line number associated with it -- 
-		//		set the line number to it
-	//	if( codeLines[i].title != "" && !isNaN(codeLines[i].title) )
-	//	if( codeBlockDiv.title != "" && !isNaN(codeLines[i].title) )
-	//	{
-	//		codeBlockDiv.style.counterReset = "codeLines " + (codeLines[i].title -1);
-	//	}
 		
 		if(codeBlockDiv.classList.contains("brackets"))
 		{
@@ -1561,12 +1554,17 @@ function addReferences()
 		{
 		//	Note: there is no way to access the CSS pseudo counter in JavaScript
 		// Fix: Need to check for offset number
-		// Fix: Need to check if codeline needs to be scrolled to be seen
 		
 			cl = encapObject.querySelector("#" + refID);
 			clParent = cl.parentNode;
 			lineNum = Array.prototype.indexOf.call(clParent.children, cl);
 
+			// the title of the codeblockdiv potentially has the numbering offset
+			if(cl.parentNode.title && !isNaN(cl.parentNode.title))
+			{
+				lineNum = lineNum + parseInt(cl.parentNode.title);
+			}				
+			
 			addNumToReference(references[i], lineNum);
 		}
 		// for all other elements referenced in the page -- often these elements
@@ -1710,8 +1708,6 @@ function scrollToElement(elementID, outsideCall = false)
 		window.parent.scrollTo(element.offsetLeft, (elementYPos -offsetPadding) );	
 	}
 	
-
-			
 	highLightObject(element, 2000);
 	enablePrevious();
 }
