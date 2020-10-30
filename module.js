@@ -1119,6 +1119,12 @@ function addCodeTags(elementType)
 				// make this codeLine the first line 
 				codeLines[i].classList.add("firstLine");	
 			}
+			
+			if( codeBlockDiv.title != "" && !isNaN(codeLines[i].title) )
+			{
+				//codeLines[i].style.counterReset = "codeLines " + (codeLines[i].title -1);
+				codeBlockDiv.style.counterReset = "codeLines " + (codeLines[i].title -1);
+			}
 			firstLine = false;
 		}
 
@@ -1131,10 +1137,11 @@ function addCodeTags(elementType)
 					
 		// check if the codeLine has a line number associated with it -- 
 		//		set the line number to it
-		if( codeLines[i].title != "" && !isNaN(codeLines[i].title) )
-		{
-			codeLines[i].style.counterReset = "codeLines " + (codeLines[i].title -1);
-		}
+	//	if( codeLines[i].title != "" && !isNaN(codeLines[i].title) )
+	//	if( codeBlockDiv.title != "" && !isNaN(codeLines[i].title) )
+	//	{
+	//		codeBlockDiv.style.counterReset = "codeLines " + (codeLines[i].title -1);
+	//	}
 		
 		if(codeBlockDiv.classList.contains("brackets"))
 		{
@@ -1654,7 +1661,8 @@ function scrollToElement(elementID, outsideCall = false)
 	var element = encapObject.querySelector("#" + elementID); 
 	var windowHeight = window.parent.innerHeight;// height of the webpage with the lesson
 	var windowScroll = window.parent.scrollY; 	// amount window has been scrolled
-	var divWindowScroll = 0;
+	var divWindowScroll = 0;							// for object in a scrolling div
+	
 	// find the position of the iframe -- if content is not in iframe this will return 0,0
 	const [offsetLeft, offsetTop] = getIframeOffset();
 	
