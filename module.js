@@ -6,7 +6,7 @@ Future:
 - <almost done> remove depecated referencing (sectRef...)
 - break up code functions
 - look for Span within H6 for Title
-- Title in H6 means no numbers
+- <done> Title in H6 means no numbers
 - Class to add numbers
 - <done> switch to addEventListener()
 - <started> use encapObject whenever possible
@@ -20,6 +20,7 @@ Future:
 - <done> cannot put an email link inside H2,H3,H4 -- click event gets removed
     - switched innerHTML for insertAdjacentHTML
 - <done - checking for Math element> MathJax is activating long-click menu
+- multi-line equations stay on one line in MathJax (will MathJax fix?)
 */
 
 // tabs in codeblocks are messing with the figures
@@ -31,10 +32,11 @@ imageWidth = new Array();			// the widths of all flex-sized images in a page
 minImageWidth = 700;					// minimum width for a flexSize image in expanded mode
 scrollTopPosition = 0; 				// value saved for links-return-links within a page
 overflowCalled = false;   			// check to see if there is a current check of code lines
-//mathObjCount = 0;						// The number of equations in the lesson
-//count=0;prevCount=0;countNum=0;	// used to keep track of the equations
+//mathObjCount = 0;					// The number of equations in the lesson (deprecated w. MathJax3)
+//count=0;prevCount=0;countNum=0;// used to keep track of the equations (deprecated w. MathJax3)
 editURL = "";							// URL for the editting page 
 referenceTimer = "";					// timer used to toggle the reference object
+scrollFlag = 0;  						// counts when scrolling of page occurs due to reference links
 
 // D2L variables 
 redNum = -1;						// the number of the class 
@@ -106,28 +108,46 @@ window.addEventListener("mousemove", function(event)
 });
 
 // will combine the following two functions later...
-function activateNotification(e)
+function activateNotification(e, type)
 {
+	// create a notification layer is there is not one
 	if(!encapObject.querySelector("#notification"))
 	{
+		// create a new notification layer
 		notifDiv = document.createElement("div");
 		notifDiv.id = "notification";
-		notifDiv.classList.add("rcMenu");
-		notifDiv.innerHTML = "Codeblock copied to clipboard";
+		notifDiv.classList.add("rcMenu"); // use same style as menu
 		encapObject.appendChild(notifDiv);
 	}
 	else
 	{
-		clearInterval(notifTimer);
+		clearInterval(notifTimer);  // make sure the timer is not running
 	}
+	
+	// set the text in the notificaytion layer
+	if(type=="code")
+	{
+		notifDiv.innerHTML = "Codeblock copied to clipboard";
+		displayTime = 1000;
+		
+	}
+	else if(type=="scroll")
+	{
+		notifDiv.innerHTML = "Hold left mouse button to return to previous location";			
+		displayTime = 2000;
+	}
+	
 	activateElement(e, notifDiv, -2);
+
+	// set timer for notfication layer
 	notifTimer = setTimeout(function()
 	{
 		notifDiv.style.visibility = 'hidden';
 		notifDiv.style.top = '0px';
-	}, 1000);
+	}, displayTime);
 }
 
+// used for long-click menu, code copying notification, and scrolling notification
 function activateElement(e, element, offset = 5)
 {			
 	const[offsetLeft, offsetTop] = getIframeOffset();
@@ -284,73 +304,6 @@ function loadMathML()
 	document.head.appendChild(script); //or something of the likes
 }
 
-/* For all equations that have a number --
-   moves the number to an appropriate spot if the equation has multiple lines.
-	This is hacky! 
-	I belive this has now been deprecated by display: inline-flex and other stuff
-function moveEqNum()
-{
-	// get all elements with class = eqNum
-	eqNumObj = document.querySelectorAll("span.eqNum");
-
-	// find all elements that use the clip style
-	for(i=0; i<eqNumObj.length; i++)
-	{	
-		// remove the font-family style using in the D2L editor (Dotum)
-		eqNumObj[i].style.fontFamily = null;
-		
-		// get the parent node of the eqNum object
-		eqNumParent = eqNumObj[i].parentNode;
-		
-		// get through each child element of eqNum 
-		for(j=0; j<eqNumObj[i].childElementCount; j++)
-		{
-			// move children up one level (basically, this makes eqNum a last sibling instead of a parent)
-			eqNumParent.insertBefore(eqNumObj[i].firstChild, eqNumObj[i]);
-		}
-		
-		// find all multiple-line equations -- which all use the style MathJax_FullWidth 
-		// multiple-line equations cause problems with the eqNum object
-		if(FW = eqNumObj[i].parentNode.querySelector("span.MathJax_FullWidth"))
-		{
-			/**** setting the top position of the equation number ***
-			// set the eqNum position to relativ to allow it to move
-			eqNumObj[i].style.position = "relative";
-			
-			// get the bounding rectangles of the equation and the equation number
-			eqNumRect = eqNumObj[i].getBoundingClientRect();
-			eqRect = FW.getBoundingClientRect() 
-
-			// use the height and top values to move the equation number 
-			eqNumObj[i].style.top = ( eqRect.top - eqNumRect.top ) + 
-											(eqRect.height/2 - eqNumRect.height) + "px";
-
-
-			/**** setting the left position of the equation number 
-					issue: need to find the widest line in the multi-line equation ***
-			// the bounding box of each line in the equation uniquely has a margin-left style
-			spanClips = eqNumParent.querySelectorAll("span[style*=margin-left]");
-			
-			maxLineWidth = 0;  // initial state value
-			
-			// go through each span clip to find which is the widest
-			for(j=0; j<spanClips.length; j++)
-			{
-				lineWidth = spanClips[j].getBoundingClientRect().width; // get width of current EQ line
-
-				if(lineWidth > maxLineWidth)
-				{
-					maxLineWidth = lineWidth;
-					eqLeftPos = spanClips[j].getBoundingClientRect().left; // get left of current EQ line
-				}
-			}	
-			
-			// use the height and top values to move the equation number to the appropriate left pos
-			eqNumObj[i].style.left = ( maxLineWidth + eqLeftPos - eqNumRect.left + 10) + "px";
-		}
-	}
-}
-*/
 function joomlaFixes()
 {
 	// In Joomla, the article is in a div of class "container"
@@ -867,8 +820,8 @@ function goBackToPrevLocation()
 	//return false;	// so the page does not reload (don't ask why!)
 }
 	
-	/* link to external CSS file 
-		This is in the javascript because D2L will rewrite links in the HTML file */
+/* link to external CSS file 
+	This is in the javascript because D2L will rewrite links in the HTML file */
 function addStyleSheet()
 {
 	var CSSFile = document.createElement("link");
@@ -903,17 +856,7 @@ function equationNumbering()
 	// find all elements of elementType (initially it is H5)
 	var equations = encapObject.getElementsByClassName("eqNum");
 	
-/*	for(i=0; i<equations.length; i++)
-	{
-		if(equations[i].tagName == "H5" || equations[i].tagName == "SPAN")
-		{
-			equations[i].insertAdjacentHTML("beforeend", " ( " + (i+1) + " )");
-		}
-		else if(equations[i].innerText.trim() != "")  // there is text in the caption
-		{
-			equations[i].innerHTML = " ( " + (i+1) + " )";
-		}	
-	}*/
+	// add the equation number after the equation
 	for(i=0; i<equations.length; i++)
 	{
 		if(equations[i].textContent.trim() != "")
@@ -965,7 +908,6 @@ function addCodeTags(elementType)
 {
 	/* this part works if we are using <h6> with class="code" */
 	var codeLines = encapObject.getElementsByTagName(elementType);  
-	//var codeLines = document.querySelectorAll(elementType);
 
 	/* count the number of H6 tags
 	   note: if you use codeLines.length in the for loop, the length will change
@@ -1079,9 +1021,8 @@ function addCodeTags(elementType)
 			// when double-clicked, select all the children (text) within the codeblock
 			codeBlockDiv.addEventListener("dblclick", function(event){ 
 				document.getSelection().selectAllChildren(this); 
-			//	document.getSelection().toString();
 				document.execCommand("copy"); 
-				activateNotification(event);
+				activateNotification(event, "code");
 			});
 			
 			// disable short-cut menu on scroll (mousemoves are not triggered on scroll)
@@ -1094,7 +1035,6 @@ function addCodeTags(elementType)
 			  const text_only = document.getSelection().trimEnd().toString();  // trimEnd() converts weird spaces to regular spaces
 			  const clipdata = e.clipboardData; // || window.clipboardData;  
 			  clipdata.setData("text/plain", text_only);
-			 // clipdata.setData("text/html", text_only);
 			  e.preventDefault();
 			});
 			
@@ -1129,12 +1069,11 @@ function addCodeTags(elementType)
 		}
 
 		// add a space to empty lines -- when copying/pasting it can treat an 
-		//			empty line as not a line (deprecated somewhat)
+		//			empty line as not a line (might be deprecated, but not sure...)
 		if(codeLines[i].innerText == "")
 		{
 			codeLines[i].innerText = " ";
 		}	
-					
 		
 		if(codeBlockDiv.classList.contains("brackets"))
 		{
@@ -1211,6 +1150,7 @@ function addCodeBlockTag()
 	}
 }
 
+// this function is still buggy and does not get called
 function overflowCodeLines()
 {
 	// find all code elements (<p> with class = "code")
@@ -1276,7 +1216,7 @@ function goToTopOfPage()
 
 function makeContextMenu(funct, param = null)
 {	
-	// for Firefox 
+	// for Firefox -- add a right-click menu (onlyFirefox supports right-click menus)
 	if (navigator.userAgent.indexOf("Firefox") != -1)
 	{
 		// when the user clicks the right button, the rightClickMenu appears
@@ -1286,28 +1226,10 @@ function makeContextMenu(funct, param = null)
 		contextMenu = document.createElement("menu");
 		contextMenu.type = "context";
 		contextMenu.id = "rightClickMenu";
-
-		// add an map of the lesson to the context menu
-		submenu = document.createElement("menu");
-		submenu.label = "Page Map";
-
-		sectionsInPage = encapObject.querySelectorAll("h2,h3");
-		for(i=0; i<sectionsInPage.length; i++)
-		{
-			mapItem = document.createElement("menuitem");
-			mapItem.label = sectionsInPage[i].innerText;
-			if(sectionsInPage[i].id == "")
-			{
-				sectionsInPage[i].id = "_sect" + i;
-			}
-			mapItem.addEventListener("click", scrollToElementReturn(sectionsInPage[i].id));
-			submenu.appendChild(mapItem);		
-		}
-
-		contextMenu.appendChild(submenu);
+		
 		encapObject.appendChild(contextMenu);
 	}
-
+	
 	var elemDiv = document.createElement('div');
 	elemDiv.id = "longClickMenu";
 	elemDiv.classList.add("rcMenu");
@@ -1329,11 +1251,34 @@ function makeContextMenu(funct, param = null)
 		newURL = newURL.replace("View", "EditFile?fm=0"); 
 		menuLinks(elemDiv, "Edit Page", function(){window.open(newURL, '_blank')}, "editPage");
 	}
-	menuLinks(elemDiv, "Go to Top of Page", goToTopOfPage, "topMenuItem");
 	menuLinks(elemDiv, "Return to previous location", goBackToPrevLocation, "previousLocMenuItem", false);
+	menuLinks(elemDiv, "Go to Top of Page", goToTopOfPage, "topMenuItem");
 	menuLinks(elemDiv, "Print/ Save as PDF", window.print, "printToPDF");
 	menuLinks(elemDiv, "Maximize All Images", function() {changeAllPicSize('maximize')}, "maxAllImages");
 	menuLinks(elemDiv, "Minimize All Images", function() {changeAllPicSize('minimize')}, "minAllImages");
+		
+	// add page mapping in Firefox (eventually want to do this for all browsers...)
+	if (navigator.userAgent.indexOf("Firefox") != -1)
+	{
+		// add an map of the lesson to the context menu
+		submenu = document.createElement("menu");
+		submenu.label = "Page Map";
+
+		sectionsInPage = encapObject.querySelectorAll("h2,h3");
+		for(i=0; i<sectionsInPage.length; i++)
+		{
+			mapItem = document.createElement("menuitem");
+			mapItem.label = sectionsInPage[i].innerText;
+			if(sectionsInPage[i].id == "")
+			{
+				sectionsInPage[i].id = "_sect" + i;
+			}
+			mapItem.addEventListener("click", scrollToElementReturn(sectionsInPage[i].id));
+			submenu.appendChild(mapItem);		
+		}
+
+		contextMenu.appendChild(submenu);
+	}
 	
 	encapObject.appendChild(elemDiv);
 }
@@ -1356,6 +1301,7 @@ function menuLinks(menu, text, command, linkid="", enable=true)
 
 	menu.appendChild(link);
 	
+	// creates a separate right-click menu in Firefox (this is the only browser that supports right-click menus)
 	if(navigator.userAgent.indexOf("Firefox") != -1)
 	{
 		menuItem = document.createElement("menuitem");
@@ -1698,6 +1644,9 @@ function scrollToElement(elementID, outsideCall = false)
 
 		// scroll the parent to the vertical position of the linkTo element
 		window.parent.scrollTo(element.offsetLeft, (elementYPos -offsetPadding) );	
+		
+		scrollFlag = scrollFlag +1;
+		if(scrollFlag <= 2) {activateNotification(event, "scroll");}
 	}
 	// if the scrolling-to element is within one page
 	else if(elementYPos >  (windowScroll+windowHeight) && elementYPos < (windowScroll+ (2*windowHeight)))
@@ -1754,7 +1703,6 @@ function getIframeOffset()
 			}
 		}
 	}
-	
 	return[offsetLeft, offsetTop];
 }
 
@@ -2179,4 +2127,71 @@ function toggleCodeBlock(tab, position)
 }
 
 */
-	
+
+/* For all equations that have a number --
+   moves the number to an appropriate spot if the equation has multiple lines.
+	This is hacky! 
+	I belive this has now been deprecated by display: inline-flex and other stuff
+function moveEqNum()
+{
+	// get all elements with class = eqNum
+	eqNumObj = document.querySelectorAll("span.eqNum");
+
+	// find all elements that use the clip style
+	for(i=0; i<eqNumObj.length; i++)
+	{	
+		// remove the font-family style using in the D2L editor (Dotum)
+		eqNumObj[i].style.fontFamily = null;
+		
+		// get the parent node of the eqNum object
+		eqNumParent = eqNumObj[i].parentNode;
+		
+		// get through each child element of eqNum 
+		for(j=0; j<eqNumObj[i].childElementCount; j++)
+		{
+			// move children up one level (basically, this makes eqNum a last sibling instead of a parent)
+			eqNumParent.insertBefore(eqNumObj[i].firstChild, eqNumObj[i]);
+		}
+		
+		// find all multiple-line equations -- which all use the style MathJax_FullWidth 
+		// multiple-line equations cause problems with the eqNum object
+		if(FW = eqNumObj[i].parentNode.querySelector("span.MathJax_FullWidth"))
+		{
+			/**** setting the top position of the equation number ***
+			// set the eqNum position to relativ to allow it to move
+			eqNumObj[i].style.position = "relative";
+			
+			// get the bounding rectangles of the equation and the equation number
+			eqNumRect = eqNumObj[i].getBoundingClientRect();
+			eqRect = FW.getBoundingClientRect() 
+
+			// use the height and top values to move the equation number 
+			eqNumObj[i].style.top = ( eqRect.top - eqNumRect.top ) + 
+											(eqRect.height/2 - eqNumRect.height) + "px";
+
+
+			/**** setting the left position of the equation number 
+					issue: need to find the widest line in the multi-line equation ***
+			// the bounding box of each line in the equation uniquely has a margin-left style
+			spanClips = eqNumParent.querySelectorAll("span[style*=margin-left]");
+			
+			maxLineWidth = 0;  // initial state value
+			
+			// go through each span clip to find which is the widest
+			for(j=0; j<spanClips.length; j++)
+			{
+				lineWidth = spanClips[j].getBoundingClientRect().width; // get width of current EQ line
+
+				if(lineWidth > maxLineWidth)
+				{
+					maxLineWidth = lineWidth;
+					eqLeftPos = spanClips[j].getBoundingClientRect().left; // get left of current EQ line
+				}
+			}	
+			
+			// use the height and top values to move the equation number to the appropriate left pos
+			eqNumObj[i].style.left = ( maxLineWidth + eqLeftPos - eqNumRect.left + 10) + "px";
+		}
+	}
+}
+*/	
