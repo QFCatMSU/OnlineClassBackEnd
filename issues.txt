@@ -1,4 +1,4 @@
-/* Issues:
+/* Issues: 
 - you can make a relative link to the file for a class but not the content.  The difference is 
 	that, when you link the file, the file will load in the iframe but the rest of the page 
 	will still reflect the original content.  So, hyperlinks to the content will break if taken 
