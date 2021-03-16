@@ -710,7 +710,9 @@ img.flexSize, img.fs
 	.codeBlockTab
 	{
 		color: black;
-		background-color: rgb(180,180,180);
+		border-width: 1px;
+		border-color: black;
+		border-style: solid;
 	}
 	.code .hl,.code .highlight,.code.hl, .code.highlight
 	{
