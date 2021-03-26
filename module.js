@@ -1253,7 +1253,7 @@ function makeContextMenu(funct, param = null)
 	}
 	menuLinks(elemDiv, "Return to previous location", goBackToPrevLocation, "previousLocMenuItem", false);
 	menuLinks(elemDiv, "Go to Top of Page", goToTopOfPage, "topMenuItem");
-	menuLinks(elemDiv, "Print/ Save as PDF", window.print, "printToPDF");
+	menuLinks(elemDiv, "Print/ Save as PDF", function(){document.getElementById("longClickMenu").style.visibility = "hidden"; window.print()}, "printToPDF");
 	menuLinks(elemDiv, "Maximize All Images", function() {changeAllPicSize('maximize')}, "maxAllImages");
 	menuLinks(elemDiv, "Minimize All Images", function() {changeAllPicSize('minimize')}, "minAllImages");
 		
