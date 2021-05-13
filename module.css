@@ -108,20 +108,21 @@ figure
 	margin: 0;
 	padding: 0;
 }
-a:link,a:visited, .jsLink
+/*a:link,a:visited, .jsLink
 {
 	text-decoration: none;
 	color: rgb(90,45,0);
-}
-a:hover
+}*/
+a:link,a:visited, email, .jsLink , a[href^="#"],a.linkback,.linkTo   /* href that begin with '#' */
+{
+	color: rgb(0,0,150);
+	text-decoration: none;
+	cursor: pointer;
+} 
+a:hover, email:hover, a[href^="#"]:hover, a.linkback:hover, .linkTo:hover, .jsLink:hover, a.href:hover
 {
 	text-decoration: underline;
 }
-a[href^="#"],a.linkback,.linkTo   /* href that begin with '#' */
-{
-	color: rgb(255,0,0);
-	cursor: pointer;
-} 
 h1
 {
 	/* h1 is essentially the title of the lesson */
@@ -361,7 +362,7 @@ td
 	color: darkred;
 	background-color: yellow;
 }
-.code .hl,.code .highlight,.code.h1, .code.highlight
+.code .hl,.code .highlight,.code.hl, .code.highlight
 {
 	color: yellow;
 }
@@ -449,7 +450,7 @@ td
 }
 .caption, .figNum, .figureRef[id], .c, .fr[id], .eqNum, .eqRef[id], .sectRef[id], .ref[id], .reference[id]
 {
-	color: rgb(0,100,0);
+	color: rgb(0,100,100);
 	font-style: italic;
 	margin-top: 0px;
 	margin-right: 0px;
@@ -464,7 +465,13 @@ td
 }
 .sectRef[id], .eqRef[id], .figureRef[id], .figRef[id], .ref[id], .reference[id]
 {
+	color: rgb(0,0,200);
 	cursor: pointer;
+	text-decoration: none;
+}
+.sectRef[id]:hover, .eqRef[id]:hover, .figureRef[id]:hover, .figRef[id]:hover, .ref[id]:hover, .reference[id]:hover
+{
+	text-decoration: underline;
 }
 .firstLine, .fl
 {
@@ -609,7 +616,7 @@ img.flexSize, img.fs
 	font-family: garamond;
 	color: rgb(100,0,0);
 }
-.email
+/*.email
 {
 	color: rgb(0,0,150);
 	cursor: pointer;
@@ -617,7 +624,7 @@ img.flexSize, img.fs
 .email:hover
 {
 	text-decoration: underline;
-}
+}*/
 .refObjHighlight
 {
 	background-color: yellow;
