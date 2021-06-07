@@ -117,11 +117,12 @@ a:link,a:visited, email, .jsLink , a[href^="#"],a.linkback,.linkTo   /* href tha
 {
 	color: rgb(0,0,150);
 	text-decoration: none;
+	border-bottom: dotted 1px;
 	cursor: pointer;
 } 
 a:hover, email:hover, a[href^="#"]:hover, a.linkback:hover, .linkTo:hover, .jsLink:hover, a.href:hover
 {
-	text-decoration: underline;
+	border-bottom: solid 1px;
 }
 h1
 {
@@ -468,10 +469,11 @@ td
 	color: rgb(0,0,200);
 	cursor: pointer;
 	text-decoration: none;
+	border-bottom: dotted 1px;
 }
 .sectRef[id]:hover, .eqRef[id]:hover, .figureRef[id]:hover, .figRef[id]:hover, .ref[id]:hover, .reference[id]:hover
 {
-	text-decoration: underline;
+	border-bottom: solid 1px;
 }
 .firstLine, .fl
 {
