@@ -467,7 +467,7 @@ function fixTitle()
 		printLink = document.createElement('a');
 		printLink.classList.add("sameWin");
 		printLink.href = "javascript:window.print()";
-		printLink.style.paddingLeft = "9px";
+		printLink.style.marginLeft = "9px";
 		printLink.innerHTML = "&#9113"; //"&#x1F5B6;";
 	
 		// add printer icon to title
@@ -1285,10 +1285,13 @@ function makeContextMenu(funct, param = null)
 
 function menuLinks(menu, text, command, linkid="", enable=true)  
 {
+	// create a block span to encapsulate the hyperlink
+	spanEncap = document.createElement('span');
+	if(enable) spanEncap.style.display = "block";
+	else spanEncap.style.display = "none";
+	
 	link = document.createElement('a');
 	link.id = linkid;
-	if(enable) link.style.display = "block";
-	else link.style.display = "none";
 	link.innerText = text;
 	link.classList.add("sameWin", "jsLink");
 	link.addEventListener("mouseup", 
@@ -1299,7 +1302,9 @@ function menuLinks(menu, text, command, linkid="", enable=true)
 									document.getElementById("longClickMenu").style.top = "0px"; 
 								 });
 
-	menu.appendChild(link);
+	// put link in span so that the hyperlink is only on the text (not the whole line)
+	spanEncap.appendChild(link);
+	menu.appendChild(spanEncap);
 	
 	// creates a separate right-click menu in Firefox (this is the only browser that supports right-click menus)
 	if(navigator.userAgent.indexOf("Firefox") != -1)
