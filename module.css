@@ -113,7 +113,7 @@ figure
 	text-decoration: none;
 	color: rgb(90,45,0);
 }*/
-a:link,a:visited, email, .jsLink , a[href^="#"],a.linkback,.linkTo   /* href that begin with '#' */
+a:link,a:visited, .email, .jsLink , a[href^="#"],a.linkback,.linkTo   /* href that begin with '#' */
 {
 	color: rgb(0,0,150);
 	text-decoration: none;
@@ -700,9 +700,14 @@ img.flexSize, img.fs
 	{
 		background-color: transparent;
 	}
+	.title>a    /* Get rid of printer icon */ 
+	{
+		display: none;
+	}
 	a
 	{
-		text-decoration: underline !important;  /* why?? what is superceding this? */
+		text-decoration: none !important;  /* why?? what is superceding this? */
+		border-bottom: dotted 1px;
 	}
 	.lessonLink, .concept, .resize, iframe /*.codeBlock>p, .codeTab*/
 	{
@@ -792,10 +797,6 @@ img.flexSize, img.fs
 		border-width: 1px;
 		border-style: solid;
 		border-radius: 5px;
-	}
-	.title>a
-	{
-		display: none;
 	}
 	/* Need to first figure out how to "resize" screen on print */
 	.overflowArrow
