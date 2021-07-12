@@ -218,19 +218,20 @@ ol>li:before
 	color: darkred;
 	font-style: italic;
 }
-h6[title]
+h6[title], code[title]
 {
 	color: white;
 }
-h6 .hl,h6 .highlight, h6.hl, h6.highlight
+h6 .hl, h6 .highlight, h6.hl, h6.highlight,
+code .hl, code .highlight, code.hl, code.highlight
 {
 	color: yellow;
 }
-h6 .note, h6.note
+h6 .note, h6.note, code .note, code.note
 {
 	color: orange;
 }
-h6 a
+h6 a, code a
 {
 	color: YellowGreen;
 }
@@ -246,7 +247,7 @@ img.flexSize:hover, img.fs:hover
 {	
 	color: rgb(0,0,200);	
 }
-h6
+h6, code
 {
 	/* white-space caused the no spaces added error in editor */
 	/* white-space: pre-wrap; */
@@ -266,7 +267,7 @@ h6
 	/*background-color: rgb(33,33,33);*/
 	font-family: monospace;
 }
-h6:empty
+h6:empty, code:empty
 {
 	min-height: 1.7em;
 	background-color: red; /* just to warn user that something is wrong */
@@ -274,7 +275,7 @@ h6:empty
 /* there should never be an [h6] within an [h6],
    if there is, the text in the section will turn red as a warning.
 	At this point, the person should hit undo on the editor */
-h6>br,h6>h6
+h6>br,h6>h6, code>br, code>code
 {
 	color: red;
 }
@@ -302,11 +303,11 @@ h6>br,h6>h6
 	color: rgb(160,64,0);
 	font-style: italic;
 }
-.p, .partial, h6.partial + h6
+.p, .partial, h6.partial + h6, code.partial + code
 {
 	color: orange;
 }
-.nn, .nonum, h6.nn + h6
+.nn, .nonum, h6.nn + h6, code.nn + code
 {
 	color: rgb(255,110,110);
 }
