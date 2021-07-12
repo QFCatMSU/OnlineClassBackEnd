@@ -222,6 +222,7 @@ parent.window.onload = function()
 	// adds code tags to all content within an [h6] tag
 	// need to add divs before doing code tags becuase this includes the div codeblocks
 	addCodeTags("H6");
+	addCodeTags("CODE");
 	
 	// allow user to toggle the size of the codeblock
 	addCodeBlockTag();
@@ -1501,7 +1502,8 @@ function addReferences()
 			addNumToReference(references[i], sectNum);
 		}
 		// for codelines
-		else if(encapObject.querySelector("#" + refID).nodeName.toLowerCase() == "h6")
+		else if(encapObject.querySelector("#" + refID).nodeName.toLowerCase() == "h6" ||
+		        encapObject.querySelector("#" + refID).nodeName.toLowerCase() == "code")
 		{
 		//	Note: there is no way to access the CSS pseudo counter in JavaScript
 		// Fix: Need to check for offset number
