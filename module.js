@@ -183,6 +183,7 @@ parent.window.onload = function()
 {		
 	encapObject = document.body; 
 
+
 	if(document.querySelectorAll('meta[content^="Joomla"]').length > 0) joomlaFixes();
 	
 	if(window.location.hostname == "d2l.msu.edu") 
@@ -190,6 +191,27 @@ parent.window.onload = function()
 		d2lFixes();
 		d2lAddHeader();
 	}
+	
+	/**** Temp Hack -- D2L got rid of H6 -- switching Blockquote and
+	      P within to H6 ****/
+	bq = document.getElementsByTagName("blockquote");
+
+	for(i=0; i<bq.length; i++)
+	{		
+		html = bq[i].innerHTML;
+		html = html.replace(/<p>(.*)<\/p>/g, "$1"); //$1 here contains all the html between the <p> tags. So you can change this around to what you want it to be, example: <a>$1</a>
+		bq[i].innerHTML = html;
+		bq[i].innerHTML = bq[i].innerHTML.trim();
+		bq[i].innerHTML = bq[i].innerHTML.replace(/(?:\r\n|\r|\n)/g, '<br>');		
+	}
+	
+	while(bq.length > 0)	
+	{
+		h6cb = document.createElement("h6");
+		h6cb.innerHTML = bq[0].innerHTML;
+		bq[0].parentNode.replaceChild(h6cb, bq[0]);
+	}
+
 	
 	// mathML() adds div to the beginning of the page -- needs to happen after header is set -- deprcated with MathJax 3.0
 	//loadMathML();
@@ -219,10 +241,11 @@ parent.window.onload = function()
 	// Create a right-click menu
 	makeContextMenu();  // needs to happen after divs are created
 		
+
+	
 	// adds code tags to all content within an [h6] tag
 	// need to add divs before doing code tags becuase this includes the div codeblocks
 	addCodeTags("H6");
-	addCodeTags("CODE");
 	
 	// allow user to toggle the size of the codeblock
 	addCodeBlockTag();
@@ -880,7 +903,8 @@ function equationNumbering()
 function addCaptions()
 {
 	// find all elements of elementType (initially it is H5)
-	var captionLines = encapObject.getElementsByTagName("h5");
+	//var captionLines = encapObject.getElementsByTagName("h5");
+	var captionLines = encapObject.querySelectorAll("h5, .fig");
 
 	// this is deprecated in DreamWeaver
 	for(i=0; i<captionLines.length; i++)

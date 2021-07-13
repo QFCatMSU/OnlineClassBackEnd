@@ -16,14 +16,8 @@
 	
 	And, this gets even more complicated by the <br>
 */
-	
-/* span with the underline style whose first-child is an image with the class equation */
-span[style*="dotum"] > img.equation:first-child
-{
-	border-color: green;
-	border-style: dashed;
-	border-width: 1px;
-}
+
+
 address
 {
 	background-color: rgb(200,215,200);
@@ -77,14 +71,15 @@ h3::before
 h4::before 
 {
   counter-increment: h4Count;               
-  content: counter(h2Count) "-" counter(h3Count) "-" counter(h4Count) " ";              
+  content: counter(h2Count) "-" counter(h3Count) "-" counter(h4Count) " ";
 }	
-.figNum::before, h5:not([class])::before, h5[class='']::before
+.figNum::before, h5:not([class])::before, h5[class='']::before, .fig::before,
+ span[style*="dotum"]::before
 {
   counter-increment: figCount;               
   content: "Fig " counter(figCount) ": ";  
 }
-h5.eqNum::after, span[style*="dotum"]::after
+h5.eqNum::after, span[style*="dotum"]>img::after
 {
   counter-increment: eqCount;               
   content: " ( " counter(eqCount) " )";  
@@ -94,6 +89,13 @@ h5.eqNum::after, span[style*="dotum"]::after
   counter-increment: eqCount;               
   content: "( " counter(eqCount) " )";  
   text-decoration: none; /* does not work -- is there another way? */
+}
+/* span with font type dotum whose first-child is an image with the class equation */
+span[style*="dotum"] > img.equation:first-child
+{
+	border-color: green;
+	border-style: dashed;
+	border-width: 1px;
 }
 h1  
 { 
@@ -125,7 +127,7 @@ h4
 	color: rgb(0,70,0); 
 	background-color: rgb(220,220,220); 
 }
-h5, .caption, .figureRef, .eqNum, .eqRef, .sectRef, .ref, .reference, span[style*="dotum"]::after
+h5, .fig, .caption, .figureRef, .eqNum, .eqRef, .sectRef, .ref, .reference, span[style*="dotum"]::after, span[style*="dotum"]::before
 { 
 	font-style: italic; 
 	color: rgb(0,100,0); 
@@ -133,6 +135,17 @@ h5, .caption, .figureRef, .eqNum, .eqRef, .sectRef, .ref, .reference, span[style
 	padding: 0; 
 	font-weight: normal; 
 	font-size: 14px; 
+}
+blockquote
+{
+	/* these values will be overridden in D2L if important is not there */
+	margin-left: 0 !important; 
+	padding-left: 0 !important; 
+	border-left-width: 0px !important;
+}
+blockquote > p
+{
+	/*display: inline;*/ 
 }
 p
 { 
@@ -218,20 +231,20 @@ ol>li:before
 	color: darkred;
 	font-style: italic;
 }
-h6[title], code[title]
+h6[title], blockquote[title]
 {
 	color: white;
 }
 h6 .hl, h6 .highlight, h6.hl, h6.highlight,
-code .hl, code .highlight, code.hl, code.highlight
+blockquote .hl, blockquote .highlight, blockquote.hl, blockquote.highlight
 {
 	color: yellow;
 }
-h6 .note, h6.note, code .note, code.note
+h6 .note, h6.note, blockquote .note, blockquote.note
 {
 	color: orange;
 }
-h6 a, code a
+h6 a, blockquote a
 {
 	color: YellowGreen;
 }
@@ -247,7 +260,7 @@ img.flexSize:hover, img.fs:hover
 {	
 	color: rgb(0,0,200);	
 }
-h6, code
+h6, blockquote
 {
 	/* white-space caused the no spaces added error in editor */
 	/* white-space: pre-wrap; */
@@ -267,7 +280,7 @@ h6, code
 	/*background-color: rgb(33,33,33);*/
 	font-family: monospace;
 }
-h6:empty, code:empty
+h6:empty, blockquote:empty
 {
 	min-height: 1.7em;
 	background-color: red; /* just to warn user that something is wrong */
@@ -275,7 +288,7 @@ h6:empty, code:empty
 /* there should never be an [h6] within an [h6],
    if there is, the text in the section will turn red as a warning.
 	At this point, the person should hit undo on the editor */
-h6>br,h6>h6, code>br, code>code
+h6>br,h6>h6, blockquote>br, blockquote>blockquote
 {
 	color: red;
 }
@@ -303,11 +316,11 @@ h6>br,h6>h6, code>br, code>code
 	color: rgb(160,64,0);
 	font-style: italic;
 }
-.p, .partial, h6.partial + h6, code.partial + code
+.p, .partial, h6.partial + h6, blockquote.partial + blockquote
 {
 	color: orange;
 }
-.nn, .nonum, h6.nn + h6, code.nn + code
+.nn, .nonum, h6.nn + h6, blockquote.nn + blockquote
 {
 	color: rgb(255,110,110);
 }

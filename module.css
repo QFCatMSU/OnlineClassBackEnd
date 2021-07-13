@@ -92,7 +92,7 @@ body
 	font-family: arial;
 	line-height: 135%;
 }
-h1, h2, h3, h4, h5
+h1, h2, h3, h4, h5, blockquote
 {
 	font-family: arial;
 	line-height: 135%;
@@ -177,7 +177,7 @@ h4
 	padding-bottom: 10px;
 	margin-left: -6px;
 }
-h6
+h6, code
 {
 	/* editor.css sets a color for h6 but I want this overridden
 		in the module and replace by the parent (which is a DIV) */
