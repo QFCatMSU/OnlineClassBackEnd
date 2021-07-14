@@ -205,6 +205,8 @@ parent.window.onload = function()
 			html = bq[i].innerHTML;
 			html = html.trim();
 			html = html.replace(/(?:\r\n|\r|\n)/g, '');	
+			html = html.replace(/<\/p>\n/g, '<\/p>');	
+			html = html.replace(/(?:\r\n|\r|\n)/g, '<br>');	
 			html = html.replace(/<p/g, "<h6");
 			html = html.replace(/<\/p/g, "<\/h6");
 			bq[i].innerHTML = html;		
@@ -216,13 +218,14 @@ parent.window.onload = function()
 		h6 = bq[0].getElementsByTagName("h6");
 		
 		if(h6.length > 0)
-		{			
+		{		
+			bq[0].insertAdjacentHTML("beforebegin", bq[0].innerHTML);
 			// get the element's parent node
 			var parent = bq[0].parentNode;
 			
 			// move all children out of the element
-			while (bq[0].firstChild) 
-				parent.insertBefore(bq[0].firstChild, bq[0]);
+	//		while (bq[0].firstChild) 
+		//		parent.insertBefore(bq[0].firstChild, bq[0]);
 			
 			// remove the empty element
 			parent.removeChild(bq[0]);
