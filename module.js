@@ -197,19 +197,45 @@ parent.window.onload = function()
 	bq = document.getElementsByTagName("blockquote");
 
 	for(i=0; i<bq.length; i++)
-	{		
-		html = bq[i].innerHTML;
-		html = html.replace(/<p>(.*)<\/p>/g, "$1"); //$1 here contains all the html between the <p> tags. So you can change this around to what you want it to be, example: <a>$1</a>
-		bq[i].innerHTML = html;
-		bq[i].innerHTML = bq[i].innerHTML.trim();
-		bq[i].innerHTML = bq[i].innerHTML.replace(/(?:\r\n|\r|\n)/g, '<br>');		
+	{
+		para = bq[i].getElementsByTagName("p");
+		
+		if(para.length > 0)
+		{
+			html = bq[i].innerHTML;
+			html = html.trim();
+			html = html.replace(/(?:\r\n|\r|\n)/g, '');	
+			html = html.replace(/<p/g, "<h6");
+			html = html.replace(/<\/p/g, "<\/h6");
+			bq[i].innerHTML = html;		
+		}
 	}
 	
 	while(bq.length > 0)	
 	{
-		h6cb = document.createElement("h6");
-		h6cb.innerHTML = bq[0].innerHTML;
-		bq[0].parentNode.replaceChild(h6cb, bq[0]);
+		h6 = bq[0].getElementsByTagName("h6");
+		
+		if(h6.length > 0)
+		{			
+			// get the element's parent node
+			var parent = bq[0].parentNode;
+			
+			// move all children out of the element
+			while (bq[0].firstChild) 
+				parent.insertBefore(bq[0].firstChild, bq[0]);
+			
+			// remove the empty element
+			parent.removeChild(bq[0]);
+		}
+		else
+		{
+			h6cb = document.createElement("h6");
+			h6cb.innerHTML = bq[0].innerHTML;
+			h6cb.id = bq[0].id;
+			h6cb.className = bq[0].className;
+			h6cb.title = bq[0].title;
+			bq[0].parentNode.replaceChild(h6cb, bq[0]);
+		}
 	}
 
 	
