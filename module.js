@@ -1296,9 +1296,18 @@ function makeContextMenu(funct, param = null)
 	elemDiv.classList.add("sameWin", "noSelect");
 	elemDiv.appendChild(scTitle);
 	
-	// check if the user is has editing privileges
-	roles = parent.document.querySelector("#RoleContainer"); 
-	if(editURL != "" && roles && roles.innerHTML.includes("Editor"))
+	// check if the user is has editing privileges by seeing if the Edit HTML button is there
+	editButton = parent.document.querySelectorAll("button.d2l-button"); // look at all buttons
+	hasEditAccess = false;
+	for(i=0; i<editButton.length; i++)
+	{
+		if(editButton[i].textContent.includes("Edit HTML"))
+		{
+			hasEditAccess = true; 
+		}
+	}
+	
+	if(hasEditAccess == true) // use has editing right -- show Edit option in menu
 	{
 		oldURL = String(window.parent.location);  // otherwise you will edit the URL
 		newURL = oldURL.replace("viewContent", "contentFile"); 
