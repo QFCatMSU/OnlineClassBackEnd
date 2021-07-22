@@ -420,7 +420,7 @@ function d2lAddHeader()
 		prevPage.parentNode.removeChild(prevPage);
 	}
 	
-	// check if there is a previous page link
+	// check if there is a next page link
 	nextPage = document.body.children[0];
 	if(nextPage && nextPage.tagName == "P")
 	{
@@ -860,13 +860,14 @@ function changeAllPicSize(param)
 function goBackToPrevLocation()
 {
 	leftPos = window.parent.scrollX; 	// get the left position of the scroll
-
+/*
 	if (navigator.userAgent.indexOf("Firefox") != -1)
 	{
 		encapObject.querySelector("menuitem[id='previousLocMenuItem']").disabled = "disabled";
-	}
-	encapObject.querySelector("a[id='previousLocMenuItem']").style.display = "none";
-	
+	}*/
+	//encapObject.querySelector("a[id='previousLocMenuItem']").parent.style.display = "none";
+	prevLocLink = document.getElementById("previousLocMenuItem");
+	prevLocLink.parentNode.style.display = "none";
 	// scroll the page vertically to the position the page was
 	// at when the link was originally clicked (stored as a global variable)
 	window.parent.scrollTo(leftPos, scrollTopPosition);
@@ -1270,7 +1271,7 @@ function goToTopOfPage()
 
 function makeContextMenu(funct, param = null)
 {	
-	// for Firefox -- add a right-click menu (onlyFirefox supports right-click menus)
+	/*// for Firefox -- add a right-click menu (onlyFirefox supports right-click menus)
 	if (navigator.userAgent.indexOf("Firefox") != -1)
 	{
 		// when the user clicks the right button, the rightClickMenu appears
@@ -1282,7 +1283,7 @@ function makeContextMenu(funct, param = null)
 		contextMenu.id = "rightClickMenu";
 		
 		encapObject.appendChild(contextMenu);
-	}
+	}*/
 	
 	var elemDiv = document.createElement('div');
 	elemDiv.id = "longClickMenu";
@@ -1321,7 +1322,8 @@ function makeContextMenu(funct, param = null)
 	menuLinks(elemDiv, "Minimize All Images", function() {changeAllPicSize('minimize')}, "minAllImages");
 		
 	// add page mapping in Firefox (eventually want to do this for all browsers...)
-	if (navigator.userAgent.indexOf("Firefox") != -1)
+	// no longer works in FF or any browser
+	/*if (navigator.userAgent.indexOf("Firefox") != -1)
 	{
 		// add an map of the lesson to the context menu
 		submenu = document.createElement("menu");
@@ -1341,7 +1343,7 @@ function makeContextMenu(funct, param = null)
 		}
 
 		contextMenu.appendChild(submenu);
-	}
+	}*/
 	
 	encapObject.appendChild(elemDiv);
 }
@@ -1368,7 +1370,7 @@ function menuLinks(menu, text, command, linkid="", enable=true)
 	// put link in span so that the hyperlink is only on the text (not the whole line)
 	spanEncap.appendChild(link);
 	menu.appendChild(spanEncap);
-	
+	/*
 	// creates a separate right-click menu in Firefox (this is the only browser that supports right-click menus)
 	if(navigator.userAgent.indexOf("Firefox") != -1)
 	{
@@ -1378,7 +1380,7 @@ function menuLinks(menu, text, command, linkid="", enable=true)
 		if(enable==false) menuItem.disabled = "disabled";
 		menuItem.addEventListener("click", function(){command();} );
 		encapObject.querySelector("#rightClickMenu").appendChild(menuItem);
-	}
+	}*/
 }
 
 function scrollToElementReturn(elementID)
@@ -1543,7 +1545,8 @@ function addReferences()
 			addNumToReference(references[i], eqRef);
 		}
 		// if this is a figure ref (has h5 tag and does not have eqNum class)
-		else if(encapObject.querySelector("#" + refID).nodeName.toLowerCase() == "h5") 
+		else if(encapObject.querySelector("#" + refID).nodeName.toLowerCase() == "h5" || // old system
+              encapObject.querySelector("#" + refID).classList.contains("fig"))        // new system
 		{
 			caption = encapObject.querySelector("#" + refID).innerText;
 			strIndex = caption.indexOf(":");  // find the location of the first semicolon
@@ -1777,12 +1780,14 @@ function getIframeOffset()
 
 function enablePrevious()
 {	
-	// change the right-click menu to show the return link
+	/*// change the right-click menu to show the return link
 	if (navigator.userAgent.indexOf("Firefox") != -1)
 	{
 		encapObject.querySelector("menuitem[id='previousLocMenuItem']").disabled = false;
-	}
-	encapObject.querySelector("a[id='previousLocMenuItem']").style.display = "block";
+	}*/
+	prevLocLink = document.getElementById("previousLocMenuItem");
+	prevLocLink.parentNode.style.display = "block";
+	//encapObject.querySelector("a[id='previousLocMenuItem']").style.display = "block";
 }
 
 function linksToNewWindow()
