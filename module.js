@@ -860,14 +860,9 @@ function changeAllPicSize(param)
 function goBackToPrevLocation()
 {
 	leftPos = window.parent.scrollX; 	// get the left position of the scroll
-/*
-	if (navigator.userAgent.indexOf("Firefox") != -1)
-	{
-		encapObject.querySelector("menuitem[id='previousLocMenuItem']").disabled = "disabled";
-	}*/
-	//encapObject.querySelector("a[id='previousLocMenuItem']").parent.style.display = "none";
+
 	prevLocLink = document.getElementById("previousLocMenuItem");
-	prevLocLink.parentNode.style.display = "none";
+	prevLocLink.classList.add("disabledLink"); 
 	// scroll the page vertically to the position the page was
 	// at when the link was originally clicked (stored as a global variable)
 	window.parent.scrollTo(leftPos, scrollTopPosition);
@@ -1271,20 +1266,6 @@ function goToTopOfPage()
 
 function makeContextMenu(funct, param = null)
 {	
-	/*// for Firefox -- add a right-click menu (onlyFirefox supports right-click menus)
-	if (navigator.userAgent.indexOf("Firefox") != -1)
-	{
-		// when the user clicks the right button, the rightClickMenu appears
-		encapObject.setAttribute("contextmenu", "rightClickMenu");
-
-		// creating a right-click context menu
-		contextMenu = document.createElement("menu");
-		contextMenu.type = "context";
-		contextMenu.id = "rightClickMenu";
-		
-		encapObject.appendChild(contextMenu);
-	}*/
-	
 	var elemDiv = document.createElement('div');
 	elemDiv.id = "longClickMenu";
 	elemDiv.classList.add("rcMenu");
@@ -1320,30 +1301,6 @@ function makeContextMenu(funct, param = null)
 	menuLinks(elemDiv, "Print/ Save as PDF", function(){document.getElementById("longClickMenu").style.visibility = "hidden"; window.print()}, "printToPDF");
 	menuLinks(elemDiv, "Maximize All Images", function() {changeAllPicSize('maximize')}, "maxAllImages");
 	menuLinks(elemDiv, "Minimize All Images", function() {changeAllPicSize('minimize')}, "minAllImages");
-		
-	// add page mapping in Firefox (eventually want to do this for all browsers...)
-	// no longer works in FF or any browser
-	/*if (navigator.userAgent.indexOf("Firefox") != -1)
-	{
-		// add an map of the lesson to the context menu
-		submenu = document.createElement("menu");
-		submenu.label = "Page Map";
-
-		sectionsInPage = encapObject.querySelectorAll("h2,h3");
-		for(i=0; i<sectionsInPage.length; i++)
-		{
-			mapItem = document.createElement("menuitem");
-			mapItem.label = sectionsInPage[i].innerText;
-			if(sectionsInPage[i].id == "")
-			{
-				sectionsInPage[i].id = "_sect" + i;
-			}
-			mapItem.addEventListener("click", scrollToElementReturn(sectionsInPage[i].id));
-			submenu.appendChild(mapItem);		
-		}
-
-		contextMenu.appendChild(submenu);
-	}*/
 	
 	encapObject.appendChild(elemDiv);
 }
@@ -1352,7 +1309,27 @@ function menuLinks(menu, text, command, linkid="", enable=true)
 {
 	// create a block span to encapsulate the hyperlink
 	spanEncap = document.createElement('span');
-	if(enable) spanEncap.style.display = "block";
+	spanEncap.style.display = "block";
+	
+
+	
+	link = document.createElement('a');
+	if(!enable)
+		link.classList.add("disabledLink");
+	link.id = linkid;
+	link.innerText = text;
+	link.classList.add("sameWin", "jsLink");
+	link.addEventListener("mouseup", 
+								 function(event) 
+								 { 
+									command(); 	
+									document.getElementById("longClickMenu").style.visibility = "hidden"; 
+									document.getElementById("longClickMenu").style.top = "0px"; 
+								 });
+	spanEncap.appendChild(link);
+	
+	menu.appendChild(spanEncap);
+/*	if(enable) spanEncap.style.display = "block";
 	else spanEncap.style.display = "none";
 	
 	link = document.createElement('a');
@@ -1365,22 +1342,11 @@ function menuLinks(menu, text, command, linkid="", enable=true)
 									command(); 	
 									document.getElementById("longClickMenu").style.visibility = "hidden"; 
 									document.getElementById("longClickMenu").style.top = "0px"; 
-								 });
+								 });*/
 
 	// put link in span so that the hyperlink is only on the text (not the whole line)
-	spanEncap.appendChild(link);
-	menu.appendChild(spanEncap);
-	/*
-	// creates a separate right-click menu in Firefox (this is the only browser that supports right-click menus)
-	if(navigator.userAgent.indexOf("Firefox") != -1)
-	{
-		menuItem = document.createElement("menuitem");
-		menuItem.label = text;
-		menuItem.id = linkid;
-		if(enable==false) menuItem.disabled = "disabled";
-		menuItem.addEventListener("click", function(){command();} );
-		encapObject.querySelector("#rightClickMenu").appendChild(menuItem);
-	}*/
+	//spanEncap.appendChild(link);
+
 }
 
 function scrollToElementReturn(elementID)
@@ -1712,25 +1678,29 @@ function scrollToElement(elementID, outsideCall = false)
 		}
 		
 		// save the current value of the scroll position so we can return to this spot
-		scrollTopPosition = windowScroll;  
-
+		scrollTopPosition = window.parent.scrollY; 
+		
 		// scroll the parent to the vertical position of the linkTo element
 		window.parent.scrollTo(element.offsetLeft, (elementYPos -offsetPadding) );	
 		
 		scrollFlag = scrollFlag +1;
 		if(scrollFlag <= 2) {activateNotification(event, "scroll");}
+		enablePrevious();
 	}
 	// if the scrolling-to element is within one page
 	else if(elementYPos >  (windowScroll+windowHeight) && elementYPos < (windowScroll+ (2*windowHeight)))
 	{
 		offsetPadding = windowHeight - 200;
 		
+		// save the current value of the scroll position so we can return to this spot
+		scrollTopPosition = window.parent.scrollY; 
+		
 		// scroll the parent to the vertical position of the linkTo element
 		window.parent.scrollTo(element.offsetLeft, (elementYPos -offsetPadding) );	
+		enablePrevious();
 	}
 	
 	highLightObject(element, 2000);
-	enablePrevious();
 }
 
 function highLightObject(element, time=2000)
@@ -1780,14 +1750,9 @@ function getIframeOffset()
 
 function enablePrevious()
 {	
-	/*// change the right-click menu to show the return link
-	if (navigator.userAgent.indexOf("Firefox") != -1)
-	{
-		encapObject.querySelector("menuitem[id='previousLocMenuItem']").disabled = false;
-	}*/
+	// change the right-click menu to show the return link
 	prevLocLink = document.getElementById("previousLocMenuItem");
-	prevLocLink.parentNode.style.display = "block";
-	//encapObject.querySelector("a[id='previousLocMenuItem']").style.display = "block";
+	prevLocLink.classList.remove("disabledLink");
 }
 
 function linksToNewWindow()

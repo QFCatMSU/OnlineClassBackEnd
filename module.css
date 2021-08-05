@@ -16,7 +16,12 @@ allow one to apply style classes.
 
 Extend flexSize to all types of objects (would need to change the execution)
 */
-
+.disabledLink
+{
+	color: gray !important;
+	pointer-events: none !important;
+	border-bottom-width: 0 !important;
+}
 .code::after, .codeBlockTab::after
 {	/* This is a hack for IE so unselectable text will not be copied */
 	content: attr(data-text);
