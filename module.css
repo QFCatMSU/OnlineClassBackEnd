@@ -1,4 +1,6 @@
 /*
+email dotted underlink does not change to solid onmouseover
+
 module.css fix:
 user can select the number before code lines in all but Firefox
 - add all variation of user-select: none; to ::before
@@ -125,10 +127,10 @@ a:link,a:visited, .email, .jsLink , a[href^="#"],a.linkback,.linkTo   /* href th
 	border-bottom: dotted 1px;
 	cursor: pointer;
 } 
-a:hover, email:hover, a[href^="#"]:hover, a.linkback:hover, .linkTo:hover, .jsLink:hover, a.href:hover
+a:hover, .email:hover, a[href^="#"]:hover, a.linkback:hover, .linkTo:hover, .jsLink:hover, a.href:hover
 {
-	border-bottom: solid 1px;
-}
+	border-bottom: solid 1px;  /* this does not work for email -- they are not <a> */
+} 
 h1
 {
 	/* h1 is essentially the title of the lesson */
