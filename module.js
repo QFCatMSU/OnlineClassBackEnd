@@ -193,13 +193,13 @@ parent.window.onload = function()
 	}
 	
 	/**** Temp Hack -- D2L got rid of H6 -- switching Blockquote and
-	      P within to H6 ****/
+	      P within a blockquote to H6 ****/
 	bq = document.getElementsByTagName("blockquote");
 
 	for(i=0; i<bq.length; i++)
 	{
 		para = bq[i].getElementsByTagName("p");
-		
+
 		if(para.length > 0)
 		{
 			html = bq[i].innerHTML;
@@ -209,6 +209,19 @@ parent.window.onload = function()
 			html = html.replace(/(?:\r\n|\r|\n)/g, '<br>');	
 			html = html.replace(/<p/g, "<h6");
 			html = html.replace(/<\/p/g, "<\/h6");
+			bq[i].innerHTML = html;		
+		}
+		
+		innerBQ = bq[i].getElementsByTagName("blockquote");
+		if(innerBQ.length > 0)
+		{
+			html = bq[i].innerHTML;
+			html = html.trim();
+			html = html.replace(/(?:\r\n|\r|\n)/g, '');	
+			html = html.replace(/<\/blockquote>\n/g, '<\/blockquote>');	
+			html = html.replace(/(?:\r\n|\r|\n)/g, '<br>');	
+			html = html.replace(/<blockquote/g, "<h6");
+			html = html.replace(/<\/blockquote/g, "<\/h6");
 			bq[i].innerHTML = html;		
 		}
 	}
@@ -1207,7 +1220,6 @@ function overflowCodeLines()
 	/*** Tried to use encapObject but the bounded rectangle function did
 		not work the second time -- don't know why ***/
 	codeLines = document.getElementsByClassName("code");	
-//	codeLines = encapObject.querySelectorAll(".code");	
 
 	if(codeLines.length > 0)
 	{
@@ -1329,24 +1341,6 @@ function menuLinks(menu, text, command, linkid="", enable=true)
 	spanEncap.appendChild(link);
 	
 	menu.appendChild(spanEncap);
-/*	if(enable) spanEncap.style.display = "block";
-	else spanEncap.style.display = "none";
-	
-	link = document.createElement('a');
-	link.id = linkid;
-	link.innerText = text;
-	link.classList.add("sameWin", "jsLink");
-	link.addEventListener("mouseup", 
-								 function(event) 
-								 { 
-									command(); 	
-									document.getElementById("longClickMenu").style.visibility = "hidden"; 
-									document.getElementById("longClickMenu").style.top = "0px"; 
-								 });*/
-
-	// put link in span so that the hyperlink is only on the text (not the whole line)
-	//spanEncap.appendChild(link);
-
 }
 
 function scrollToElementReturn(elementID)
