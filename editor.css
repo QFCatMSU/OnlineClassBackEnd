@@ -18,19 +18,6 @@
 */
 
 
-address
-{
-	background-color: rgb(200,215,200);
-	font-style: normal;
-	color: rgb(0,0,0);
-	padding: 10px;
-	font-family: arial;
-	font-size: 22px;
-	line-height: 30%;
-	margin-left: 15%;
-	margin-right: 15%;
-	text-align: center;
-}
 body
 {
 	counter-reset: h2Count figCount eqCount;
@@ -73,13 +60,7 @@ h4::before
   counter-increment: h4Count;               
   content: counter(h2Count) "-" counter(h3Count) "-" counter(h4Count) " ";
 }	
-.figNum::before, h5:not([class])::before, h5[class='']::before, .fig::before,
- span[style*="dotum"]::before
-{
-  counter-increment: figCount;               
-  content: "Fig " counter(figCount) ": ";  
-}
-h5.eqNum::after, span[style*="dotum"]>img::after
+h5.eqNum::after, span[style*="dotum"]>.equation::after, span[style*="dotum"]::after
 {
   counter-increment: eqCount;               
   content: " ( " counter(eqCount) " )";  
@@ -90,6 +71,12 @@ h5.eqNum::after, span[style*="dotum"]>img::after
   content: "( " counter(eqCount) " )";  
   text-decoration: none; /* does not work -- is there another way? */
 }
+.figNum::before, h5:not([class])::before, h5[class='']::before, .fig::before
+{
+  counter-increment: figCount;               
+  content: "Fig " counter(figCount) ": ";  
+}
+
 /* span with font type dotum whose first-child is an image with the class equation */
 span[style*="dotum"] > img.equation:first-child
 {
@@ -329,4 +316,21 @@ h6>br,h6>h6, blockquote>br, blockquote>blockquote
 	color: rgb(0,0,150);
 	text-decoration: underline;
 	cursor: pointer;
+}
+
+
+/*** Probably deprecated ***/
+
+address
+{
+	background-color: rgb(200,215,200);
+	font-style: normal;
+	color: rgb(0,0,0);
+	padding: 10px;
+	font-family: arial;
+	font-size: 22px;
+	line-height: 30%;
+	margin-left: 15%;
+	margin-right: 15%;
+	text-align: center;
 }
