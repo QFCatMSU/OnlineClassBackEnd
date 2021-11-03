@@ -296,6 +296,7 @@ td
 	   is no height set on the code-blocks so the border automatically
 		changes the size of the box (so the box-sizing property does not work */
 	outline: 2px solid rgb(150,250,50);
+	/*scrollbar-color: green lightgray;*/
 }
 .contentDiv
 {
@@ -377,6 +378,10 @@ td
 .code .email, .code.email
 {
 	color: pink;
+}
+.code .ref, .code.ref, .code .ref[id], .code.ref[id]
+{
+	color: lime;
 }
 .code .note, .code.note
 {

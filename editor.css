@@ -231,6 +231,10 @@ h6 .note, h6.note, blockquote .note, blockquote.note
 {
 	color: orange;
 }
+h6 .ref, h6.ref, blockquote .ref, blockquote.ref
+{
+	color: lime;
+}
 h6 a, blockquote a
 {
 	color: YellowGreen;
