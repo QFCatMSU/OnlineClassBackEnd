@@ -58,7 +58,8 @@ mouseX = 0; mouseY = 0;  // allow a little wiggle of the mouse
 var script = document.createElement('script');
 script.type = "text/javascript";
 script.id = "MathJax-script";
-script.src = "https://cdn.jsdelivr.net/npm/mathjax@3.1.2/es5/tex-mml-svg.js";
+//script.src = "https://cdn.jsdelivr.net/npm/mathjax@3.1.2/es5/tex-mml-svg.js";
+script.src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js";
 script.async = "async";
 document.head.appendChild(script); 
 	
