@@ -58,7 +58,6 @@ mouseX = 0; mouseY = 0;  // allow a little wiggle of the mouse
 var script = document.createElement('script');
 script.type = "text/javascript";
 script.id = "MathJax-script";
-//script.src = "https://cdn.jsdelivr.net/npm/mathjax@3.1.2/es5/tex-mml-svg.js";
 script.src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js";
 script.async = "async";
 document.head.appendChild(script); 
@@ -199,35 +198,41 @@ parent.window.onload = function()
 
 	for(i=0; i<bq.length; i++)
 	{
-		para = bq[i].getElementsByTagName("p");
-
-		if(para.length > 0)
-		{
-			html = bq[i].innerHTML;
-			html = html.trim();
-			html = html.replace(/(?:\r\n|\r|\n)/g, '');	
-			html = html.replace(/<\/p>\n/g, '<\/p>');	
-			html = html.replace(/(?:\r\n|\r|\n)/g, '<br>');	
-			html = html.replace(/<p/g, "<h6");
-			html = html.replace(/<\/p/g, "<\/h6");
-			bq[i].innerHTML = html;		
-		}
-		
+		// Find the blockquote and save the html in the blockquote
 		innerBQ = bq[i].getElementsByTagName("blockquote");
-		if(innerBQ.length > 0)
-		{
-			html = bq[i].innerHTML;
-			html = html.trim();
-			html = html.replace(/(?:\r\n|\r|\n)/g, '');	
-			html = html.replace(/<\/blockquote>\n/g, '<\/blockquote>');	
-			html = html.replace(/(?:\r\n|\r|\n)/g, '<br>');	
-			html = html.replace(/<blockquote/g, "<h6");
-			html = html.replace(/<\/blockquote/g, "<\/h6");
-			bq[i].innerHTML = html;		
-		}
+		html = bq[i].innerHTML;
+		
+		// remove all carriage returns (\r) and enters (\n) 
+		html = html.replace(/(?:\r\n|\r|\n)/g, '');	
+
+		// remove all the inner blockquotes
+		html = html.replace(/<blockquote>/g, '');	
+		html = html.replace(/<\/blockquote>/g, '');	
+
+		// Switch <H6> to <p>
+		html = html.replace(/<h6>/g, '<p>');	
+		html = html.replace(/<\/h6>/g, '</p>');	
+
+		// Handle all the <p> 
+		html = html.replace("<p>", "");   			// replace first <p> with ""
+		html = html.replace(/<br><p>/g, "<br>"); 	// replace <br><p> with just <br>
+		html = html.replace(/<p>/g, "<br>"); 		// replace all other <p> with <br>
+		
+		// Handle all the </p> 
+		html = html.replace(/<\/p>(?=[^<])/g, "<br>");	// replace </p> with no tag after it with <br>
+		html = html.replace(/<\/p>/g, "");  		// replace all other </p> with ""
+		
+		// save the modified html
+		bq[i].innerHTML = html;		
 	}
 	
-	while(bq.length > 0)	
+	// Now change all blockquotes to H6 (need to change to <p> with class="code"
+	allHTML = encapObject.innerHTML;
+	allHTML = allHTML.replace(/<blockquote>/g, '<h6>');	
+	allHTML = allHTML.replace(/<\/blockquote>/g, '</h6>');	
+	encapObject.innerHTML = allHTML;		
+			
+/*	while(bq.length > 0)	
 	{
 		h6 = bq[0].getElementsByTagName("h6");
 		
@@ -236,11 +241,7 @@ parent.window.onload = function()
 			bq[0].insertAdjacentHTML("beforebegin", bq[0].innerHTML);
 			// get the element's parent node
 			var parent = bq[0].parentNode;
-			
-			// move all children out of the element
-	//		while (bq[0].firstChild) 
-		//		parent.insertBefore(bq[0].firstChild, bq[0]);
-			
+
 			// remove the empty element
 			parent.removeChild(bq[0]);
 		}
@@ -253,7 +254,7 @@ parent.window.onload = function()
 			h6cb.title = bq[0].title;
 			bq[0].parentNode.replaceChild(h6cb, bq[0]);
 		}
-	}
+	}*/
 
 	
 	// mathML() adds div to the beginning of the page -- needs to happen after header is set -- deprcated with MathJax 3.0
@@ -274,7 +275,7 @@ parent.window.onload = function()
 	createEmailLink();
 	
 	equationNumbering();
-		
+	
 	// structure the page with DIVs based on the headers 
 	addDivs();
 	
@@ -285,10 +286,10 @@ parent.window.onload = function()
 	makeContextMenu();  // needs to happen after divs are created
 		
 
-	
 	// adds code tags to all content within an [h6] tag
 	// need to add divs before doing code tags becuase this includes the div codeblocks
 	addCodeTags("H6");
+
 	
 	// allow user to toggle the size of the codeblock
 	addCodeBlockTag();
