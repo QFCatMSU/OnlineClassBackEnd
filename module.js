@@ -1,11 +1,13 @@
 /*
 Future:
+- equations cause horizontal scrolling
+- <done> shortcut menu comes up when horizontally scrolling
 - <alomst> remove formatting from copied codeblock
    - Chrome adds a line feed, Edge keps format, FF works, Safari ??
 - <done> add page map to long-click / right-click menu
 - <almost done> remove depecated referencing (sectRef...)
-- break up code functions
-- look for Span within H6 for Title
+- <done> break up code functions
+- <needed> look for Span within H6 for Title
 - <done> Title in H6 means no numbers
 - Class to add numbers
 - <done> switch to addEventListener()
@@ -13,7 +15,7 @@ Future:
 - hold position of page when resized
 - prevPage and nextPage: combine code
 - <done> combine right-click and long-click in one function 
-- fix overflow code
+- <using vert line -- almost> fix overflow code
 - fix wayward div in page
 - <done> check MathJax version
 - set equation color?
@@ -31,7 +33,7 @@ imageHeight = new Array();			// the heights of all flex-sized images in a page
 imageWidth = new Array();			// the widths of all flex-sized images in a page
 minImageWidth = 700;					// minimum width for a flexSize image in expanded mode
 scrollTopPosition = 0; 				// value saved for links-return-links within a page
-overflowCalled = false;   			// check to see if there is a current check of code lines
+//overflowCalled = false;   			// check to see if there is a current check of code lines
 //mathObjCount = 0;					// The number of equations in the lesson (deprecated w. MathJax3)
 //count=0;prevCount=0;countNum=0;// used to keep track of the equations (deprecated w. MathJax3)
 editURL = "";							// URL for the editting page 
@@ -58,7 +60,6 @@ mouseX = 0; mouseY = 0;  // allow a little wiggle of the mouse
 var script = document.createElement('script');
 script.type = "text/javascript";
 script.id = "MathJax-script";
-//script.src = "https://cdn.jsdelivr.net/npm/mathjax@3.1.2/es5/tex-mml-svg.js";
 script.src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js";
 script.async = "async";
 document.head.appendChild(script); 
@@ -87,7 +88,7 @@ window.addEventListener("scroll", function(event)
 { 
 		clearInterval(longClickTimer);
 });
-
+	
 window.addEventListener("mouseup", function()
 {
 	clearInterval(longClickTimer);
@@ -184,6 +185,155 @@ function activateElement(e, element, offset = 5)
 	element.style.visibility = "visible"; 
 }
 
+function fixBlockquotes()
+{
+	bq = encapObject.querySelectorAll("blockquote");
+	
+	for(i=0; i<bq.length; i++)
+	{
+		codelines = bq[i].querySelectorAll("h6,p");
+		//codelines = encapObject.querySelectorAll("blockquote>h6, blockquote>p");
+		for(j=0; j<codelines.length; j++)
+		{
+			// add the code class to the children
+			codelines[j].classList.add("code");
+			// move the object outside of the blockquote
+			bq[i].parentNode.insertBefore(codelines[j], bq[i]);
+		}
+		// remove the blockquote (which is now empty)
+		bq[i].parentNode.removeChild(bq[i]);
+	}
+}
+
+function fixBrInCodelines()
+{
+	var codeLines = encapObject.getElementsByClassName("code"); 
+	
+	for(i=0; i<codeLines.length; i++)
+	{
+		// need to be very careful in for loops where the counted element is changing
+		codeElement = codeLines[i];
+				
+		/* fix the situation where code lines are broken up by [br] --
+			usually happens when code was copied/pasted into editor */
+		if(codeLines[i].getElementsByTagName("br").length > 0)
+		{ 
+			// count how many lines of code there are, which is the number of <br> + 1
+			// 	because we need to add a break for the last line
+			numLines = codeLines[i].getElementsByTagName("br").length +1; 
+
+			var codeText = new Array();
+			for(j=0; j<numLines; j++)
+			{
+				// copy all the lines of code into the array, creating a new line after each <br>
+				codeText[j] = codeLines[i].innerHTML.split("<br>")[j];
+			}
+			for(j=0; j<numLines; j++)
+			{
+				newElement = document.createElement("p");		// create an [p] 
+				newElement.classList.add("code");				// add class "code" to <p>
+				newElement.innerHTML = codeText[j];				// insert line from code array in <p>
+				if(j == 0)
+				{
+					// transfer title information to only the first element
+					newElement.title = codeLines[i].title;	
+					// transfer the class list to the first element					
+					newElement.classList =  codeLines[i].classList; 
+				}
+				// add the new code line to the script
+				codeElement.parentElement.insertBefore(newElement, codeElement);  
+			}
+			// remove all the original code lines
+			codeElement.parentElement.removeChild(codeElement);	
+			
+			/********
+			the number of code tags increased -- so codeLines[] has been updated to match
+			*********/
+			// increase numCodeTags to the current codeline length
+			numCodeTags = codeLines.length; 
+			
+			// increase i by the number of codelines just added (don't need to check those)
+			i = i + numLines -1; 
+		}
+	}
+}
+
+function codeBlockFirstLine(codeLine)
+{
+	codeBlock = document.createElement("p"); 			// create a new codeblock
+	codeBlock.classList = codeLine.classList;
+	codeBlock.title = codeLine.title;
+	codeBlock.classList.add("codeBlock");
+	
+	// start numbering at number different than 1
+	if( codeBlock.title != "" && !isNaN(codeLine.title) )
+	{
+		codeBlock.style.counterReset = "codeLines " + (codeLine.title -1);
+	}
+	
+	// when double-clicked, select all the children (text) within the codeblock
+	codeBlock.addEventListener("dblclick", function(event){ 
+		document.getSelection().selectAllChildren(this); 
+		document.execCommand("copy"); 
+		activateNotification(event, "code");
+	});
+	
+	// disable short-cut menu on scroll (mousemoves are not triggered on scroll)
+	codeBlock.addEventListener("scroll", function(event){ 
+		clearInterval(longClickTimer);
+	});
+	
+	// do this only for codeblocks
+	codeBlock.addEventListener("copy", function(e) {
+	  // converts weird spaces to regular spaces
+	  const text_only = document.getSelection().toString();
+	  const clipdata = e.clipboardData; // || window.clipboardData;  
+	  clipdata.setData("text/plain", text_only);
+	  e.preventDefault();
+	});
+	
+	// add the codeBock div as a parent to the codeLine
+	codeLine.parentElement.insertBefore(codeBlock, codeLine);
+}
+
+function setCodeBlocks()
+{
+	// find all code elements that have not been made into codeblocks 
+	var codeLines = encapObject.querySelectorAll(".code:not(.codeBlock)");  
+
+	firstLine = true;
+
+	// go through all codelines 
+	for(i=0; i<codeLines.length; i++)
+	{	
+		if(firstLine == true)  // first line of a codeblock
+		{
+			codeBlockFirstLine(codeLines[i]);	
+			firstLine = false;
+		}
+		codeLine = document.createElement("span");
+		codeLine.innerHTML = codeLines[i].innerHTML;
+		codeLine.id = codeLines[i].id;
+		codeLine.title = codeLines[i].title;  // do I want the title?
+		codeLine.classList.add("code");
+
+		// this is the last element in the codeblock
+		if(codeLines[i].nextElementSibling == null || 
+			!codeLines[i].nextElementSibling.classList.contains("code"))
+		{
+			firstLine = true;
+		}
+		else
+		{
+			codeLine.innerHTML += "<br>";
+		}
+		
+		codeBlock.appendChild(codeLine);
+		
+		// remove the old codeline
+		codeLines[i].parentNode.removeChild(codeLines[i]);
+	}
+}
 // don't do anything until the parent frame (d2L) loads 
 // this still seems to work if there is no parent -- probably should check for this, though
 parent.window.onload = function()
@@ -199,69 +349,18 @@ parent.window.onload = function()
 		d2lAddHeader();
 	}
 	
-	/**** Temp Hack -- D2L got rid of H6 -- switching Blockquote and
-	      P within a blockquote to H6 ****/
-	bq = document.getElementsByTagName("blockquote");
-
-	for(i=0; i<bq.length; i++)
+	// add code class to all h6 elements (hopefully, this will be deprecated soon...)
+	h6 = encapObject.getElementsByTagName("h6");
+	for(i=0; i<h6.length; i++)
 	{
-		para = bq[i].getElementsByTagName("p");
-
-		if(para.length > 0)
-		{
-			html = bq[i].innerHTML;
-			html = html.trim();
-			html = html.replace(/(?:\r\n|\r|\n)/g, '');	
-			html = html.replace(/<\/p>\n/g, '<\/p>');	
-			html = html.replace(/(?:\r\n|\r|\n)/g, '<br>');	
-			html = html.replace(/<p/g, "<h6");
-			html = html.replace(/<\/p/g, "<\/h6");
-			bq[i].innerHTML = html;		
-		}
-		
-		innerBQ = bq[i].getElementsByTagName("blockquote");
-		if(innerBQ.length > 0)
-		{
-			html = bq[i].innerHTML;
-			html = html.trim();
-			html = html.replace(/(?:\r\n|\r|\n)/g, '');	
-			html = html.replace(/<\/blockquote>\n/g, '<\/blockquote>');	
-			html = html.replace(/(?:\r\n|\r|\n)/g, '<br>');	
-			html = html.replace(/<blockquote/g, "<h6");
-			html = html.replace(/<\/blockquote/g, "<\/h6");
-			bq[i].innerHTML = html;		
-		}
+		h6[i].classList.add("code"); 
 	}
 	
-	while(bq.length > 0)	
-	{
-		h6 = bq[0].getElementsByTagName("h6");
-		
-		if(h6.length > 0)
-		{		
-			bq[0].insertAdjacentHTML("beforebegin", bq[0].innerHTML);
-			// get the element's parent node
-			var parent = bq[0].parentNode;
-			
-			// move all children out of the element
-	//		while (bq[0].firstChild) 
-		//		parent.insertBefore(bq[0].firstChild, bq[0]);
-			
-			// remove the empty element
-			parent.removeChild(bq[0]);
-		}
-		else
-		{
-			h6cb = document.createElement("h6");
-			h6cb.innerHTML = bq[0].innerHTML;
-			h6cb.id = bq[0].id;
-			h6cb.className = bq[0].className;
-			h6cb.title = bq[0].title;
-			bq[0].parentNode.replaceChild(h6cb, bq[0]);
-		}
-	}
-
-	
+	// adds "code" to elements within bq and moves p and h6 out of bq
+	fixBlockquotes();
+	fixBrInCodelines();
+	setCodeBlocks();
+	addBrackets();
 	// mathML() adds div to the beginning of the page -- needs to happen after header is set -- deprcated with MathJax 3.0
 	//loadMathML();
 	
@@ -280,7 +379,7 @@ parent.window.onload = function()
 	createEmailLink();
 	
 	equationNumbering();
-		
+	
 	// structure the page with DIVs based on the headers 
 	addDivs();
 	
@@ -289,20 +388,17 @@ parent.window.onload = function()
 	
 	// Create a right-click menu
 	makeContextMenu();  // needs to happen after divs are created
-		
 
-	
 	// adds code tags to all content within an [h6] tag
 	// need to add divs before doing code tags becuase this includes the div codeblocks
-	addCodeTags("H6");
+//	addCodeTags();
 	
-	// allow user to toggle the size of the codeblock
+	// allow user to toggle the size of the codeblock --used?? needed??
 	addCodeBlockTag();
 	
+	codeLineVertBar();
+	
 	addReferences();
-		
-	// handling wordwrapped codelines (A little buggy -- avoiding for now)
-	// overflowCodeLines();
 	
 	// convert "download" class to a download hyperlink 
 	//		(because D2L does not allow you to specify this trait)
@@ -353,16 +449,6 @@ function resizeIframeContent()
 		// change to size of the document
 		parentIFrames[0].height = parentIFrames[0].contentWindow.document.body.scrollHeight;
 	}
-	
-	if(overflowCalled == false)
-	{
-		overflowCalled = true;
-	}
-	else
-	{
-		clearTimeout(overFlowTimer);
-	}
-	overFlowTimer = setTimeout(function() { overflowCodeLines(); }, 500);
 }
 
 function loadMathML()
@@ -972,149 +1058,54 @@ function addCaptions()
 	}
 }
 
+function addBrackets()
+{
+	bracketCode = encapObject.querySelectorAll("p.bx");
+	
+	for(i=0; i<bracketCode.length; i++)
+	{
+		// add extra padding to each line:
+		codeLines = bracketCode[i].querySelectorAll(".code");
+		for(j=0; j<codeLines.length; j++)
+		{
+			codeLines[j].innerText = "\u00A0\u00A0" + codeLines[j].innerText;
+		}
+		
+		/**** added formatting to put in {} ***********/
+		// create a line that just has a start curly bracket ( { )
+		startCodeLine = document.createElement("span");
+		startCodeLine.setAttribute("data-text", "{");  // so it does not appear as text when selected
+		startCodeLine.classList.add("code", "firstLine", "noSelect", "noCode");
+
+		bracketCode[i].prepend(startCodeLine);
+		
+		// create a line that just has a start curly bracket ( } )
+		endCodeLine = document.createElement("span");
+		endCodeLine.setAttribute("data-text", "}");  // so it does not appear as text when selected
+		endCodeLine.classList.add("code", "firstLine", "noSelect", "noCode");
+
+		bracketCode[i].append(endCodeLine);	
+	}
+}
 /* add the tag: [code] to each line inside a [pre] block --
   the real trick is that there are multiple ways in which D2L will code a set of lines */
-function addCodeTags(elementType)
+/*function addCodeTags(elementType="p", classType="code")
 {
-	/* this part works if we are using <h6> with class="code" */
-	var codeLines = encapObject.getElementsByTagName(elementType);  
-
-	/* count the number of H6 tags
-	   note: if you use codeLines.length in the for loop, the length will change
-		as you add [h6] tags -- creating an infinite loop */
-	numCodeTags = codeLines.length;
-
-	// first go through [H6] elements and check for [br] tag -- switch to [H6]
-	for(i=0; i<numCodeTags; i++)
-	{
-		// need to be very careful in for loops where the counted element is changing
-		codeElement = codeLines[i];
-				
-		/* fix the situation where code lines are broken up by [br] --
-			usually happens when code was copied/pasted into editor */
-		if(codeLines[i].getElementsByTagName("br").length > 0)
-		{ 
-			// count how many lines of code there are, which is the number of <br> + 1
-			// 	because we need to add a break for the last line
-			numLines = codeLines[i].getElementsByTagName("br").length +1; 
-
-			var codeText = new Array();
-			for(j=0; j<numLines; j++)
-			{
-				// copy all the lines of code into an array
-				codeText[j] = codeLines[i].innerHTML.split("<br>")[j];
-			}
-			for(j=0; j<numLines; j++)
-			{
-				newElement = document.createElement(elementType);	// create an [H6] 
-				newElement.innerHTML = codeText[j];						// insert code into [H6]
-				if(j == 0)
-				{
-					// transfer title information to only the first element
-					newElement.title = codeLines[i].title;	
-					// transfer the class list to the first element					
-					newElement.classList =  codeLines[i].classList; 
-				}
-				// add the new code line to the script
-				codeElement.parentElement.insertBefore(newElement, codeElement);  
-			}
-			// remove all the original code lines
-			codeElement.parentElement.removeChild(codeElement);	
-			
-			/********
-			the number of code tags increased -- so codeLines[] has been updated to match
-			*********/
-			// increase numCodeTags to the current codeline length
-			numCodeTags = codeLines.length; 
-			
-			// increase i by the number of codelines just added (don't need to check those)
-			i = i + numLines -1; 
-		}
-	}
+	/* this part works if we are using <h6> with class="code" 
+	var codeLines = encapObject.getElementsByClassName(classType);  
 
 	firstLine = true;
 
-	// now, go through all H6 including new ones generated from above
+	// go through all codelines 
 	for(i=0; i<codeLines.length; i++)
-	{
-		// add "code" class to line
-		codeLines[i].classList.add("code");
-		
-		/* D2L-only fix: when code is copied and pasted in D2L, the class names can also 
-			be copy/pasted -- removes erroneous class names */
-		if(codeLines[i].classList.contains("firstLine"))
-		{
-			codeLines[i].classList.remove("firstLine")
-		}
-		if(codeLines[i].classList.contains("lastLine"))
-		{
-			codeLines[i].classList.remove("lastLine")
-		}			
-		
-		if(firstLine == true)  // this is the first line of the code-block
-		{
-			// create a [div] for the code-block and give it class "codeBlock"
-			codeBlockDiv = document.createElement("div");
-			
-			// check if the codelines or any of its children (D2L issue) has the class "partial"
-			if(codeLines[i].classList.contains("partial")  || 
-				codeLines[i].querySelectorAll(".partial").length != 0)
-			{
-				codeBlockDiv.classList.add("partial");
-			}		
-			// check if the codelines or any of its children (D2L issue) has the class "nonum"
-			if(codeLines[i].classList.contains("nonum")  || 
-				codeLines[i].querySelectorAll(".nonum").length != 0)
-			{
-				codeBlockDiv.classList.add("nonum");
-			}		
-			// check if the codelines or any of its children (D2L issue) has the class "text"
-			if(codeLines[i].classList.contains("text") || 
-				codeLines[i].querySelectorAll(".text").length != 0) 
-			{
-				codeBlockDiv.classList.add("text");
-			}				
-			// check if the codelines or any of its children (D2L issue) has the class "brackets" or "bx"
-			if(codeLines[i].classList.contains("brackets") || codeLines[i].classList.contains("bx") ||
-				codeLines[i].querySelectorAll(".brackets").length != 0 || 
-				codeLines[i].querySelectorAll(".bx").length != 0) 
-			{
-				codeBlockDiv.classList.add("brackets");
-			}
-			// check if the codeline has a title 
-			if(codeLines[i].title.trim() != "" ) 
-			{
-				codeBlockDiv.title = codeLines[i].title;
-			}				
-			codeBlockDiv.classList.add("codeBlock");
-			
-			// when double-clicked, select all the children (text) within the codeblock
-			codeBlockDiv.addEventListener("dblclick", function(event){ 
-				document.getSelection().selectAllChildren(this); 
-				document.execCommand("copy"); 
-				activateNotification(event, "code");
-			});
-			
-			// disable short-cut menu on scroll (mousemoves are not triggered on scroll)
-			codeBlockDiv.addEventListener("scroll", function(event){ 
-				clearInterval(longClickTimer);
-			});
-			
-			// do this only for codeblocks
-			codeBlockDiv.addEventListener("copy", function(e) {
-			  const text_only = document.getSelection().trimEnd().toString();  // trimEnd() converts weird spaces to regular spaces
-			  const clipdata = e.clipboardData; // || window.clipboardData;  
-			  clipdata.setData("text/plain", text_only);
-			  e.preventDefault();
-			});
-			
+	{		
 			// add the codeBock div as a parent to the codeLine
 			codeLines[i].parentElement.insertBefore(codeBlockDiv, codeLines[i]);
 			
 			// check if this is a partial codeblock or a full codeblock
 			if(codeBlockDiv.classList.contains("brackets"))
 			{
-				/**** added formatting to put in {} ************/
+				/**** added formatting to put in {} ***********
 				// create a line that just has a start curly bracket ( { )
 				startCodeLine = document.createElement(elementType);
 				startCodeLine.setAttribute("data-text", "{");  // so it does not appear as text when selected
@@ -1122,51 +1113,41 @@ function addCodeTags(elementType)
 
 				codeBlockDiv.appendChild(startCodeLine);
 				i++;  // another element was added so we need to increment the index
-				/*****************************************/
+				/****************************************
 			}
 			else  
 			{
 				// make this codeLine the first line 
 				codeLines[i].classList.add("firstLine");	
 			}
-			
-			// numbering
-			if( codeBlockDiv.title != "" && !isNaN(codeLines[i].title) )
-			{
-				codeBlockDiv.style.counterReset = "codeLines " + (codeLines[i].title -1);
-			}
-			firstLine = false;
 		}
 
 		// add a space to empty lines -- when copying/pasting it can treat an 
 		//			empty line as not a line (might be deprecated, but not sure...)
 		if(codeLines[i].innerText == "")
-		{
 			codeLines[i].innerText = " ";
-		}	
 		
+		// needed ??
 		if(codeBlockDiv.classList.contains("brackets"))
-		{
 			codeLines[i].insertAdjacentHTML("afterbegin", "  ");
-		}
 			
-		// check if the next element after this codeLine is an [H6] -- 
+		// check if the next element after this codeLine is another codeline -- 
 		//		if not than this is the last line
 		if(codeLines[i].nextElementSibling == null || 
-			codeLines[i].nextElementSibling.tagName != elementType)
+			!codeLines[i].nextElementSibling.classList.contains("code"))
 		{
 			// check if this is a codeblock that needs curly brackets
 			if(codeBlockDiv.classList.contains("brackets"))
 			{
 				codeBlockDiv.appendChild(codeLines[i]);
-				/**** added formatting to put in curly brackets {} **********/
+				/**** added formatting to put in curly brackets {} *********
 				// create a line that just has a start curly bracket ( { )
 				lastCodeLine = document.createElement(elementType);
 				lastCodeLine.setAttribute("data-text", "}");
 				lastCodeLine.classList.add("code", "lastLine", "noSelect", "noCode");
 				codeBlockDiv.appendChild(lastCodeLine);
 				i++;  // another element was added so we need to increment the index
-				/*****************************************/
+				/****************************************
 			}
 			else
 			{
@@ -1177,18 +1158,22 @@ function addCodeTags(elementType)
 		}		
 		else // this is not the last line of the codeblock
 		{			
-			// add the code line to the codeblock */
-			codeBlockDiv.appendChild(codeLines[i]);
+			// add the code line to the codeblock 
+			codeBlockDiv.innerHTML += "<br>";
+			codeBlockDiv.innerHTML += codeLines[i].innerHTML;
+		//	codeBlockDiv.innerText = codeBlockDiv.innerText + "\n";
+		//	codeBlockDiv.appendChild(codeLines[i]);
+
 		}
 	}
 }
-
+*/
 function addCodeBlockTag()
 {
 	codeBlockDivs = encapObject.querySelectorAll(".codeBlock");
 		
 	for(i=0; i<codeBlockDivs.length; i++)
-	{
+	{		
 		// need to check if there is a title in the first element of the codeblock
 		codeBlockTitle = "";
 		if(codeBlockDivs[i].title.trim() != "" && isNaN(codeBlockDivs[i].title.trim())) 			
@@ -1205,7 +1190,7 @@ function addCodeBlockTag()
 			}
 		}
 
-		// add a tab to the codeblock
+		// add a pop-up tab to the codeblock
 		if(codeBlockTitle != "")	
 		{
 			par = document.createElement("p");
@@ -1215,63 +1200,44 @@ function addCodeBlockTag()
 			tabSpan.classList.add("codeBlockTab", "noSelect", "noCode", "nonum");
 			tabSpan.setAttribute("data-text", codeBlockTitle);
 			par.appendChild(tabSpan);
-			codeBlockDivs[i].insertBefore(par, codeBlockDivs[i].children[0]);
+		   // position is still off by a bit...
+			codeBlockDivs[i].parentNode.insertBefore(tabSpan, codeBlockDivs[i]);
 		}
 	}
 }
 
-// this function is still buggy and does not get called
-function overflowCodeLines()
+function codeLineVertBar()
 {
-	// find all code elements (<p> with class = "code")
-	/*** Tried to use encapObject but the bounded rectangle function did
-		not work the second time -- don't know why ***/
-	codeLines = document.getElementsByClassName("code");	
-
-	if(codeLines.length > 0)
+	// find all codeblocks
+	codeBlocks = document.getElementsByClassName("codeBlock");
+	
+	const myObserver = new ResizeObserver(entries => {
+			  entries.forEach(entry => {
+				  vertLine = entry.target.querySelector(".vertBar");
+				  vertLine.style.height = 0;
+				 // vertLine.style.height = entry.contentRect.height + "px";
+				  vertLine.style.height = entry.target.scrollHeight + "px";
+			})
+	});
+			
+	// for each line of code in the page
+	for(i=0; i<codeBlocks.length; i++)
 	{
-		// get original height of codelines -- only need to do this once in code 
-		//				(maybe? what if page is magnified?)
-		elem = encapObject.querySelector('.code');
-		style = getComputedStyle(elem);
-		lineHeight = parseInt(style.lineHeight);
-
-		// for each line of code in the page
-		for(i=0; i<codeLines.length; i++)
+		if(!codeBlocks[i].classList.contains("nonum") ||
+			!codeBlocks[i].classList.contains("nn") ||
+			codeBlocks[i].classList.contains("num"))
 		{
 			// get the actual height the codeline 
-			actualHeight = codeLines[i].getBoundingClientRect().height;  
-			// find how many times bigger the actual height is compared to the original height
-			lineHeightMult = Math.round(actualHeight/lineHeight);	
-			// get the number of arrows attched to the line (last resize's multiple)
-			numArrows = codeLines[i].querySelectorAll("span.overflowArrow");
+			actualHeight = codeBlocks[i].scrollHeight;
+			vertLine = document.createElement("hr");
+			vertLine.classList.add("vertBar");
+			vertLine.style.height = actualHeight + "px";
 			
-			
-			if(lineHeightMult != (numArrows.length +1)) 
-			{
-				// remove all current overflow arrow (later -- compare to multiplier)
-				for(j=0; j<numArrows.length; j++)
-				{
-					codeLines[i].removeChild(numArrows[j]);
-				}
-				if(lineHeightMult > 1)	// if the codeline has length >1 (there is overflow)
-				{
-					for(j=1; j<lineHeightMult; j++)	// for each overflow line, add an arrow
-					{
-						arrowObj = document.createElement("span");  // create a new arrow object
-						arrowObj.classList.add("overflowArrow");	// add overflowArrow class
-						arrowObj.innerHTML = "&#x2937;";			// add arrow character
-						
-						// top position of arrow is top position of line offset by number of lines
-						arrowObj.style.top = (codeLines[i].offsetTop + (j * lineHeight) )+  "px";
-						arrowObj.style.left = (codeLines[i].offsetLeft + 80) + "px";
-						codeLines[i].appendChild(arrowObj);	
-					}
-				}
-			}		
+			myObserver.observe(codeBlocks[i]);
+
+			codeBlocks[i].prepend(vertLine);
 		}
 	}
-	overFlowTimer = false;
 }
 
 function goToTopOfPage()
@@ -1329,9 +1295,7 @@ function menuLinks(menu, text, command, linkid="", enable=true)
 	// create a block span to encapsulate the hyperlink
 	spanEncap = document.createElement('span');
 	spanEncap.style.display = "block";
-	
-
-	
+		
 	link = document.createElement('a');
 	if(!enable)
 		link.classList.add("disabledLink");
