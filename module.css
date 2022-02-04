@@ -286,7 +286,7 @@ td
 	cursor: pointer;
 	position: relative;
 	color: rgb(100,255,255);
-	left: -10px;
+	left: -30px;
 	max-height: 400px;
 	overflow-y: auto;
 }
@@ -344,19 +344,22 @@ td
 /*** Code typesettings ****/
 .code
 {	
-	white-space: pre-wrap;
-	word-wrap: break-word;
+/*	white-space: nowrap;
+	word-wrap: break-word; */
 	/*padding-bottom: 0px;*/
-	
 	display: block;
 	line-height: 1.7em;	
 	font-style: normal;	
 	font-weight: normal;	
 	font-size: 14px;
-	margin: 0;
+	margin-top: 0;
+	margin-bottom: 0;
+	margin-right: 0;
+	margin-left: 22px;
+	text-indent: -22px;
 	letter-spacing: -0.3px;
-	padding-left: 4.5em;
-	text-indent: -4.5em;
+	padding-left: 0.5em;
+/*	text-indent: -4.5em; */
 	background: none; /* gets rid of background from editor.css */
 	background-color: rgb(33,33,33);
 	font-family: "Lucida Console", Menlo, "Courier New", Courier, Monaco, Monospace;
@@ -393,41 +396,55 @@ td
 }
 .codeBlock.nonum > .code
 {
-	padding-left: 5.5em;
+	/*padding-left: 5.5em;*/
 }
 
-.codeBlock:not(.nonum) > .code:not(.noSelect):before, .codeBlock.num > .code:not(.noSelect):before
+/*.codeBlock:not(.nonum) > .code:not(.noSelect):before, .codeBlock.num > .code:not(.noSelect):before*/
+.codeBlock:not(.nonum) > .code:before
 {	
 	counter-increment: codeLines;
 	content: counter(codeLines);
 }
 
-.codeBlock:not(.nonum) > .code.noSelect:before, .codeBlock.num > .code.noSelect:before
-{	
-	counter-increment: codeLines;  /* comment this out?? */
-	content: counter(codeLines);   /* content: " ";  */
+.vertBar
+{
+	display: inline-block;
+	width: 1px;
+	margin-left: 47px;
+	border-width: 0;
+	background-color: rgb(200,200,100);
+	position: absolute;
+	margin-top: 0;
 }
+/*.codeBlock:not(.nonum) > .code.noSelect:before, .codeBlock.num > .code.noSelect:before
+{	
+	counter-increment: codeLines;  /* comment this out?? 
+	content: counter(codeLines);   /* content: " ";  
+}*/
 
-.codeBlock:not(.nonum) > .code:before, .codeBlock.num > .code:before
+.codeBlock:not(.nonum) > .code:before, .codeBlock.num > .code:before 
 {	
 	display: inline-block;
-	border-right: 1px solid rgb(200,200,100);
-	padding-right: 6px; /* space between line number and horizontal line */
-	margin-right: 2px;  /* space between horizontal line and code */
+/*	border-right-width: 1px;
+	border-right-style: solid;
+	border-right-color: rgb(200,200,100);*/
+	padding-right: 5px; /* space between line number and horizontal line */
+	margin-right: 5px;  /* space between horizontal line and code */
 	color: rgb(200,200,100);
 	min-width: 25px;
 	text-align: right;
 	user-select: none;			/* standard but not used (might be fully implemented by now...) */
-	-webkit-user-select: none; /* Chrome/Safari */        
-	-moz-user-select: none;  	/* Firefox */
-	-ms-user-select: none;		/* IE10+ */
+/*	-webkit-user-select: none;  Chrome/Safari */        
+/*	-moz-user-select: none;  	 Firefox */
+/*	-ms-user-select: none;		 IE10+ */
+	margin-left: -13px;
 }
 .noSelect
 {
 	user-select: none;			/* standard but not used */
-	-webkit-user-select: none; /* Chrome/Safari */        
-	-moz-user-select: none;  	/* Firefox */
-	-ms-user-select: none;		/* IE10+ */
+/*	-webkit-user-select: none;  Chrome/Safari        
+	-moz-user-select: none;  	 Firefox 
+	-ms-user-select: none;		 IE10+ */
 	outline-style: none;
 }
 .noCode
@@ -473,8 +490,8 @@ td
 	padding-right: 0px;
 	padding-bottom: 0px;
 	padding-left: 0px;
-	font-weight: normal;
-	font-size: 14px;
+/*	font-weight: normal;
+	font-size: 14px;*/
 }
 .sectRef[id], .eqRef[id], .figureRef[id], .figRef[id], .ref[id], .reference[id]
 {
@@ -504,7 +521,7 @@ td
 	color: rgb(255,255,255);	
 }
 /* reset the codeLines counter when a new codeBlock starts */
-div.codeBlock
+.codeBlock
 {
 	counter-reset: codeLines;
 }
@@ -649,10 +666,10 @@ img.flexSize, img.fs
 	background-color: rgb(50,50,50);
 	color: rgb(240,240,240);
 	text-align: center;
+	margin-left: -8px;
 	display: inline-block;
 	font-size: 14px;
 	border-radius: 4px 4px 0px 0px;
-	/*top: 1px;*/
 	min-width: 100px;
 	position: relative;
 	padding-left: 10px;
@@ -762,6 +779,8 @@ img.flexSize, img.fs
 		background-color: transparent;	
 		color: rgb(0,0,153);
 		font-size: 13px;
+		white-space: normal;
+		word-wrap: break-word;
 
 		/* adjust the font color for a white background 
 		   -- it was designed for a black background */
@@ -771,7 +790,7 @@ img.flexSize, img.fs
 		border-bottom-width: 1px;
 		border-top-width: 1px;
 		border-right-width: 1px;
-		padding-left: 20px;
+		padding-left: 20px;  
 		margin-top: 8px;
 		
 		left: -20px;
@@ -785,10 +804,11 @@ img.flexSize, img.fs
 		/* Need to remove scroll from print view */
 		max-height: none;
 	}
-	.codeBlock:not(.nonum)>.code
+	.code:not(.nonum)>.code
 	{
-		margin-left: -25px;
-		margin-right: -15px;
+		margin-left: 0px;
+		text-indent: -22px;
+		margin-right: -10px;
 	}
 	.partial>.code, .p>.code
 	{
