@@ -23,6 +23,9 @@ Future:
     - switched innerHTML for insertAdjacentHTML
 - <done - checking for Math element> MathJax is activating long-click menu
 - multi-line equations stay on one line in MathJax (will MathJax fix?)
+Fix hacks in Safari:
+- move vertical line in codeblocks over 22px
+- clipboard works differently in Safari
 */
 
 // tabs in codeblocks are messing with the figures
@@ -272,24 +275,23 @@ function codeBlockFirstLine(codeLine)
 	}
 	
 	// when double-clicked, select all the children (text) within the codeblock
-	codeBlock.addEventListener("dblclick", function(event){ 
-		document.getSelection().selectAllChildren(this); 
-		document.execCommand("copy"); 
-		activateNotification(event, "code");
+	codeBlock.addEventListener("dblclick", function(event){   
+		document.getSelection().selectAllChildren(this);  // select everything from the codeblock
+		activateNotification(event, "code");              // tooltip indicate code has been copied
+		text_only = this.innerText;                       // get text from codeblock
+	   text_only = text_only.replaceAll(/\u00A0/g, ' '); // change non-breaking space to space
+		/* Hack to get this to work in Safari -- I am not sure why the clipboard work differently for Safari 
+		   Note: This seems like a Safari issue -- not a Mac OS issue */
+		if(!(navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1))
+	   {
+			text_only = text_only.replaceAll(/\n\n/g, '\n');  // remove double newlines
+		}
+	   navigator.clipboard.writeText(text_only);
 	});
 	
 	// disable short-cut menu on scroll (mousemoves are not triggered on scroll)
 	codeBlock.addEventListener("scroll", function(event){ 
 		clearInterval(longClickTimer);
-	});
-	
-	// do this only for codeblocks
-	codeBlock.addEventListener("copy", function(e) {
-	  // converts weird spaces to regular spaces
-	  const text_only = document.getSelection().toString();
-	  const clipdata = e.clipboardData; // || window.clipboardData;  
-	  clipdata.setData("text/plain", text_only);
-	  e.preventDefault();
 	});
 	
 	// add the codeBock div as a parent to the codeLine
@@ -1232,6 +1234,12 @@ function codeLineVertBar()
 			vertLine = document.createElement("hr");
 			vertLine.classList.add("vertBar");
 			vertLine.style.height = actualHeight + "px";
+			
+			/* Hack to get this to work in Safari -- I am not sure why the CSS does not work for Safari */
+			if(navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1)
+			{
+				vertLine.style.marginLeft = "22px";
+			}
 			
 			myObserver.observe(codeBlocks[i]);
 
