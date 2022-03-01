@@ -1834,9 +1834,14 @@ function captionFigures()
 		// get the previous sibling for the caption (probably a <p>)
 		prevSibling = captions[i].previousElementSibling;
 		
+		
+		/*** <br> are an issue -- 
+		  could remove break and take the previous sibling of the break ***/
+		  
 		// don't attach a caption to an already existing figure or another caption
 		//  -- no recursive figure-ing!
 		if(prevSibling.tagName.toLowerCase() != "figure" &&
+		   prevSibling.tagName.toLowerCase() != "br" &&   // kluge for now
 			!(prevSibling.classList.contains("caption")) )
 		{		
 			// find the first image within the prevSibling (should only be one)
