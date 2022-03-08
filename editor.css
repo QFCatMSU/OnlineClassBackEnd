@@ -167,52 +167,6 @@ ol ol, ol ol ol ol, ol ol ol ol ol ol
 	list-style-type: upper-alpha; 
 }
 
-/*
-ol
-{
-	list-style-type: none;
-}
-ol>li
-{
-	counter-increment: section;
-}
-ol>li:before
-{
-	content: counter(section, decimal) ") ";
-	margin-left: -16px;
-}
-
-		ol 
-		{
-			list-style-type: none;
-			counter-reset: item;
-			margin: 0;
-			padding: 0;
-		}
-
-		li 
-		{
-			display: table;
-			counter-increment: item;
-		}
-
-		li:before 
-		{
-			content: counters(item, ".") ". ";
-			display: table-cell;
-			padding-right: 0.6em;    
-		}
-
-		li li 
-		{
-			margin: 0;
-		}
-
-		li li:before 
-		{
-			content: counters(item, ".") " ";
-		}
-*/
 .hl,.highlight
 {
 	color: darkred;
@@ -322,7 +276,14 @@ h6>br,h6>h6, blockquote>br, blockquote>blockquote
 	cursor: pointer;
 }
 
-
+/* almost always a copy/paste issue in the editor 
+   divs should not be in the editor */
+div:not([class]):not([id])
+{
+	border-style: dashed;
+	border-color: red;
+	border-width: 1px;
+}
 /*** Probably deprecated ***/
 
 address
