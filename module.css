@@ -808,7 +808,7 @@ img.flexSize, img.fs
 	{
 		margin-left: 0px;
 		text-indent: -22px;
-		margin-right: -10px;
+		/*margin-right: -10px;*/
 	}
 	.partial>.code, .p>.code
 	{
