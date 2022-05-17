@@ -1,31 +1,39 @@
 /*
+- JS: onload check for homePAge before 
+- CSS: p,h2,h3,h4 -> margin 0 -> important
+- CSS: take away negative text-indent for p>code and span>code within a table 
+- To DO: Remove Previous/Next Page from JS/CSS
+-        Fix sizing on H2,3,4
+*/
+/*
 Future:
-- equations cause horizontal scrolling
+- Deal with situation with figures are not siblinged to a block object
+- look for Span with class and title inside <p>
+  - but not everything becasue you could have a span at the beginning of a line...
+- fix wayward div in page (there should not be a div in the editor -- it is copied/pasted in)
+- multi-line equations stay on one line in MathJax (will MathJax fix?)
+- use encapObject whenever possible
+- hold position of page when resized
+- prevPage and nextPage: combine code
+- <done> equations cause horizontal scrolling
 - <done> shortcut menu comes up when horizontally scrolling
-- <alomst> remove formatting from copied codeblock
-   - Chrome adds a line feed, Edge keps format, FF works, Safari ??
+- <done> remove formatting from copied codeblock
 - <done> add page map to long-click / right-click menu
 - <almost done> remove depecated referencing (sectRef...)
 - <done> break up code functions
-- <needed> look for Span within H6 for Title
 - <done> Title in H6 means no numbers
 - Class to add numbers
 - <done> switch to addEventListener()
-- <started> use encapObject whenever possible
-- hold position of page when resized
-- prevPage and nextPage: combine code
 - <done> combine right-click and long-click in one function 
-- <using vert line -- almost> fix overflow code
-- fix wayward div in page
+- <done -- use vertical line> fix overflow code
 - <done> check MathJax version
-- set equation color?
+- <done> set equation color?  Keep at brown
 - <done> cannot put an email link inside H2,H3,H4 -- click event gets removed
     - switched innerHTML for insertAdjacentHTML
 - <done - checking for Math element> MathJax is activating long-click menu
-- multi-line equations stay on one line in MathJax (will MathJax fix?)
 Fix hacks in Safari:
-- move vertical line in codeblocks over 22px
-- clipboard works differently in Safari
+- <hacky but done> move vertical line in codeblocks over 22px
+- <close -- adds spaces> clipboard works differently in Safari
 */
 
 // tabs in codeblocks are messing with the figures
@@ -47,6 +55,14 @@ scrollFlag = 0;  						// counts when scrolling of page occurs due to reference 
 redNum = -1;						// the number of the class 
 instructorEmail = "Charlie Belinsky <belinsky@msu.edu>;";
 lessonFolder = "";
+
+// Is this the homepage?
+url = window.parent.location.href;
+if(url.includes("d2l.msu.edu/d2l/home/"))
+	homePage = true;
+else
+	homePage = false;
+	
 
 // pre-onload functions
 addStyleSheet();  // can be done before page load since this is called in the [head]
@@ -348,7 +364,8 @@ parent.window.onload = function()
 	if(window.location.hostname == "d2l.msu.edu") 
 	{
 		d2lFixes();
-		d2lAddHeader();
+		if(homePage == false)
+			d2lAddHeader();
 	}
 	
 	// add code class to all h6 elements (hopefully, this will be deprecated soon...)

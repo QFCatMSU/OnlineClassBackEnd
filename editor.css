@@ -23,22 +23,24 @@ body
 	counter-reset: h2Count figCount eqCount;
 	font-size: 14px; 
 }
-body>p:first-child, .pl, .previousLesson
+/* Only add previous and next lines in the editor if you are editing a lesson,
+   not if you are editing the front page */
+body[aria-label~="Document"]>p:first-child, .pl, .previousLesson
 {
 	background-color: powderblue;
 }
-body>p:first-child::before
+body[aria-label~="Document"]>p:first-child::before
 {
 	content: "Previously: "; 
 	font-style: italic;
 	font-weight: bold;
 	color: rgb(50,0,0);
 }
-body>p:first-child + p, .nl, .nextLesson
+body[aria-label~="Document"]>p:first-child + p, .nl, .nextLesson
 {
 	background-color: powderblue;
 }
-body>p:first-child + p::before
+body[aria-label~="Document"]>p:first-child + p::before
 {
 	content: "Up Next: "; 
 	font-style: italic;

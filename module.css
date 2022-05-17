@@ -160,29 +160,29 @@ h2
 	font-size: 20px;
 	text-align: left;
 	margin-left: -12px;
-	margin-top: 0px; /*!important;  override editor style -- no longer need -- moved editor.css before this file*/ 
-	margin-bottom: 10px;
-	margin-right: 0px;
+	margin-top: 0px !important; /*!important;  override editor style -- no longer need -- moved editor.css before this file*/ 
+	margin-bottom: 10px !important;
+	margin-right: 0px !important;
 	background-color: transparent; /*!important; override editor style */ 
 }
 h3
 {
 	color: rgb(0,0,100);
 	font-size: 18px;
-	margin: 0px; /*!important;  override editor style */
+	margin: 0px !important; /*!important;  override editor style */
 	padding-top: 0px;
 	padding-bottom: 10px;
-	margin-left: -8px;
+	margin-left: -8px !important;
 	background-color: transparent; /*!important; override editor style */ 
 }
 h4
 {
 	color: rgb(90,20,20);
 	font-size: 16px;
-	margin: 0px;			
+	margin: 0px !important;			
 	padding-top: 10px;
 	padding-bottom: 10px;
-	margin-left: -6px;
+	margin-left: -6px !important;
 }
 h6, code
 {
@@ -192,7 +192,7 @@ h6, code
 }
 p
 {
-	margin: 0em;
+	margin: 0em !important; 
 	min-height: 1.25em;
 }
 
@@ -363,6 +363,10 @@ td
 	background: none; /* gets rid of background from editor.css */
 	background-color: rgb(33,33,33);
 	font-family: "Lucida Console", Menlo, "Courier New", Courier, Monaco, Monospace;
+}
+td > p.code, td > p.code > span.code
+{
+	text-indent: 0px;
 }
 .hl,.highlight
 {
@@ -675,7 +679,28 @@ img.flexSize, img.fs
 	padding-left: 10px;
 	padding-right: 10px;
 	font-family: calibri;
-}/*
+}
+
+table.frontPage
+{
+	border-collapse:separate !important;
+	border-spacing: 12px;
+	border-width: 0px !important;
+	border-width: 0px;
+	margin-left: -12px;
+	margin-top: -12x;
+	width: 102% !important;
+}
+
+table.frontPage td
+{
+/*	box-shadow: 0 0 0 8px #bbb;*/
+	border-radius: 10px;
+	border-width: 0px;
+	padding: 5px;
+	background-color: #eee;
+}
+/*
 .codeTab:hover
 {
 	background-color: lime;
@@ -808,7 +833,7 @@ img.flexSize, img.fs
 	{
 		margin-left: 0px;
 		text-indent: -22px;
-		/*margin-right: -10px;*/
+	/*	margin-right: -10px;*/
 	}
 	.partial>.code, .p>.code
 	{
