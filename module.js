@@ -1002,11 +1002,13 @@ function addStyleSheet()
 	scripts = document.getElementsByTagName("script");
 	for(i=0; i<scripts.length; i++)
 	{
-		jsIndex = scripts[i].src.indexOf("module.js");
-		if(jsIndex != -1) //scripts[i].src.includes("module.js"))
+		//jsIndex = scripts[i].src.indexOf("module.js");
+		// check for module in the script file name -- this is my code
+		if(scripts[i].src.includes("module")) // (jsIndex != -1) 
 		{
-			//cssFile = scripts[i].src.slice(0,-2) + "css"; -- old system, when on Github
-			cssFile = scripts[i].src.substring(0,jsIndex) + "module.css";
+			// script file and css file have same name and different extension
+			cssFile = scripts[i].src.slice(0,-2) + "css"; 
+			// cssFile = scripts[i].src.substring(0,jsIndex) + "module.css";
 		}
 	}
 	CSSFile.href = cssFile;	// location depends on platform
