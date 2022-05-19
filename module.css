@@ -286,7 +286,7 @@ td
 	cursor: pointer;
 	position: relative;
 	color: rgb(100,255,255);
-	left: -30px;
+	left: -8px;
 	max-height: 400px;
 	overflow-y: auto;
 }
