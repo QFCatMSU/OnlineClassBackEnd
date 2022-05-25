@@ -775,6 +775,11 @@ table.frontPage td
 			I thought this should override all other heights automatically */
 		height: auto !important; 
 	}
+	img.flexSize, img.fs
+	{
+		/* The dotted border causes crashes on prin t-- don't know why */
+		border-style: none;
+	}
 	.codeBlockTab
 	{
 		color: black;
