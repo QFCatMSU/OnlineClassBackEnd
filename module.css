@@ -836,9 +836,16 @@ table.frontPage td
 	}
 	.code:not(.nonum)>.code
 	{
-		margin-left: 0px;
+		margin-left: 4px;
 		text-indent: -22px;
 	/*	margin-right: -10px;*/
+	}
+	.vertBar
+	{
+		margin-left: 24px;
+		border-right-color: rgb(102,0,0);
+		border-right-style: solid;
+		border-right-width: 1px;
 	}
 	.partial>.code, .p>.code
 	{
@@ -846,7 +853,7 @@ table.frontPage td
 	}
 	.code:before
 	{
-		color: rgb(102,0,0);
+		color: rgb(102,0,0) !important;
 	}
 	.caption, .figNum, .figureRef, .c, .fr
 	{
