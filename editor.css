@@ -286,18 +286,20 @@ div:not([class]):not([id])
 	border-color: red;
 	border-width: 1px;
 }
-/*** Probably deprecated ***/
 
-address
+table.frontPage td
 {
-	background-color: rgb(200,215,200);
-	font-style: normal;
-	color: rgb(0,0,0);
-	padding: 10px;
-	font-family: arial;
-	font-size: 22px;
-	line-height: 30%;
-	margin-left: 15%;
-	margin-right: 15%;
-	text-align: center;
+/*	box-shadow: 0 0 0 8px #bbb;
+	border-radius: 10px;
+	border-width: 0px;
+	padding: 5px;
+	background-color: #eee;*/
+	vertical-align: top;
+	font-size: 16px;
+}
+
+td ul, td ol
+{
+	padding-left: 2em;
+	margin-top: 0;
 }

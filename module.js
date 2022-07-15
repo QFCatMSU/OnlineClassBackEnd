@@ -210,14 +210,28 @@ function fixBlockquotes()
 	
 	for(i=0; i<bq.length; i++)
 	{
+		// find all h6 (old code) and p (new) in the blockquote
 		codelines = bq[i].querySelectorAll("h6,p");
-		//codelines = encapObject.querySelectorAll("blockquote>h6, blockquote>p");
-		for(j=0; j<codelines.length; j++)
+
+		if(codelines > 0)
 		{
-			// add the code class to the children
-			codelines[j].classList.add("code");
-			// move the object outside of the blockquote
-			bq[i].parentNode.insertBefore(codelines[j], bq[i]);
+			for(j=0; j<codelines.length; j++)
+			{
+				// add the code class to the children
+				codelines[j].classList.add("code");
+				// move the object outside of the blockquote
+				bq[i].parentNode.insertBefore(codelines[j], bq[i]);
+			}
+		}
+		else if(bq[i].innerText.trim() != "") // the blockquote has something in it
+		{
+			
+			codeLine = document.createElement("p"); 			// create a new codeblock
+			codeLine.classList = bq[i].classList;
+			codeLine.title = bq[i].title;
+			codeLine.innerHTML = bq[i].innerHTML;
+			codeLine.classList.add("code");
+			bq[i].parentNode.insertBefore(codeLine, bq[i]);
 		}
 		// remove the blockquote (which is now empty)
 		bq[i].parentNode.removeChild(bq[i]);

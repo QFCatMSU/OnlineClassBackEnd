@@ -687,9 +687,9 @@ table.frontPage
 	border-spacing: 12px;
 	border-width: 0px !important;
 	border-width: 0px;
-	margin-left: -12px;
+	margin-left: -24px;
 	margin-top: -12x;
-	width: 102% !important;
+	width: 104% !important;
 }
 
 table.frontPage td
@@ -699,7 +699,16 @@ table.frontPage td
 	border-width: 0px;
 	padding: 5px;
 	background-color: #eee;
+	vertical-align: top;
+	font-size: 16px;
 }
+
+td ul, td ol
+{
+	padding-left: 1em !important;
+	margin-top: 0 !important;
+}
+
 /*
 .codeTab:hover
 {
