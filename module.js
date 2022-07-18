@@ -213,7 +213,7 @@ function fixBlockquotes()
 		// find all h6 (old code) and p (new) in the blockquote
 		codelines = bq[i].querySelectorAll("h6,p");
 
-		if(codelines > 0)
+		if(codelines.length > 0)
 		{
 			for(j=0; j<codelines.length; j++)
 			{
