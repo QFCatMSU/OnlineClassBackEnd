@@ -7,6 +7,7 @@
 */
 /*
 Future:
+- turn off longclick timer on horizontal scroll in widget
 - Deal with situation with figures are not siblinged to a block object
 - look for Span with class and title inside <p>
   - but not everything becasue you could have a span at the beginning of a line...
@@ -90,10 +91,36 @@ window.addEventListener("mousedown", function(event)
 	{
 		longClickTimer = setTimeout(function() 
 		{
-			activateElement(event, encapObject.querySelector("#longClickMenu"));
-			overRCMenu = true;
-			encapObject.style.userSelect = "none";
-			encapObject.style.msUserSelect = "none";
+			// we are inside a widget
+			if(window.location.pathname.includes("customwidgets"))
+			{
+				editButton = parent.document.querySelectorAll("a.d2l-navigation-s-link"); // look at all buttons
+				hasEditAccess = false;
+				for(i=0; i<editButton.length; i++)
+				{
+					if(editButton[i].textContent.includes("Course Admin"))
+					{
+						hasEditAccess = true; 
+					}
+				}
+				if(hasEditAccess)
+				{
+					splitUrl = window.location.pathname.split('/');
+					theClass = splitUrl[4];
+					theWidget = splitUrl[6];
+					newUrl = "https://d2l.msu.edu/d2l/lp/homepage/admin/widget/widget_newedit_content.d2l?d2l_isfromtab=1&wid=" +
+								theWidget + "&ou=" + theClass;
+					openEditor = confirm("Do you want to edit this widget?");
+					if(openEditor) window.open(newUrl, '_blank');
+				}
+			}
+			else // we are in a lesson
+			{
+				activateElement(event, encapObject.querySelector("#longClickMenu"));
+				overRCMenu = true;
+				encapObject.style.userSelect = "none";
+				encapObject.style.msUserSelect = "none";
+			}
 		}, 350);
 		
 		// get current mouse pointer position -- used to allow for wiggle in the mouse
