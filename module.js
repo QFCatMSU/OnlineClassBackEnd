@@ -676,7 +676,7 @@ function setClassNames()
 function fixTitle()
 {
 	// set title on webpage -- the first H1 on the page
-	titleObj = encapObject.querySelector("h1");
+	titleObj = encapObject.querySelector("body > h1");
 	
 	if(titleObj)  // there is a title 
 	{
@@ -863,8 +863,8 @@ function changeImageSize(element, instruction="none")
 	(H1, H2, and H3 are currently supported */ 
 function addDivs()
 {
-	// find all element of the type asked for (H1, H2, and H3 currently supported)
-	elements = encapObject.querySelectorAll("H1, H2, H3");
+	// find all element of the type asked for (H1, H2, and H3 that are direct children of the body are currently supported)
+	elements = encapObject.querySelectorAll("body > h1, body > h2, body > h3");
 	
 	// for each header element
 	for(i=0; i<elements.length; i++)
