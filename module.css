@@ -266,7 +266,7 @@ ol>li:before
 }*/
 ol,ul
 {
-	margin-left: 18px;
+	margin-left: 18px !important;
 	margin-right: 0px;
 	margin-top: 0px;
 	margin-bottom: 0px;
@@ -684,12 +684,28 @@ img.flexSize, img.fs
 table.frontPage
 {
 	border-collapse:separate !important;
-	border-spacing: 12px;
-	border-width: 0px !important;
+	border-spacing: 10px;
 	border-width: 0px;
-	margin-left: -12px;
-	margin-top: -12x;
-	width: 102% !important;
+	border-radius: 10px;
+	width: 100% !important;
+	/*margin-left: -12px;
+	width: 102% !important;	
+	margin-top: -12x;*/
+	background-color: #18453b;
+}
+
+table.frontPage a:link, a:visited, a:hover
+{
+	color: #18453b !important;
+	text-decoration:none !important;
+}
+table.frontPage div
+{
+	background-color: transparent;
+}
+table.frontPage hr
+{
+	color: #18453b;	
 }
 
 table.frontPage td
