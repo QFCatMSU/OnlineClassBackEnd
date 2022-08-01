@@ -18,6 +18,10 @@ allow one to apply style classes.
 
 Extend flexSize to all types of objects (would need to change the execution)
 */
+.transparent
+{
+	background-color: transparent !important;
+}
 .disabledLink
 {
 	color: gray !important;
@@ -366,7 +370,10 @@ td
 }
 td > p.code, td > p.code > span.code
 {
-	text-indent: 0px;
+	/*text-indent: 0px;*/
+	text-indent: -22px;
+	left: 0px;
+	
 }
 .hl,.highlight
 {
