@@ -47,17 +47,17 @@ body[aria-label~="Document"]>p:first-child + p::before
 	font-weight: bold;
 	color: rgb(50,0,0);
 }
-h2::before 
+body > h2::before 
 {
   counter-increment: h2Count;               
   content: counter(h2Count) "- ";              
 }
-h3::before 
+body > h3::before 
 {
   counter-increment: h3Count;               
   content: counter(h2Count) "-" counter(h3Count) " ";    
 }	
-h4::before 
+body > h4::before 
 {
   counter-increment: h4Count;               
   content: counter(h2Count) "-" counter(h3Count) "-" counter(h4Count) " ";
@@ -140,6 +140,7 @@ p
 { 
 	margin:0px; 
 }
+
 ul,ol
 { 
 	margin-left: -20px; /* unsure what in D2L editor is indenting ol, ul by 20px */
@@ -147,6 +148,11 @@ ul,ol
 	padding-top: 0px; 
 	margin-bottom:0px; 
 	padding-bottom: 0px; 
+}
+
+table ul, table ol
+{
+	margin-left: -2px;
 }
 
 ul, ul ul ul, ul ul ul ul ul

@@ -174,9 +174,8 @@ h3
 	color: rgb(0,0,100);
 	font-size: 18px;
 	margin: 0px !important; /*!important;  override editor style */
-	padding-top: 0px;
+	padding-top: 10px;
 	padding-bottom: 10px;
-	margin-left: -8px !important;
 	background-color: transparent; /*!important; override editor style */ 
 }
 h4
@@ -186,6 +185,14 @@ h4
 	margin: 0px !important;			
 	padding-top: 10px;
 	padding-bottom: 10px;
+}
+div > h3
+{
+	margin-left: -8px !important;
+	padding-top: 0px;
+}
+div > h4
+{
 	margin-left: -6px !important;
 }
 h6, code
