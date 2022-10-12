@@ -185,6 +185,7 @@ h6[title], blockquote[title]
 	color: white;
 }
 h6 .hl, h6 .highlight, h6.hl, h6.highlight,
+.code .hl, .code .highlight, .code.hl, .code.highlight,
 blockquote .hl, blockquote .highlight, blockquote.hl, blockquote.highlight
 {
 	color: yellow;
