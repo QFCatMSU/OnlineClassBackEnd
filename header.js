@@ -1,7 +1,7 @@
 var lessonLinks = new Array();
 var lessonNames = new Array();
 
-lessonNames[0] = "aaaa";
+lessonNames[0] = "aaaa";  //1
 lessonNames[1] = "bbbb";
 lessonNames[2] = "cccc";
 lessonNames[3] = "dddd";
