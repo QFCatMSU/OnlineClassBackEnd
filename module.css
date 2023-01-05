@@ -18,6 +18,7 @@ allow one to apply style classes.
 
 Extend flexSize to all types of objects (would need to change the execution)
 */
+
 .transparent
 {
 	background-color: transparent !important;
@@ -55,27 +56,6 @@ address
 {
 	font-style: normal;
 }
-/*address:first-of-type
-{
-	border-top-style: double;
-}
-address:last-of-type
-{
-	border-bottom-style: double;
-}*/
-/*.MathJaxAlt_Display, math
-{
- 	display: inline;  does this do anything? 
-}*/
-/*.math
-{
-	width: auto !important;
-}*/
-/*.MathJax
-{
-	text-align: left !important;
-}*/
-
 /* for multi-lined equations */
 .MathJax_FullWidth
 {
@@ -431,7 +411,7 @@ td > p.code, td > p.code > span.code
 	margin-left: 47px;
 	border-width: 0;
 	background-color: rgb(200,200,100);
-	position: absolute;
+	position: fixed;
 	margin-top: 0;
 }
 /*.codeBlock:not(.nonum) > .code.noSelect:before, .codeBlock.num > .code.noSelect:before
