@@ -852,6 +852,9 @@ td ul, td ol
 		
 		/* Need to remove scroll from print view */
 		max-height: none;
+		
+		/* only works on Firefox -- and makes scrollbar easier to see on Firefox in Windows 11 */
+		scrollbar-color: lightblue black;
 	}
 	.code:not(.nonum)>.code
 	{
