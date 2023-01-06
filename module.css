@@ -328,7 +328,7 @@ td > p.code, td > p.code > span.code
 	/* reset the codeLines counter when a new codeBlock starts */
 	counter-reset: codeLines;
 }
-.codeBlock[title="Console"], .codeBlock[title="Environment"]  
+.codeBlock[title="Console"], .codeBlock[title="Environment"], .text  
 {
 	color: rgb(180,255,180);	
 }	
@@ -386,11 +386,11 @@ td > p.code, td > p.code > span.code
 /*.partial>.code, .p>.code
 {
 	color: rgb(180,255,180);	
-}  -- come up with a better way to do this */
-.text  /* since this is for codeblocks, this shouls also be replaced */
+}  -- come up with a better way to do this 
+.text  /* since this is for codeblocks, this shouls also be replaced 
 {
 	color: rgb(255,255,255);	
-}
+} */
 
 /* if an element does not contain class="code" but the next element does */
 :not([class*='code']) + .code
