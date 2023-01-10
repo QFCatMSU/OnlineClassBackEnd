@@ -380,7 +380,7 @@ td > p.code, td > p.code > span.code
 	margin-left: 47px;
 	border-width: 0;
 	background-color: rgb(200,200,100);
-	position: absolute;
+	position: fixed;
 	margin-top: 0;
 }
 /*.partial>.code, .p>.code

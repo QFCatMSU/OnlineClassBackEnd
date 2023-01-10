@@ -321,9 +321,33 @@ function fixBrInCodelines()
 function codeBlockFirstLine(codeLine)
 {
 	codeBlock = document.createElement("p"); 			// create a new codeblock
+	/* Check if the code line has an embedded span as the first element -- bug in D2L 
+		that ignores the <p> and only sees the embedded <span>
+	   Want to apply classes and titles from span to the parent p */
+	if(codeLine.innerHTML.startsWith("<span"))	// if the codeline starts with <span
+	{
+		embedSpan = codeLine.getElementsByTagName("span")[0];
+		
+		// true only if the embedded span takes up the whole codeline
+		if(codeLine.innerText == embedSpan.innerText)
+		{
+		   /*if(embedSpan.classList != "") 
+			{
+				for(ii=0; ii<embedSpan.classList.length; ii++)
+				{
+					codeLine.classList.add(embedSpan.classList[ii]);
+				}
+			}*/
+			codeLine.classList = embedSpan.classList;
+			codeLine.classList.add("code");  // make sure it is there...
+			embedSpan.classList = "";
+			codeLine.title = embedSpan.title;
+			embedSpan.title = "";
+		}
+	}		
 	codeBlock.classList = codeLine.classList;
 	codeBlock.title = codeLine.title;
-	codeBlock.classList.add("codeBlock");
+	codeBlock.classList.add("codeBlock");	
 	
 	// start numbering at number different than 1
 	if( codeBlock.title != "" && !isNaN(codeLine.title) )
@@ -509,18 +533,6 @@ function resizeIframeContent()
 		// change to size of the document
 		parentIFrames[0].height = parentIFrames[0].contentWindow.document.body.scrollHeight;
 	}
-}
-
-function loadMathML()
-{
-	var script = document.createElement('script');
-	script.onload = function () 
-	{
-		mathEdit(); // wait for mathML script to load before manipulating the script 
-	};
-	script.src = "/content/DEVELOPMENT/2018/courses/DEV-belinsky-2018-BackendTest/Programming/eqTest/MathML2.js";
-
-	document.head.appendChild(script); //or something of the likes
 }
 
 function joomlaFixes()
@@ -1278,7 +1290,7 @@ function codeLineVertBar()
 				  vertLine = entry.target.querySelector(".vertBar");
 				  vertLine.style.height = 0;
 				 // vertLine.style.height = entry.contentRect.height + "px";
-				  vertLine.style.height = entry.target.scrollHeight + "px";
+				  vertLine.style.height = entry.target.clientHeight + "px";
 			})
 	});
 			
@@ -1290,7 +1302,7 @@ function codeLineVertBar()
 			codeBlocks[i].classList.contains("num"))
 		{
 			// get the actual height the codeline 
-			actualHeight = codeBlocks[i].scrollHeight;
+			actualHeight = codeBlocks[i].clientHeight;  // replaces scrollHeight
 			vertLine = document.createElement("hr");
 			vertLine.classList.add("vertBar");
 			vertLine.style.height = actualHeight + "px";
@@ -2272,3 +2284,16 @@ function moveEqNum()
 	}
 }
 */	
+/*
+function loadMathML()
+{
+	var script = document.createElement('script');
+	script.onload = function () 
+	{
+		mathEdit(); // wait for mathML script to load before manipulating the script 
+	};
+	script.src = "/content/DEVELOPMENT/2018/courses/DEV-belinsky-2018-BackendTest/Programming/eqTest/MathML2.js";
+
+	document.head.appendChild(script); //or something of the likes
+}
+*/
