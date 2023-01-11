@@ -290,7 +290,6 @@ td > p.code, td > p.code > span.code
 	text-indent: -22px;
 	left: 0px;
 }
-
 .code::after, .codeBlockTab::after
 {	/* This is a hack for IE so unselectable text will not be copied */
 	content: attr(data-text);
@@ -298,6 +297,7 @@ td > p.code, td > p.code > span.code
 .code .hl,.code .highlight,.code.hl, .code.highlight
 {
 	color: yellow;
+	font-style: normal;  /* remove italics, which makes some code chars look confusing */
 }
 .code .email, .code.email
 {
