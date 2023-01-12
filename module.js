@@ -68,8 +68,9 @@ else
 // pre-onload functions
 addStyleSheet();  // can be done before page load since this is called in the [head]
 
-// resize the iframe in the parent window when the page gets resized
-window.parent.addEventListener("resize", resizeIframeContent());
+// resize the iframe in the parent window when the page gets resized (if in an iframe)
+if(window !== window.parent)
+	window.parent.addEventListener("resize", resizeIframeContent());
 
 /*** Handling the long-press menu ****/
 longClickTimer = null;
