@@ -761,10 +761,11 @@ td ul, td ol
 	}
 	.vertBar
 	{
-		margin-left: 24px;
+		display: none; /* too inconsistent */ 
+		/*margin-left: 24px;
 		border-right-color: rgb(102,0,0);
 		border-right-style: solid;
-		border-right-width: 1px;
+		border-right-width: 1px;*/
 	}
 	.partial>.code, .p>.code
 	{
@@ -773,6 +774,7 @@ td ul, td ol
 	.code:before
 	{
 		color: rgb(102,0,0) !important;
+		background-color: eeeeee;
 	}
 	.caption, .figNum, .figureRef, .c, .fr
 	{
