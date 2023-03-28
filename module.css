@@ -274,10 +274,10 @@ td
 	font-style: normal;	
 	font-weight: normal;	
 	font-size: 14px;
-	margin-top: 0;
+/*	margin-top: 0;
 	margin-bottom: 0;
-	margin-right: 0;
-	margin-left: 22px;  
+	margin-right: 0; Done with p */
+	margin-left: 22px;  /* Not sure how to avoid this yet ... */
 	text-indent: -22px;
 	letter-spacing: -0.3px;
 	padding-left: 0.5em;
@@ -318,9 +318,9 @@ td > p.code, td > p.code > span.code
 .codeBlock
 {
 	cursor: pointer;
-	position: relative;
+	position: static; /* absolute; */
 	color: rgb(100,255,255);
-	left: -8px;
+	margin-left: -8px !important;
 	max-height: 400px;
 	overflow-y: auto;
 	/* works only in Firefox -- make scrollbar easier to see in Windows 11 */
@@ -380,7 +380,7 @@ td > p.code, td > p.code > span.code
 	margin-left: 47px;
 	border-width: 0;
 	background-color: rgb(200,200,100);
-	position: fixed;
+	position: absolute; /*fixed;*/
 	margin-top: 0;
 }
 /*.partial>.code, .p>.code
@@ -774,7 +774,7 @@ td ul, td ol
 	.code:before
 	{
 		color: rgb(102,0,0) !important;
-		background-color: eeeeee;
+		background-color: #d0d0d0;
 	}
 	.caption, .figNum, .figureRef, .c, .fr
 	{
