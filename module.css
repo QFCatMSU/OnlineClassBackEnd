@@ -212,7 +212,7 @@ td
 	border: solid 1px rgb(100,100,100);
 	padding: 3px;
 }
-.contentDiv
+.contentDiv  /* can be an h2Div or an h3Div */
 {
 	padding-left: 25px;
 	padding-right: 13px;
@@ -244,7 +244,7 @@ td
 	border-bottom-right-radius: 0px;
 	border-bottom-left-radius: 0px;
 }
-.nonlinear
+.nonlinear  /* extensions or traps */
 {
 	background-color: rgb(210,210,220);	
 }
@@ -340,13 +340,17 @@ td > p.code, td > p.code > span.code
 	outline: 2px solid rgb(150,250,50);
 }
 /*.codeBlock:not(.nonum) > .code:not(.noSelect):before, .codeBlock.num > .code:not(.noSelect):before*/
-.codeBlock:not(.nonum) > .code:before
+/*.codeBlock:not(.nonum) > .code:before
 {	
 	counter-increment: codeLines;
 	content: counter(codeLines);
-}
-.codeBlock:not(.nonum) > .code:before, .codeBlock.num > .code:before 
+}*/
+/*.codeBlock:not(.nonum) > .code:before, .codeBlock.num > .code:before */
+
+.codeBlock.num > .code:before 
 {	
+	counter-increment: codeLines;
+	content: counter(codeLines);
 	display: inline-block;
 	padding-right: 5px; /* space between line number and horizontal line */
 	margin-right: 5px;  /* space between horizontal line and code */
@@ -702,6 +706,7 @@ td ul, td ol
 		border-width: 1px;
 		border-color: black;
 		border-style: solid;
+		background-color: lightgray;
 	}
 	.code .hl,.code .highlight,.code.hl, .code.highlight
 	{
@@ -753,10 +758,11 @@ td ul, td ol
 		/* only works on Firefox -- and makes scrollbar easier to see on Firefox in Windows 11 */
 		scrollbar-color: lightblue black;
 	}
-	.code:not(.nonum)>.code
-	{
-		margin-left: 4px;
-		text-indent: -22px;
+	/*.code:not(.nonum)>.code*/
+	.code.num>.code
+	{ 
+/*		margin-left: 4px;
+		text-indent: -22px; Not needed anymore*/
 	/*	margin-right: -10px;*/
 	}
 	.vertBar

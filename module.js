@@ -1303,8 +1303,8 @@ function codeLineVertBar()
 		// Check if the codelines are to be numbered... 
 		// This is default but might change ... if it change the logic will be just:
 		//		if(codeBlocks[i].classList.contains("num"))
-		if( (!codeBlocks[i].classList.contains("nonum") &&
-	        !codeBlocks[i].classList.contains("nn")) ||
+		if( //(!codeBlocks[i].classList.contains("nonum") &&
+	       // !codeBlocks[i].classList.contains("nn")) ||
 			  codeBlocks[i].classList.contains("num"))
 		{
 			// get the actual height the codeline 
