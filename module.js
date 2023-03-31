@@ -1300,9 +1300,12 @@ function codeLineVertBar()
 	// for each line of code in the page
 	for(i=0; i<codeBlocks.length; i++)
 	{
-		if(!codeBlocks[i].classList.contains("nonum") ||
-			!codeBlocks[i].classList.contains("nn") ||
-			codeBlocks[i].classList.contains("num"))
+		// Check if the codelines are to be numbered... 
+		// This is default but might change ... if it change the logic will be just:
+		//		if(codeBlocks[i].classList.contains("num"))
+		if( (!codeBlocks[i].classList.contains("nonum") &&
+	        !codeBlocks[i].classList.contains("nn")) ||
+			  codeBlocks[i].classList.contains("num"))
 		{
 			// get the actual height the codeline 
 			actualHeight = codeBlocks[i].clientHeight;  // replaces scrollHeight
@@ -1316,6 +1319,7 @@ function codeLineVertBar()
 				vertLine.style.marginLeft = "22px";
 			}
 			
+			// if codeblocks changes size, change the vertical line size
 			myObserver.observe(codeBlocks[i]);
 
 			codeBlocks[i].prepend(vertLine);
