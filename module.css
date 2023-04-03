@@ -478,7 +478,14 @@ td > p.code, td > p.code > span.code
 {
 	padding-bottom: 0px;
 }
-
+div.scrollCell  
+{
+	height: 100%;
+	width: 100%;
+	overflow-y: auto;
+	margin: 0;
+	padding: 0;
+}
 
 .rcMenu  /* the right-click menu */
 {

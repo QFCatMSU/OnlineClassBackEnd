@@ -315,3 +315,14 @@ td ul, td ol
 	padding-left: 2em;
 	margin-top: 0;
 }
+div.scrollCell  
+{
+	height: 100%;
+	width: 100%;
+	overflow-y: auto;
+	margin: 0;
+	padding: 0;
+	border-width: 1px;
+	border-style: dashed;
+	border-color: green;
+}
