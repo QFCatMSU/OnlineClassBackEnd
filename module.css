@@ -164,12 +164,12 @@ div > h4
 {
 	margin-left: -6px !important;
 }
-h6, code
+/*h6, code  (pretty sure this is all deprecated)
 {
-	/* editor.css sets a color for h6 but I want this overridden
-		in the module and replace by the parent (which is a DIV) */
+	 editor.css sets a color for h6 but I want this overridden
+		in the module and replace by the parent (which is a DIV) 
 	color: inherit;
-}
+}*/
 p
 {
 	margin: 0em !important; 

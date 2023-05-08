@@ -238,9 +238,9 @@ function fixBlockquotes()
 	
 	for(i=0; i<bq.length; i++)
 	{
-		// find all h6 (old code) and p (new) in the blockquote
-		codelines = bq[i].querySelectorAll("h6,p");
-
+		// find all <p> in the blockquote
+		codelines = bq[i].querySelectorAll("p");   // used to include <h6>
+ 
 		if(codelines.length > 0)
 		{
 			for(j=0; j<codelines.length; j++)
@@ -435,13 +435,13 @@ parent.window.onload = function()
 	}
 	
 	// add code class to all h6 elements (hopefully, this will be deprecated soon...)
-	h6 = encapObject.getElementsByTagName("h6");
+/*	h6 = encapObject.getElementsByTagName("h6");
 	for(i=0; i<h6.length; i++)
 	{
 		h6[i].classList.add("code"); 
-	}
+	}*/
 	
-	// adds "code" to elements within bq and moves p and h6 out of bq
+	// adds "code" to elements within bq and moves p out of bq
 	fixBlockquotes();
 	fixBrInCodelines();
 	setCodeBlocks();
@@ -458,7 +458,7 @@ parent.window.onload = function()
 	// allow users to resize images from small to full-size
 	createFlexImages();
 	
-	// adds the caption class to all H5 elements
+	// adds the caption class to all figure elements
 	addCaptions();
 	
 	createEmailLink();
@@ -474,7 +474,7 @@ parent.window.onload = function()
 	// Create a right-click menu
 	makeContextMenu();  // needs to happen after divs are created
 
-	// adds code tags to all content within an [h6] tag
+	// adds code tags to all content within an .code tag
 	// need to add divs before doing code tags becuase this includes the div codeblocks
 //	addCodeTags();
 	
@@ -1074,7 +1074,7 @@ function addStyleSheet()
 	document.getElementsByTagName("head")[0].appendChild(CSSFile);
 }
 
-/* adds the class "eqNum" to all H5 lines that have the dotum font (it's a hack for D2L) */
+/* adds the class "eqNum" to all figures that have the dotum font (it's a hack for D2L) */
 function equationNumbering()
 {
 	// currently using font family: dotum; to indicate equation number (thanks, D2L!)
@@ -1085,7 +1085,7 @@ function equationNumbering()
 		newEQs[i].classList.add("eqNum");
 	}
 	
-	// find all elements of elementType (initially it is H5)
+	// find all elements that are equation numbers
 	var equations = encapObject.getElementsByClassName("eqNum");
 	
 	// add the equation number after the equation
@@ -1107,12 +1107,11 @@ function equationNumbering()
 	}
 }
 
-/* adds the class "caption" to all H5 lines */
+/* adds the class "caption" to all figures */
 function addCaptions()
 {
-	// find all elements of elementType (initially it is H5)
-	//var captionLines = encapObject.getElementsByTagName("h5");
-	var captionLines = encapObject.querySelectorAll("h5, .fig");
+	// find all elements with "fig" class
+	var captionLines = encapObject.querySelectorAll(".fig");  // used to include "h5"
 
 	// this is deprecated in DreamWeaver
 	for(i=0; i<captionLines.length; i++)
@@ -1123,7 +1122,6 @@ function addCaptions()
 		}
 	}
 	
-	// In D2L, H5 was used to signify a caption;
 	// In DW: the class .caption is an option
 	captionLines = encapObject.getElementsByClassName("caption");
 	for(i=0; i<captionLines.length; i++)
@@ -1550,7 +1548,6 @@ function addReferences()
 												references[i].innerText + "** ";					
 		}
 		// if this is a reference to an equation -- 
-		//			this handles the situation where H5 is used and not
 		else if(encapObject.querySelector("#" + refID).classList.contains("eqNum")) 
 		{
 			caption = encapObject.querySelector("#" + refID).innerText;
@@ -1562,8 +1559,8 @@ function addReferences()
 			
 			addNumToReference(references[i], eqRef);
 		}
-		// if this is a figure ref (has h5 tag and does not have eqNum class)
-		else if(encapObject.querySelector("#" + refID).nodeName.toLowerCase() == "h5" || // old system
+		// if this is a figure ref (has fig class but not eqNum class)
+		else if(//encapObject.querySelector("#" + refID).nodeName.toLowerCase() == "h5" || // old system
               encapObject.querySelector("#" + refID).classList.contains("fig"))        // new system
 		{
 			caption = encapObject.querySelector("#" + refID).innerText;
@@ -1585,7 +1582,7 @@ function addReferences()
 			addNumToReference(references[i], sectNum);
 		}
 		// for codelines
-		else if(encapObject.querySelector("#" + refID).nodeName.toLowerCase() == "h6" ||
+		else if(//encapObject.querySelector("#" + refID).nodeName.toLowerCase() == "h6" ||
 		        encapObject.querySelector("#" + refID).nodeName.toLowerCase() == "code")
 		{
 		//	Note: there is no way to access the CSS pseudo counter in JavaScript
@@ -1612,13 +1609,17 @@ function addReferences()
 			parentObj = refObject.parentNode.nodeName.toLowerCase();
 			refNum = -1;
 			
+			
+			/* I think this part is fully deprecated 
 			// if the parent object is an H5 -- so it is a figure reference
 			if(parentObj && parentObj == "h5")
 			{
 				strIndex = caption.indexOf(":");  // find the location of the first semicolon
 				refNum = parentObj.innerText.slice(0, strIndex);
 			}
-			else if(parentObj && parentObj.firstElementChild &&
+			else */
+				
+			if(parentObj && parentObj.firstElementChild &&
 					  parentObj == "div" && 
 								(parentObj.firstElementChild.nodeName.toLowerCase() == "h2" ||
 								 parentObj.firstElementChild.nodeName.toLowerCase() == "h3" ||
@@ -1905,7 +1906,7 @@ function createTextBox()
 
 function captionFigures()
 {
-	// find all objects with class="caption" (usually H5)
+	// find all objects with class="caption" (figures)
 	captions = encapObject.querySelectorAll(".caption");
 	
 	for(i=0; i<captions.length; i++)
