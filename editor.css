@@ -62,16 +62,20 @@ body > h4::before
   counter-increment: h4Count;               
   content: counter(h2Count) "-" counter(h3Count) "-" counter(h4Count) " ";
 }	
+
+/* This should be deprecated */
 h5.eqNum::after, span[style*="dotum"]>.equation::after, span[style*="dotum"]::after
 {
   counter-increment: eqCount;               
   content: " ( " counter(eqCount) " )";  
 }
-.eqNum:not(h5)::after
+
+/*.eqNum:not(h5)::after*/
+.eqNum:not([data-d2l-mathml])::after
 {
   counter-increment: eqCount;               
   content: "( " counter(eqCount) " )";  
-  text-decoration: none; /* does not work -- is there another way? */
+ /* text-decoration: none;  does not work -- is there another way? */
 }
 .figNum::before, h5:not([class])::before, h5[class='']::before, .fig::before
 {
@@ -116,7 +120,23 @@ h4
 	color: rgb(0,70,0); 
 	background-color: rgb(220,220,220); 
 }
-h5, .fig, .caption, .figureRef, .eqNum, .eqRef, .sectRef, .ref, .reference, span[style*="dotum"]::after, span[style*="dotum"]::before
+[data-d2l-mathml][id], [data-d2l-mathml][class]
+{
+	color: red;
+}
+
+[data-d2l-mathml]
+{
+	color: #412b15;
+}
+
+[data-d2l-mathml][id]:after, [data-d2l-mathml][class]:after
+{
+	content: ' -- (Cannot add class or id directly to equation)';
+}
+
+.fig, .caption, .figureRef, .eqNum:not([data-d2l-mathml])::after, .eqRef, .sectRef, .ref, .reference, 
+h5, span[style*="dotum"]::after, span[style*="dotum"]::before   /* deprecated */
 { 
 	font-style: italic; 
 	color: rgb(0,100,0); 
@@ -180,29 +200,29 @@ ol ol, ol ol ol ol, ol ol ol ol ol ol
 	color: darkred;
 	font-style: italic;
 }
-h6[title], blockquote[title], .code[title]
+/*h6[title],*/ blockquote[title], .code[title]
 {
 	color: white;
 }
-h6 .hl, h6 .highlight, h6.hl, h6.highlight,
+/*h6 .hl, h6 .highlight, h6.hl, h6.highlight,*/
 .code .hl, .code .highlight, .code.hl, .code.highlight,
 blockquote .hl, blockquote .highlight, blockquote.hl, blockquote.highlight
 {
 	color: yellow;
 }
-h6 .note, h6.note, 
+/*h6 .note, h6.note, */
 blockquote .note, blockquote.note,
 .code .note, .code.note
 {
 	color: orange;
 }
-h6 .ref, h6.ref, 
+/*h6 .ref, h6.ref, */
 blockquote .ref, blockquote.ref,
 .code .ref .code.ref
 {
 	color: lime;
 }
-h6 a, .code a, blockquote a
+/*h6 a,*/ .code a, blockquote a
 {
 	color: YellowGreen;
 }
@@ -218,7 +238,7 @@ img.flexSize:hover, img.fs:hover
 {	
 	color: rgb(0,0,200);	
 }
-h6, blockquote, .code
+/*h6,*/ blockquote, .code
 {
 	/* white-space caused the no spaces added error in editor */
 	/* white-space: pre-wrap; */
@@ -238,7 +258,7 @@ h6, blockquote, .code
 	/*background-color: rgb(33,33,33);*/
 	font-family: monospace;
 }
-h6:empty, blockquote:empty, .code:empty
+/*h6:empty,*/ blockquote:empty, .code:empty
 {
 	min-height: 1.7em;
 	background-color: red; /* just to warn user that something is wrong */
@@ -246,7 +266,7 @@ h6:empty, blockquote:empty, .code:empty
 /* there should never be an [h6] within an [h6],
    if there is, the text in the section will turn red as a warning.
 	At this point, the person should hit undo on the editor */
-h6>br,h6>h6, blockquote>br, blockquote>blockquote, .code>br,.code>.code
+/*h6>br,h6>h6,*/ blockquote>br, blockquote>blockquote, .code>br,.code>.code
 {
 	color: red;
 }
@@ -274,12 +294,12 @@ h6>br,h6>h6, blockquote>br, blockquote>blockquote, .code>br,.code>.code
 	color: rgb(160,64,0);
 	font-style: italic;
 }
-.p, .partial, h6.partial + h6, blockquote.partial + blockquote, 
+.p, .partial, /*h6.partial + h6, */ blockquote.partial + blockquote, 
 .code.partial + .code
 {
 	color: orange;
 }
-.nn, .nonum, h6.nn + h6, blockquote.nn + blockquote, .code.nn + .code
+.nn, .nonum, /*h6.nn + h6,*/ blockquote.nn + blockquote, .code.nn + .code
 {
 	color: rgb(255,110,110);
 }
