@@ -1078,12 +1078,12 @@ function addStyleSheet()
 function equationNumbering()
 {
 	// currently using font family: dotum; to indicate equation number (thanks, D2L!)
-	var newEQs = encapObject.querySelectorAll("span[style*='dotum']");
+/*	var newEQs = encapObject.querySelectorAll("span[style*='dotum']");
 	
 	for(i=0; i<newEQs.length; i++)
 	{
 		newEQs[i].classList.add("eqNum");
-	}
+	}*/
 	
 	// find all elements that are equation numbers
 	var equations = encapObject.getElementsByClassName("eqNum");
@@ -1094,15 +1094,20 @@ function equationNumbering()
 		if(equations[i].textContent.trim() != "")
 		{		
 			// should move most of this to module.css
-			equations[i].style.display = "inline-flex";
-			
+		//	equations[i].style.display = "inline-flex";
 			eqNumber = document.createElement("span");
+			eqNumber.classList.add("eqNum");
+			
+			
 			eqNumber.textContent =  "\u00a0( " + (i+1) + " )";
-			eqNumber.style.fontSize = "14px";
+	/*		eqNumber.style.fontSize = "14px";
 			eqNumber.style.alignSelf = "center";
-			eqNumber.style.whiteSpace = "nowrap";
+			eqNumber.style.whiteSpace = "nowrap";*/
 
 			equations[i].appendChild(eqNumber);
+			
+			// remove class from original element -- otherwise class could be applied to whole equation
+			equations[i].classList.remove("eqNum");
 		}
 	}
 }

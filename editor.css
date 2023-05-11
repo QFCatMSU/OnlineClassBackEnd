@@ -63,12 +63,12 @@ body > h4::before
   content: counter(h2Count) "-" counter(h3Count) "-" counter(h4Count) " ";
 }	
 
-/* This should be deprecated */
+/* This should be deprecated 
 h5.eqNum::after, span[style*="dotum"]>.equation::after, span[style*="dotum"]::after
 {
   counter-increment: eqCount;               
   content: " ( " counter(eqCount) " )";  
-}
+}*/
 
 /*.eqNum:not(h5)::after*/
 .eqNum:not([data-d2l-mathml])::after
@@ -77,14 +77,18 @@ h5.eqNum::after, span[style*="dotum"]>.equation::after, span[style*="dotum"]::af
   content: "( " counter(eqCount) " )";  
  /* text-decoration: none;  does not work -- is there another way? */
 }
-.figNum::before, h5:not([class])::before, h5[class='']::before, .fig::before
+
+/*h5:not([class])::before, h5[class='']::before*/
+.figNum::before, .fig::before
 {
   counter-increment: figCount;               
   content: "Fig " counter(figCount) ": ";  
 }
 
-/* span with font type dotum whose first-child is an image with the class equation */
-span[style*="dotum"] > img.equation:first-child
+/* span with font type dotum whose first-child is an image with the class equation 
+change to */
+/*span[style*="dotum"] > img.equation:first-child*/
+.eqNum > [data-d2l-mathml]:first-child
 {
 	border-color: green;
 	border-style: dashed;
@@ -125,7 +129,7 @@ h4
 	color: red;
 }
 
-[data-d2l-mathml]
+[data-d2l-mathml], .eq, .equation
 {
 	color: #412b15;
 }
@@ -135,8 +139,8 @@ h4
 	content: ' -- (Cannot add class or id directly to equation)';
 }
 
-.fig, .caption, .figureRef, .eqNum:not([data-d2l-mathml])::after, .eqRef, .sectRef, .ref, .reference, 
-h5, span[style*="dotum"]::after, span[style*="dotum"]::before   /* deprecated */
+/*h5, span[style*="dotum"]::after, span[style*="dotum"]::before,    deprecated */
+.fig, .caption, .figureRef, .eqNum:not([data-d2l-mathml])::after, .eqRef, .sectRef, .ref, .reference 
 { 
 	font-style: italic; 
 	color: rgb(0,100,0); 
@@ -275,7 +279,7 @@ img.flexSize:hover, img.fs:hover
 	padding-left: 20px; 
 	text-indent: -20px;
 }	
-.figureRef, .fr, .eqNum:not(h5)::before, .eqRef /*, .sectRef */
+.figureRef, .fr,  .eqRef /*, .sectRef .eqNum:not(h5)::before,*/
 {
 	text-decoration: line-through;
 }

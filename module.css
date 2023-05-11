@@ -67,7 +67,7 @@ p:not([style*="text-align: center;"]) .math
 math, .MathJax, .eq, .equation
 {
 	color: rgb(79,49,9);
-	display: inline !important;
+/*	display: inline !important;  I beleive this is deprecated as the issue was that D2L would force block -- but not anymore */ 
 }
 .eq, .equation
 {
@@ -80,7 +80,7 @@ body
 	font-family: arial;
 	line-height: 135%;
 }
-h1, h2, h3, h4, h5, blockquote
+h1, h2, h3, h4, blockquote /* h5 */
 {
 	font-family: arial;
 	line-height: 135%;
@@ -442,6 +442,13 @@ td > p.code, td > p.code > span.code
 {
 	color: rgb(160,64,0);
 	font-style: italic;
+}
+
+.eqNum
+{
+	font-size: 14px;
+	align-self: center;
+	white-space: "nowrap";
 }
 
 .caption, .figNum, .figureRef[id], .c, .fr[id], .eqNum, .eqRef[id], .sectRef[id], .ref[id], .reference[id]
