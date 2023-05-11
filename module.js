@@ -1096,7 +1096,7 @@ function equationNumbering()
 		//	equations[i].style.display = "inline-flex";  // think this is no longer needed
 			eqNumber = document.createElement("span");
 			eqNumber.classList.add("eqNum");
-			
+			eqNumber.id = equations[i].id;
 			
 			eqNumber.textContent =  "\u00a0( " + (i+1) + " )";
 	/*		eqNumber.style.fontSize = "14px";
@@ -1106,7 +1106,10 @@ function equationNumbering()
 			equations[i].appendChild(eqNumber);
 			
 			// remove class from original element -- otherwise class could be applied to whole equation
+			equations[i].id = "";
 			equations[i].classList.remove("eqNum");
+
+			//equations[i].classList.add("equation");
 		}
 	}
 }
@@ -1552,7 +1555,9 @@ function addReferences()
 												references[i].innerText + "** ";					
 		}
 		// if this is a reference to an equation -- 
-		else if(encapObject.querySelector("#" + refID).classList.contains("eqNum")) 
+		else if(encapObject.querySelector("#" + refID).classList.contains("eqNum")  ||
+				  encapObject.querySelector("#" + refID).classList.contains("eq") ||
+			     encapObject.querySelector("#" + refID).classList.contains("equation")) 
 		{
 			caption = encapObject.querySelector("#" + refID).innerText;
 
