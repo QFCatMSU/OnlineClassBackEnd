@@ -1093,8 +1093,7 @@ function equationNumbering()
 	{
 		if(equations[i].textContent.trim() != "")
 		{		
-			// should move most of this to module.css
-		//	equations[i].style.display = "inline-flex";
+		//	equations[i].style.display = "inline-flex";  // think this is no longer needed
 			eqNumber = document.createElement("span");
 			eqNumber.classList.add("eqNum");
 			
@@ -1102,7 +1101,7 @@ function equationNumbering()
 			eqNumber.textContent =  "\u00a0( " + (i+1) + " )";
 	/*		eqNumber.style.fontSize = "14px";
 			eqNumber.style.alignSelf = "center";
-			eqNumber.style.whiteSpace = "nowrap";*/
+			eqNumber.style.whiteSpace = "nowrap"; -- moved to css */
 
 			equations[i].appendChild(eqNumber);
 			
@@ -1925,7 +1924,8 @@ function captionFigures()
 		  
 		// don't attach a caption to an already existing figure or another caption
 		//  -- no recursive figure-ing!
-		if(prevSibling.tagName.toLowerCase() != "figure" &&
+		if(prevSibling &&   // just in case there is no prevSibling (somebody puts a fig in a list...)
+			prevSibling.tagName.toLowerCase() != "figure" &&
 		   prevSibling.tagName.toLowerCase() != "br" &&   // kluge for now
 			!(prevSibling.classList.contains("caption")) )
 		{		
