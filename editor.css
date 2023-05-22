@@ -63,22 +63,12 @@ body > h4::before
   content: counter(h2Count) "-" counter(h3Count) "-" counter(h4Count) " ";
 }	
 
-/* This should be deprecated 
-h5.eqNum::after, span[style*="dotum"]>.equation::after, span[style*="dotum"]::after
-{
-  counter-increment: eqCount;               
-  content: " ( " counter(eqCount) " )";  
-}*/
-
-/*.eqNum:not(h5)::after*/
 .eqNum:not([data-d2l-mathml])::after
 {
   counter-increment: eqCount;               
   content: "( " counter(eqCount) " )";  
- /* text-decoration: none;  does not work -- is there another way? */
 }
 
-/*h5:not([class])::before, h5[class='']::before*/
 .figNum::before, .fig::before
 {
   counter-increment: figCount;               
@@ -87,7 +77,6 @@ h5.eqNum::after, span[style*="dotum"]>.equation::after, span[style*="dotum"]::af
 
 /* span with font type dotum whose first-child is an image with the class equation 
 change to */
-/*span[style*="dotum"] > img.equation:first-child*/
 .eqNum > [data-d2l-mathml]:first-child
 {
 	border-color: green;
@@ -139,7 +128,6 @@ h4
 	content: ' -- (Cannot add class or id directly to equation)';
 }
 
-/*h5, span[style*="dotum"]::after, span[style*="dotum"]::before,    deprecated */
 .fig, .caption, .figureRef, .eqNum:not([data-d2l-mathml])::after, .eqRef, .sectRef, .ref, .reference 
 { 
 	font-style: italic; 
@@ -156,10 +144,7 @@ blockquote
 	padding-left: 0 !important; 
 	border-left-width: 0px !important;
 }
-blockquote > p
-{
-	/*display: inline;*/ 
-}
+
 p
 { 
 	margin:0px; 
@@ -204,29 +189,26 @@ ol ol, ol ol ol ol, ol ol ol ol ol ol
 	color: darkred;
 	font-style: italic;
 }
-/*h6[title],*/ blockquote[title], .code[title]
+blockquote[title], .code[title]
 {
 	color: white;
 }
-/*h6 .hl, h6 .highlight, h6.hl, h6.highlight,*/
 .code .hl, .code .highlight, .code.hl, .code.highlight,
 blockquote .hl, blockquote .highlight, blockquote.hl, blockquote.highlight
 {
 	color: yellow;
 }
-/*h6 .note, h6.note, */
 blockquote .note, blockquote.note,
 .code .note, .code.note
 {
 	color: orange;
 }
-/*h6 .ref, h6.ref, */
 blockquote .ref, blockquote.ref,
 .code .ref .code.ref
 {
 	color: lime;
 }
-/*h6 a,*/ .code a, blockquote a
+.code a, blockquote a
 {
 	color: YellowGreen;
 }
@@ -242,13 +224,9 @@ img.flexSize:hover, img.fs:hover
 {	
 	color: rgb(0,0,200);	
 }
-/*h6,*/ blockquote, .code
+blockquote, .code
 {
-	/* white-space caused the no spaces added error in editor */
-	/* white-space: pre-wrap; */
 	word-wrap: break-word;
-	/*padding-bottom: 0px;*/
-
 	display: block;
 	line-height: 1.7em;	
 	font-style: normal;	
@@ -259,10 +237,9 @@ img.flexSize:hover, img.fs:hover
 	color: rgb(100,255,255);
 	background: linear-gradient(90deg, rgb(33,33,33) 663px, 
 	                            rgb(100,100,100) 0, rgb(100,100,100) 100%);
-	/*background-color: rgb(33,33,33);*/
 	font-family: monospace;
 }
-/*h6:empty,*/ blockquote:empty, .code:empty
+blockquote:empty, .code:empty
 {
 	min-height: 1.7em;
 	background-color: red; /* just to warn user that something is wrong */
@@ -270,7 +247,7 @@ img.flexSize:hover, img.fs:hover
 /* there should never be an [h6] within an [h6],
    if there is, the text in the section will turn red as a warning.
 	At this point, the person should hit undo on the editor */
-/*h6>br,h6>h6,*/ blockquote>br, blockquote>blockquote, .code>br,.code>.code
+blockquote>br, blockquote>blockquote, .code>br,.code>.code
 {
 	color: red;
 }
@@ -279,7 +256,7 @@ img.flexSize:hover, img.fs:hover
 	padding-left: 20px; 
 	text-indent: -20px;
 }	
-.figureRef, .fr,  .eqRef /*, .sectRef .eqNum:not(h5)::before,*/
+.figureRef, .fr,  .eqRef 
 {
 	text-decoration: line-through;
 }
@@ -298,12 +275,12 @@ img.flexSize:hover, img.fs:hover
 	color: rgb(160,64,0);
 	font-style: italic;
 }
-.p, .partial, /*h6.partial + h6, */ blockquote.partial + blockquote, 
+.p, .partial, blockquote.partial + blockquote, 
 .code.partial + .code
 {
 	color: orange;
 }
-.nn, .nonum, /*h6.nn + h6,*/ blockquote.nn + blockquote, .code.nn + .code
+.nn, .nonum, blockquote.nn + blockquote, .code.nn + .code
 {
 	color: rgb(255,110,110);
 }
@@ -325,11 +302,6 @@ div:not([class]):not([id])
 
 table.frontPage td
 {
-/*	box-shadow: 0 0 0 8px #bbb;
-	border-radius: 10px;
-	border-width: 0px;
-	padding: 5px;
-	background-color: #eee;*/
 	vertical-align: top;
 	font-size: 16px;
 }

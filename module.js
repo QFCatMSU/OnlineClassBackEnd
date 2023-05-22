@@ -7,6 +7,9 @@
 */
 /*
 Future:
+-- 2023 --
+- Put flexsize width/height in JSON (or, manage without global variable)
+
 - turn off longclick timer on horizontal scroll in widget
 - Deal with situation with figures are not siblinged to a block object
 - look for Span with class and title inside <p>
@@ -40,14 +43,11 @@ Fix hacks in Safari:
 // tabs in codeblocks are messing with the figures
 // tabs are not aligned to the divs because the divs have been shifted
 //    you can align by putting the tab inside the div
-smallImageHeight = 100;				// set the height of flex-sized images when small 
+smallImageHeight = 100;				// set the height of flex-sized objects when small 
 imageHeight = new Array();			// the heights of all flex-sized images in a page
 imageWidth = new Array();			// the widths of all flex-sized images in a page
 minImageWidth = 700;					// minimum width for a flexSize image in expanded mode
 scrollTopPosition = 0; 				// value saved for links-return-links within a page
-//overflowCalled = false;   			// check to see if there is a current check of code lines
-//mathObjCount = 0;					// The number of equations in the lesson (deprecated w. MathJax3)
-//count=0;prevCount=0;countNum=0;// used to keep track of the equations (deprecated w. MathJax3)
 editURL = "";							// URL for the editting page 
 referenceTimer = "";					// timer used to toggle the reference object
 scrollFlag = 0;  						// counts when scrolling of page occurs due to reference links
@@ -56,14 +56,6 @@ scrollFlag = 0;  						// counts when scrolling of page occurs due to reference 
 redNum = -1;						// the number of the class 
 instructorEmail = "Charlie Belinsky <belinsky@msu.edu>;";
 lessonFolder = "";
-
-// Is this the homepage?
-url = window.parent.location.href;
-if(url.includes("d2l.msu.edu/d2l/home/"))
-	homePage = true;
-else
-	homePage = false;
-	
 
 // pre-onload functions
 addStyleSheet();  // can be done before page load since this is called in the [head]
@@ -77,13 +69,6 @@ longClickTimer = null;
 overRCMenu = false;
 mouseX = 0; mouseY = 0;  // allow a little wiggle of the mouse
 
-/***** Adding MathJax 3 **
-var script = document.createElement('script');
-script.type = "text/javascript";
-script.id = "MathJax-script";
-script.src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js";
-script.async = "async";
-document.head.appendChild(script); **/
 	
 window.addEventListener("mousedown", function(event)
 {
@@ -133,7 +118,7 @@ window.addEventListener("mousedown", function(event)
 // disable short-cut menu on scroll (mousemoves are not triggered on scroll)
 window.addEventListener("scroll", function(event)
 { 
-		clearInterval(longClickTimer);
+	clearInterval(longClickTimer);
 });
 	
 window.addEventListener("mouseup", function()
@@ -332,13 +317,6 @@ function codeBlockFirstLine(codeLine)
 		// true only if the embedded span takes up the whole codeline
 		if(codeLine.innerText == embedSpan.innerText)
 		{
-		   /*if(embedSpan.classList != "") 
-			{
-				for(ii=0; ii<embedSpan.classList.length; ii++)
-				{
-					codeLine.classList.add(embedSpan.classList[ii]);
-				}
-			}*/
 			codeLine.classList = embedSpan.classList;
 			codeLine.classList.add("code");  // make sure it is there...
 			embedSpan.classList = "";
@@ -424,30 +402,24 @@ parent.window.onload = function()
 {		
 	encapObject = document.body; 
 
-
 	if(document.querySelectorAll('meta[content^="Joomla"]').length > 0) joomlaFixes();
 	
 	if(window.location.hostname == "d2l.msu.edu") 
 	{
 		d2lFixes();
-		if(homePage == false)
+		// Is this the homepage?
+		
+		url = window.parent.location.href;
+
+		if(!url.includes("d2l.msu.edu/d2l/home/"))
 			d2lAddHeader();
 	}
-	
-	// add code class to all h6 elements (hopefully, this will be deprecated soon...)
-/*	h6 = encapObject.getElementsByTagName("h6");
-	for(i=0; i<h6.length; i++)
-	{
-		h6[i].classList.add("code"); 
-	}*/
 	
 	// adds "code" to elements within bq and moves p out of bq
 	fixBlockquotes();
 	fixBrInCodelines();
 	setCodeBlocks();
 	addBrackets();
-	// mathML() adds div to the beginning of the page -- needs to happen after header is set -- deprcated with MathJax 3.0
-	//loadMathML();
 	
 	getClassInfoD2L(); // emails, lessons (works only in D2L for now)
 	
@@ -1077,14 +1049,6 @@ function addStyleSheet()
 /* adds the class "eqNum" to all figures that have the dotum font (it's a hack for D2L) */
 function equationNumbering()
 {
-	// currently using font family: dotum; to indicate equation number (thanks, D2L!)
-/*	var newEQs = encapObject.querySelectorAll("span[style*='dotum']");
-	
-	for(i=0; i<newEQs.length; i++)
-	{
-		newEQs[i].classList.add("eqNum");
-	}*/
-	
 	// find all elements that are equation numbers
 	var equations = encapObject.getElementsByClassName("eqNum");
 	
@@ -1093,23 +1057,17 @@ function equationNumbering()
 	{
 		if(equations[i].textContent.trim() != "")
 		{		
-		//	equations[i].style.display = "inline-flex";  // think this is no longer needed
 			eqNumber = document.createElement("span");
 			eqNumber.classList.add("eqNum");
 			eqNumber.id = equations[i].id;
 			
 			eqNumber.textContent =  "\u00a0( " + (i+1) + " )";
-	/*		eqNumber.style.fontSize = "14px";
-			eqNumber.style.alignSelf = "center";
-			eqNumber.style.whiteSpace = "nowrap"; -- moved to css */
 
 			equations[i].appendChild(eqNumber);
 			
 			// remove class from original element -- otherwise class could be applied to whole equation
 			equations[i].id = "";
-			equations[i].classList.remove("eqNum");
-
-			//equations[i].classList.add("equation");
+			equations[i].classList.remove("eqNum");   
 		}
 	}
 }
@@ -1169,87 +1127,7 @@ function addBrackets()
 		bracketCode[i].append(endCodeLine);	
 	}
 }
-/* add the tag: [code] to each line inside a [pre] block --
-  the real trick is that there are multiple ways in which D2L will code a set of lines */
-/*function addCodeTags(elementType="p", classType="code")
-{
-	/* this part works if we are using <h6> with class="code" 
-	var codeLines = encapObject.getElementsByClassName(classType);  
 
-	firstLine = true;
-
-	// go through all codelines 
-	for(i=0; i<codeLines.length; i++)
-	{		
-			// add the codeBock div as a parent to the codeLine
-			codeLines[i].parentElement.insertBefore(codeBlockDiv, codeLines[i]);
-			
-			// check if this is a partial codeblock or a full codeblock
-			if(codeBlockDiv.classList.contains("brackets"))
-			{
-				/**** added formatting to put in {} ***********
-				// create a line that just has a start curly bracket ( { )
-				startCodeLine = document.createElement(elementType);
-				startCodeLine.setAttribute("data-text", "{");  // so it does not appear as text when selected
-				startCodeLine.classList.add("code", "firstLine", "noSelect", "noCode");
-
-				codeBlockDiv.appendChild(startCodeLine);
-				i++;  // another element was added so we need to increment the index
-				/****************************************
-			}
-			else  
-			{
-				// make this codeLine the first line 
-				codeLines[i].classList.add("firstLine");	
-			}
-		}
-
-		// add a space to empty lines -- when copying/pasting it can treat an 
-		//			empty line as not a line (might be deprecated, but not sure...)
-		if(codeLines[i].innerText == "")
-			codeLines[i].innerText = " ";
-		
-		// needed ??
-		if(codeBlockDiv.classList.contains("brackets"))
-			codeLines[i].insertAdjacentHTML("afterbegin", "  ");
-			
-		// check if the next element after this codeLine is another codeline -- 
-		//		if not than this is the last line
-		if(codeLines[i].nextElementSibling == null || 
-			!codeLines[i].nextElementSibling.classList.contains("code"))
-		{
-			// check if this is a codeblock that needs curly brackets
-			if(codeBlockDiv.classList.contains("brackets"))
-			{
-				codeBlockDiv.appendChild(codeLines[i]);
-				/**** added formatting to put in curly brackets {} *********
-				// create a line that just has a start curly bracket ( { )
-				lastCodeLine = document.createElement(elementType);
-				lastCodeLine.setAttribute("data-text", "}");
-				lastCodeLine.classList.add("code", "lastLine", "noSelect", "noCode");
-				codeBlockDiv.appendChild(lastCodeLine);
-				i++;  // another element was added so we need to increment the index
-				/****************************************
-			}
-			else
-			{
-				codeLines[i].classList.add("lastLine");
-				codeBlockDiv.appendChild(codeLines[i]);
-			}
-			firstLine = true;
-		}		
-		else // this is not the last line of the codeblock
-		{			
-			// add the code line to the codeblock 
-			codeBlockDiv.innerHTML += "<br>";
-			codeBlockDiv.innerHTML += codeLines[i].innerHTML;
-		//	codeBlockDiv.innerText = codeBlockDiv.innerText + "\n";
-		//	codeBlockDiv.appendChild(codeLines[i]);
-
-		}
-	}
-}
-*/
 function addCodeBlockTag()
 {
 	codeBlockDivs = encapObject.querySelectorAll(".codeBlock");
@@ -1306,11 +1184,7 @@ function codeLineVertBar()
 	for(i=0; i<codeBlocks.length; i++)
 	{
 		// Check if the codelines are to be numbered... 
-		// This is default but might change ... if it change the logic will be just:
-		//		if(codeBlocks[i].classList.contains("num"))
-		if( //(!codeBlocks[i].classList.contains("nonum") &&
-	       // !codeBlocks[i].classList.contains("nn")) ||
-			  codeBlocks[i].classList.contains("num"))
+		if(codeBlocks[i].classList.contains("num"))
 		{
 			// get the actual height the codeline 
 			actualHeight = codeBlocks[i].clientHeight;  // replaces scrollHeight
@@ -1617,16 +1491,6 @@ function addReferences()
 			refObject = encapObject.querySelector("#" + refID);
 			parentObj = refObject.parentNode.nodeName.toLowerCase();
 			refNum = -1;
-			
-			
-			/* I think this part is fully deprecated 
-			// if the parent object is an H5 -- so it is a figure reference
-			if(parentObj && parentObj == "h5")
-			{
-				strIndex = caption.indexOf(":");  // find the location of the first semicolon
-				refNum = parentObj.innerText.slice(0, strIndex);
-			}
-			else */
 				
 			if(parentObj && parentObj.firstElementChild &&
 					  parentObj == "div" && 
@@ -1958,360 +1822,3 @@ function captionFigures()
 		}
 	}
 }
-
-
-/**** DEPRECATED FUNCTIONS ****/
-/*function fixMathJaxEQs()
-{
-	// change the display type of all math objects so they all display 
-	//						in the same way (this is a D2L issue)
-	// this works if it happens before mathjax javascript is executed 
-	var m = document.querySelectorAll('math');
-	
-	for(i=0; i<m.length; i++)
-	{
-		m[i].setAttribute("display", "block");   // still needed??
-	}
-	
-	// this works if it happens after mathjax javascript is executed 
-	mathSpan = document.querySelectorAll("span.MathJax_Preview");
-	//mathDis = document.querySelectorAll(".MathJax_Display");
-	//mathPro = document.querySelectorAll(".MathJax_Processing");
-	//mathPro2 = document.querySelectorAll(".MathJax_Processed");
-	
-	// MathJax/IE bug where annotations take up space but are not displayed
-	// Might not be needed anymore 
-	if(window.navigator.userAgent.indexOf("Edge ") > -1 || 
-		window.navigator.userAgent.indexOf("MSIE "))
-	{
-		mathObj = document.getElementsByClassName("MJX_Assistive_MathML");
-		for(i=0; i<mathObj.length; i++)
-		{
-			mathObj[i].style.cssText += ";display: none !important;";
-		}
-	}
-}*/
-
-/*
-function mathEdit()
-{
-	// get all Math object in the page
-	var mathObj = document.querySelectorAll('math');
-	mathObjCount = mathObj.length;
-	
-	// switch the display to block for each math element
-	// note: this is not the same as the CSS style block
-	//     display = inline means math characters are resized to fit inline
-	//     diaplay = block means math characters are styled naturally
-	for(i=0; i<mathObj.length; i++)
-	{
-		mathObj[i].setAttribute("display", "block");
-	}
-	
-	// if there are math objects, then
-	if(mathObjCount > 0)
-	{
-		// execute the MathJax code
-		D2LMathML2.DesktopInit(
-			'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/latest.js?config=MML_HTMLorMML',
-			'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/latest.js?config=TeX-AMS-MML_HTMLorMML%2cSafe'); 
-		
-		// do post mathJax manipulation
-		postMathJax();
-	}
-}*/
-
-/**** Changes to D2L MathJax code
-  1) Need to stop loading 		
-		D2LMathML.DesktopInit('https://s.brightspace.com/lib/mathjax/2.6.1/MathJax.js?config=MML_HTMLorMML',
-		'https://s.brightspace.com/lib/mathjax/2.6.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML%2cSafe');
-     onDOMContent -- same as my code.
-  2) MathJS error b.parentNode prevents move from MathJax_Preview -> MathJax_Display
-****/	
-/*
-function postMathJax()
-{
-	// MathJax will change all math objects into class="MathJax_Display" --
-	// find all mathJaxDisplay objects --
-	// note: MathJax is running asynchronously, 
-	//			so these objects will appear at different times
-	mathDis = document.querySelectorAll(".MathJax_Display");
-	countNum++;
-	
-	// For each MathJax_Display object
-	for(i=0; i<mathDis.length; i++)
-	{
-		// if it has not been changed to display:inline, change it to display:inline
-		if(mathDis[i].getAttribute("style") != "display: inline !important;" &&
-			mathDis[i].classList.length == 1)
-		{
-			// When display=block is set, MathJax overcpmpensates and 
-			// sets all style display to block !important.  Switching this to inline makes the formula 
-			// more flexible and matches the style in the D2L editor
-			mathDis[i].setAttribute("style", "display: inline !important;");
-			count++;
-		}
-	}
-	prevCount = count;
-	
-	// We are still waiting for MathJax to change all math objects
-	if(count < mathObjCount)
-	{
-		// recursive call in 300ms
-		setTimeout("postMathJax()", 300);
-	}
-	else  // we are done -- see if we need to scroll page
-	{	
-		if(window.location.hash.slice(1) != "") 
-			scrollToElement(window.location.hash.slice(1), true);
-		
-		moveEqNum();
-	}
-}*/
-/* takes
-<p><img src="ImgSrc"></p>
-<p class="caption">Caption text </p>
-
-and converts it to
-
-<figure>
-	<img src="ImgSrc">
-	<figCaption">Caption text </figCaption>
-</figure>
-UNUSED function -- too many complications in implementation!
-function captionImages()
-{
-	// get all the images in the page (can later expand to tables, code-blocks...)
-	var imagesInPage = encapObject.getElementsByTagName("img");
-	
-	/* should have this in D2L:
-		[p]      <-- parent of image
-		  [img]  <-- looking at images
-		[/p]
-		[p class="caption]	   <-- nextElementSibling of parent with caption
-		[/p]
-		
-		and converting it to this:
-		[p]
-		   [figure]
-		     [img]
-			  [figcaption]  <-- old caption with "Fig. #:" appended
-		   [/figure]
-		[/p]
-	
-	for(i=0; i<imagesInPage.length; i++)
-	{	
-		// trying to find the paragraph [p] parent of the image --
-		// the problem is that there might be [b], [i], or [span] ancestors in the way
-		parElement = imagesInPage[i].parentElement;
-
-		while(parElement && parElement.tagName != "P")
-		{
-			parElement = parElement.parentElement;
-		}
-		
-		/*** Add error onscreen if parent [p] not found?? ***
-		// first make sure that we actally got an element and not end-of-page
-		if(parElement)  
-		{
-			/* need to find a class="caption" element in the next element 
-				sibling's descendants again, same issue as before where you should have
-			      [p class="caption"] 
-					but could have
-					[p][span][b][i][span class="caption"]    
-					
-			if(parElement.nextElementSibling)  // if there is a next sibling
-			{
-				// go to the next sibling (likely a [p])
-				capElement = parElement.nextElementSibling;  
-			
-				while(capElement.childElementCount != 0 && 
-						!(capElement.classList.contains("caption")) )
-				{
-					capElement = capElement.childNodes[0];
-				}
-
-				/*** Add error onscreen if caption not found?? **
-				// make sure we found an element with class = "caption"
-				if(capElement.classList.contains("caption"))
-				{
-					// create a [figure] element
-					figure = document.createElement("figure");	
-
-					// create a [figcaption] element					
-					figCaption = document.createElement("figCaption");	
-					
-					// copy caption in [figcaption] element and preprend with the figure number
-					figCaption.innerHTML = capElement.innerText;	
-					figCaption.classList.add("caption");		// add caption class to [figCaption]
-					figure.appendChild(imagesInPage[i]);		// add image to [figure]
-					figure.appendChild(figCaption);				// add [figcaption] to [figure]
-					
-					// remove the original caption
-					capElement.parentElement.removeChild(capElement);
-					
-					// add figure to parent of image
-					parElement.appendChild(figure);
-				}
-			}
-		}
-	}
-}
-
-
-function addCodeBlockToggle()
-{
-	codeBlocks = document.body.querySelectorAll(".codeBlock");
-
-	for(i=0; i<codeBlocks.length; i++)
-	{
-		if(codeBlocks[i].childElementCount > 8)
-		{
-			if(codeBlocks.id == "") codeBlocks.id = "codeblock" + i
-			
-			par = document.createElement("p");
-			par.classList.add("noSelect");
-			par.style.textAlign = "right";
-			tabSpan = document.createElement("span");
-			tabSpan.classList.add("codeTab");
-			tabSpan.classList.add("codeTabTop");
-			tabSpan.classList.add("noSelect");
-			tabSpan.innerHTML = "\u2013";
-			tabSpan.addEventListener("click", function() {toggleCodeBlock(this, "top");} );
-			par.appendChild(tabSpan);
-			codeBlocks[i].insertBefore(par, codeBlocks[i].children[0]);
-			
-			par = document.createElement("p");
-			par.classList.add("noSelect");
-			par.style.textAlign = "left";
-			tabSpan = document.createElement("span");
-			tabSpan.classList.add("codeTab");
-			tabSpan.classList.add("codeTabBottom");
-			tabSpan.classList.add("noSelect");
-			tabSpan.innerHTML = "\u2013";
-			tabSpan.addEventListener("click", function() {toggleCodeBlock(this, "bottom");} );
-			par.appendChild(tabSpan);
-			codeBlocks[i].appendChild(par);
-		
-		}
-	}
-}
-
-function toggleCodeBlock(tab, position)
-{
-	cb = tab.parentNode.parentNode;
-	codeLines = cb.querySelectorAll(".code");
-
-	if(position == "top")
-	{
-		otherTab = cb.lastElementChild.children[0];
-	}
-	else
-	{
-		otherTab = cb.children[0].children[0];
-	}
-
-	if(tab.innerText != "\u25A1")
-	{
-		tab.innerText =  "\u25A1";	// make a hollow square
-		otherTab.innerText =  "\u25A1";	// make a hollow square
-		
-		for(i=3; i<codeLines.length; i++)  // start at the third line
-		{
-			codeLines[i].style.display = "none";		
-		}
-	}
-	else
-	{
-		tab.innerText =  "\u2013"; 		// make an endash
-		otherTab.innerText =  "\u2013"; // make an endash
-		
-		for(i=3; i<codeLines.length; i++)  // start at the third line
-		{
-			codeLines[i].style.display = "block";		
-		}
-	}
-}
-
-*/
-
-/* For all equations that have a number --
-   moves the number to an appropriate spot if the equation has multiple lines.
-	This is hacky! 
-	I belive this has now been deprecated by display: inline-flex and other stuff
-function moveEqNum()
-{
-	// get all elements with class = eqNum
-	eqNumObj = document.querySelectorAll("span.eqNum");
-
-	// find all elements that use the clip style
-	for(i=0; i<eqNumObj.length; i++)
-	{	
-		// remove the font-family style using in the D2L editor (Dotum)
-		eqNumObj[i].style.fontFamily = null;
-		
-		// get the parent node of the eqNum object
-		eqNumParent = eqNumObj[i].parentNode;
-		
-		// get through each child element of eqNum 
-		for(j=0; j<eqNumObj[i].childElementCount; j++)
-		{
-			// move children up one level (basically, this makes eqNum a last sibling instead of a parent)
-			eqNumParent.insertBefore(eqNumObj[i].firstChild, eqNumObj[i]);
-		}
-		
-		// find all multiple-line equations -- which all use the style MathJax_FullWidth 
-		// multiple-line equations cause problems with the eqNum object
-		if(FW = eqNumObj[i].parentNode.querySelector("span.MathJax_FullWidth"))
-		{
-			/**** setting the top position of the equation number ***
-			// set the eqNum position to relativ to allow it to move
-			eqNumObj[i].style.position = "relative";
-			
-			// get the bounding rectangles of the equation and the equation number
-			eqNumRect = eqNumObj[i].getBoundingClientRect();
-			eqRect = FW.getBoundingClientRect() 
-
-			// use the height and top values to move the equation number 
-			eqNumObj[i].style.top = ( eqRect.top - eqNumRect.top ) + 
-											(eqRect.height/2 - eqNumRect.height) + "px";
-
-
-			/**** setting the left position of the equation number 
-					issue: need to find the widest line in the multi-line equation ***
-			// the bounding box of each line in the equation uniquely has a margin-left style
-			spanClips = eqNumParent.querySelectorAll("span[style*=margin-left]");
-			
-			maxLineWidth = 0;  // initial state value
-			
-			// go through each span clip to find which is the widest
-			for(j=0; j<spanClips.length; j++)
-			{
-				lineWidth = spanClips[j].getBoundingClientRect().width; // get width of current EQ line
-
-				if(lineWidth > maxLineWidth)
-				{
-					maxLineWidth = lineWidth;
-					eqLeftPos = spanClips[j].getBoundingClientRect().left; // get left of current EQ line
-				}
-			}	
-			
-			// use the height and top values to move the equation number to the appropriate left pos
-			eqNumObj[i].style.left = ( maxLineWidth + eqLeftPos - eqNumRect.left + 10) + "px";
-		}
-	}
-}
-*/	
-/*
-function loadMathML()
-{
-	var script = document.createElement('script');
-	script.onload = function () 
-	{
-		mathEdit(); // wait for mathML script to load before manipulating the script 
-	};
-	script.src = "/content/DEVELOPMENT/2018/courses/DEV-belinsky-2018-BackendTest/Programming/eqTest/MathML2.js";
-
-	document.head.appendChild(script); //or something of the likes
-}
-*/
