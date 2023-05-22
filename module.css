@@ -90,6 +90,10 @@ p, ul, ol, li
 	color: rgb(0,0,0);
 	line-height: 135%;
 }
+ul, ol
+{
+	margin-bottom: 0;	
+}
 figure
 {
 	margin: 0;
