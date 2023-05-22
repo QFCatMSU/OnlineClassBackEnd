@@ -90,10 +90,6 @@ p, ul, ol, li
 	color: rgb(0,0,0);
 	line-height: 135%;
 }
-ul, ol
-{
-	margin-bottom: 0 !important;	
-}
 figure
 {
 	margin: 0;
@@ -204,7 +200,7 @@ ol,ul
 	margin-left: 18px !important;
 	margin-right: 0px;
 	margin-top: 0px;
-	margin-bottom: 0px;
+	margin-bottom: 0px !important;
 	padding: 0px;
 }
 table 
