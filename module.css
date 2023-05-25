@@ -547,6 +547,11 @@ div.scrollCell
 {	
 	color: rgb(150,150,255);
 }
+img
+{
+	max-width: 100%;
+	max-height: 100%;
+}
 img.flexSize, img.fs
 {
 	border-color: red;
@@ -704,10 +709,8 @@ td ul, td ol
 	img
 	{
 		page-break-inside: avoid; /* Images naturally do this? */
-		max-width: 100%;
-		/* not sure why "!important" is needed here -- 
-			I thought this should override all other heights automatically */
-		height: auto !important; 
+		/*max-width: 100%;
+		height: auto !important; */
 	}
 	img.flexSize, img.fs
 	{
