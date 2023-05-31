@@ -44,9 +44,9 @@ Fix hacks in Safari:
 // tabs are not aligned to the divs because the divs have been shifted
 //    you can align by putting the tab inside the div
 smallImageHeight = 100;				// set the height of flex-sized objects when small 
-imageHeight = new Array();			// the heights of all flex-sized images in a page
-imageWidth = new Array();			// the widths of all flex-sized images in a page
-minImageWidth = 700;					// minimum width for a flexSize image in expanded mode
+//imageHeight = new Array();			// the heights of all flex-sized images in a page
+//imageWidth = new Array();			// the widths of all flex-sized images in a page
+//minImageWidth = 700;					// minimum width for a flexSize image in expanded mode
 scrollTopPosition = 0; 				// value saved for links-return-links within a page
 editURL = "";							// URL for the editting page 
 referenceTimer = "";					// timer used to toggle the reference object
@@ -69,7 +69,88 @@ longClickTimer = null;
 overRCMenu = false;
 mouseX = 0; mouseY = 0;  // allow a little wiggle of the mouse
 
+// don't do anything until the parent frame (d2L) loads 
+// this still seems to work if there is no parent -- probably should check for this, though
+parent.window.onload = function()
+{		
+	encapObject = document.body; 
+
+	if(document.querySelectorAll('meta[content^="Joomla"]').length > 0) joomlaFixes();
 	
+	if(window.location.hostname == "d2l.msu.edu") 
+	{
+		d2lFixes();
+		// Is this the homepage?
+		
+		url = window.parent.location.href;
+
+		if(!url.includes("d2l.msu.edu/d2l/home/"))
+			d2lAddHeader();
+	}
+	
+	// adds "code" to elements within bq and moves p out of bq
+	fixBlockquotes();
+	fixBrInCodelines();
+	setCodeBlocks();
+	addBrackets();
+	
+	getClassInfoD2L(); // emails, lessons (works only in D2L for now)
+	
+	setClassNames();
+	
+	fixTitle();
+	
+	// allow users to resize images from small to full-size
+	createFlexImages();
+	
+	// adds the caption class to all figure elements
+	addCaptions();
+	
+	createEmailLink();
+	
+	equationNumbering();
+	
+	// structure the page with DIVs based on the headers 
+	addDivs();
+	
+	// add outline to the divs
+	addOutline();
+	
+	// Create a right-click menu
+	makeContextMenu();  // needs to happen after divs are created
+
+	// adds code tags to all content within an .code tag
+	// need to add divs before doing code tags becuase this includes the div codeblocks
+//	addCodeTags();
+	
+	// allow user to toggle the size of the codeblock --used?? needed??
+	addCodeBlockTag();
+	
+	codeLineVertBar();
+	
+	addReferences();
+	
+	// convert "download" class to a download hyperlink 
+	//		(because D2L does not allow you to specify this trait)
+	addDownloadLinks();	
+	
+	// check the URL to see if there is a request to go to a specific part of the page
+	checkURLForPos();
+	
+	// target most hyperlinks to a new window
+	linksToNewWindow();
+	
+	// address tag used to create an emphasized textbox
+	createTextBox();
+	
+	// wrap figure and captions together -- for accessibility
+	captionFigures();
+	
+	// if this page was hyperlinked from elsewhere and a hash tag was added to the link
+	if(window.location.hash.slice(1) != "") 
+		scrollToElement(window.location.hash.slice(1), true);
+}
+
 window.addEventListener("mousedown", function(event)
 {
 	// make sure it's a left-click and the MathJax Frame is not showing
@@ -396,87 +477,7 @@ function setCodeBlocks()
 		codeLines[i].parentNode.removeChild(codeLines[i]);
 	}
 }
-// don't do anything until the parent frame (d2L) loads 
-// this still seems to work if there is no parent -- probably should check for this, though
-parent.window.onload = function()
-{		
-	encapObject = document.body; 
 
-	if(document.querySelectorAll('meta[content^="Joomla"]').length > 0) joomlaFixes();
-	
-	if(window.location.hostname == "d2l.msu.edu") 
-	{
-		d2lFixes();
-		// Is this the homepage?
-		
-		url = window.parent.location.href;
-
-		if(!url.includes("d2l.msu.edu/d2l/home/"))
-			d2lAddHeader();
-	}
-	
-	// adds "code" to elements within bq and moves p out of bq
-	fixBlockquotes();
-	fixBrInCodelines();
-	setCodeBlocks();
-	addBrackets();
-	
-	getClassInfoD2L(); // emails, lessons (works only in D2L for now)
-	
-	setClassNames();
-	
-	fixTitle();
-	
-	// allow users to resize images from small to full-size
-	createFlexImages();
-	
-	// adds the caption class to all figure elements
-	addCaptions();
-	
-	createEmailLink();
-	
-	equationNumbering();
-	
-	// structure the page with DIVs based on the headers 
-	addDivs();
-	
-	// add outline to the divs
-	addOutline();
-	
-	// Create a right-click menu
-	makeContextMenu();  // needs to happen after divs are created
-
-	// adds code tags to all content within an .code tag
-	// need to add divs before doing code tags becuase this includes the div codeblocks
-//	addCodeTags();
-	
-	// allow user to toggle the size of the codeblock --used?? needed??
-	addCodeBlockTag();
-	
-	codeLineVertBar();
-	
-	addReferences();
-	
-	// convert "download" class to a download hyperlink 
-	//		(because D2L does not allow you to specify this trait)
-	addDownloadLinks();	
-	
-	// check the URL to see if there is a request to go to a specific part of the page
-	checkURLForPos();
-	
-	// target most hyperlinks to a new window
-	linksToNewWindow();
-	
-	// address tag used to create an emphasized textbox
-	createTextBox();
-	
-	// wrap figure and captions together -- for accessibility
-	captionFigures();
-	
-	// if this page was hyperlinked from elsewhere and a hash tag was added to the link
-	if(window.location.hash.slice(1) != "") 
-		scrollToElement(window.location.hash.slice(1), true);
-}
 	
 function getClassInfoD2L()
 {
@@ -729,11 +730,11 @@ function createFlexImages()
 		
 		/*** the strange behavior of JS and for loops: final value of the loop  ****/
 		
-		flexImage[i].myIndex = i;  	// give every image a unique index value
+	//	flexImage[i].myIndex = i;  	// give every image a unique index value
 		
 		// store the values of the images natural width and height
-		imageHeight[i] = flexImage[i].naturalHeight;
-		imageWidth[i] = flexImage[i].naturalWidth;
+	//	imageHeight[i] = flexImage[i].naturalHeight;
+	//	imageWidth[i] = flexImage[i].naturalWidth;
 		
 		// initalize the flex image to the small size
 		changeImageSize(flexImage[i], "minimize");
@@ -802,11 +803,11 @@ possible instruction values: minimize and maximize
 function changeImageSize(element, instruction="none")
 {
 	// get unique index of image
-	imageIndex = element.myIndex;				
+//	imageIndex = element.myIndex;				
 	
 	// get the images natural width and height unsing the index
-	origHeight = imageHeight[imageIndex];
-	origWidth = imageWidth[imageIndex];
+//	origHeight = imageHeight[imageIndex];
+//	origWidth = imageWidth[imageIndex];
 	
 	// If image is in small sized mode and insruction is not "minimize"
 	// The reason I do not put instruction == "minimize" 
@@ -814,16 +815,19 @@ function changeImageSize(element, instruction="none")
 	if(element.style.height == smallImageHeight + "px" && instruction != "minimize")
 	{
 		// get the width of the images parent element, which is a [figure]
-		screenWidth = element.parentElement.clientWidth;
+	//	screenWidth = element.parentElement.clientWidth;
 		
 		// if the width is less than the min width, increase the width to the min width
-		if(screenWidth < minImageWidth)
+	/*	if(screenWidth < minImageWidth)
 		{
 			screenWidth = minImageWidth;
-		}
+		}*/
 		
+	//	element.style.width = "unset";
+		element.style.height = "unset";
+			
 		// if the natural width of the image is smaller than the screen width...
-		if(origWidth <= screenWidth)
+	/*	if(origWidth <= screenWidth)
 		{
 			// set the image to its natural size
 			element.style.width = origWidth + "px";
@@ -834,13 +838,13 @@ function changeImageSize(element, instruction="none")
 			// set the image width to the screen width and scale the height
 			element.style.width = screenWidth + "px";
 			element.style.height = (screenWidth/origWidth)*origHeight + "px";
-		}
+		}*/
 	}
 	else if (instruction != "maximize")
 	{
 		// set the images height to the smallHeight value and scale the with to match
 		element.style.height = smallImageHeight + "px";	
-		element.style.width = (smallImageHeight/origHeight)*origWidth + "px";
+		//element.style.width = (smallImageHeight/origHeight)*origWidth + "px";
 	}
 }
 
