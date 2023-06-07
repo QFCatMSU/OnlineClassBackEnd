@@ -763,8 +763,8 @@ td ul, td ol
 		
 		left: -20px;
 		border-left-width: 1px;
-		border-top-style: none;
-		border-bottom-style: none;
+		border-top-style: solid;
+		border-bottom-style: solid;
 		border-right-style: solid;
 		border-left-style: solid;
 		border-color: rgb(75,75,75);
