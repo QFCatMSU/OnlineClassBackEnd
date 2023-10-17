@@ -505,8 +505,7 @@ function resizeIframeContent()
 	if (parentIFrames[0] && parentIFrames[0].contentWindow.document.body)
 	{
 		// change to size of the document
-		//parentIFrames[0].height = parentIFrames[0].contentWindow.document.body.scrollHeight;
-		parentIFrames[0].height = parentIFrames[0].contentDocument.documentElement.scrollHeight;
+		parentIFrames[0].height = parentIFrames[0].contentWindow.document.body.scrollHeight;
 	}
 }
 
