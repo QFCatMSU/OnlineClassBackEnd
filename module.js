@@ -62,8 +62,18 @@ addStyleSheet();  // can be done before page load since this is called in the [h
 
 // resize the iframe in the parent window when the page gets resized (if in an iframe)
 if(window !== window.parent)
-	window.parent.addEventListener("resize", resizeIframeContent());
-
+{
+	//switch to resizeObserver??
+	//document.body.addEventListener("resize", resizeIframeContent());
+	//document.getElementById("headerDiv").addEventListener("resize", resizeIframeContent());
+	//window.parent.addEventListener("resize", resizeIframeContent());
+	//window.addEventListener("resize", resizeIframeContent());
+	//	headerDiv = document.getElementsByClassName("headerDiv");	
+	//new ResizeObserver(resizeIframeContent).observe(headerDiv[0]);
+	new ResizeObserver(resizeIframeContent).observe(document.body);
+//	headerDiv = document.getElementsByClassName("headerDiv");	
+//	headerDiv[0].addEventListener("resize", resizeIframeContent());
+}
 /*** Handling the long-press menu ****/
 longClickTimer = null;
 overRCMenu = false;
@@ -145,7 +155,7 @@ parent.window.onload = function()
 	
 	// wrap figure and captions together -- for accessibility
 	captionFigures();
-	
+			
 	// if this page was hyperlinked from elsewhere and a hash tag was added to the link
 	if(window.location.hash.slice(1) != "") 
 		scrollToElement(window.location.hash.slice(1), true);
@@ -495,18 +505,16 @@ function getClassInfoD2L()
 }
 function resizeIframeContent()
 {
-	// When the parent page gets resized, it causes the content in the iframe to get resized.
-	//	But, the iframe only resizes when the content inside the iframe changes (D2L bug).
-	
-	// In D2L, the iframe's height is set to "auto" so we don't need to change its size.
+	// The iframe containing the content in D2L will only change size 
+	// if the content inside increasing in height -- not if it decreases
+	// This will change the size anytime
 	
 	// get iframes from the parent windows:
 	parentIFrames = window.parent.document.getElementsByTagName("iframe");
-	if (parentIFrames[0] && parentIFrames[0].contentWindow.document.body)
-	{
-		// change to size of the document
-		parentIFrames[0].height = parentIFrames[0].contentWindow.document.body.scrollHeight;
-	}
+	
+	// set height to the total scroll length of the lesson window
+	parentIFrames[0].style.height = document.body.scrollHeight + "px";
+
 }
 
 function joomlaFixes()
