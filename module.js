@@ -147,7 +147,7 @@ parent.window.onload = function()
 		scrollToElement(window.location.hash.slice(1), true);
 
 	// resize the iframe in the parent window when the page gets resized (if in an iframe)
-	if(window !== window.parent)
+	if(window !== window.parent && document.body)
 	{
 		//switch to resizeObserver??
 		//document.body.addEventListener("resize", resizeIframeContent());
