@@ -60,20 +60,6 @@ lessonFolder = "";
 // pre-onload functions
 addStyleSheet();  // can be done before page load since this is called in the [head]
 
-// resize the iframe in the parent window when the page gets resized (if in an iframe)
-if(window !== window.parent)
-{
-	//switch to resizeObserver??
-	//document.body.addEventListener("resize", resizeIframeContent());
-	//document.getElementById("headerDiv").addEventListener("resize", resizeIframeContent());
-	//window.parent.addEventListener("resize", resizeIframeContent());
-	//window.addEventListener("resize", resizeIframeContent());
-	//	headerDiv = document.getElementsByClassName("headerDiv");	
-	//new ResizeObserver(resizeIframeContent).observe(headerDiv[0]);
-	new ResizeObserver(resizeIframeContent).observe(document.body);
-//	headerDiv = document.getElementsByClassName("headerDiv");	
-//	headerDiv[0].addEventListener("resize", resizeIframeContent());
-}
 /*** Handling the long-press menu ****/
 longClickTimer = null;
 overRCMenu = false;
@@ -159,6 +145,21 @@ parent.window.onload = function()
 	// if this page was hyperlinked from elsewhere and a hash tag was added to the link
 	if(window.location.hash.slice(1) != "") 
 		scrollToElement(window.location.hash.slice(1), true);
+
+	// resize the iframe in the parent window when the page gets resized (if in an iframe)
+	if(window !== window.parent)
+	{
+		//switch to resizeObserver??
+		//document.body.addEventListener("resize", resizeIframeContent());
+		//document.getElementById("headerDiv").addEventListener("resize", resizeIframeContent());
+		//window.parent.addEventListener("resize", resizeIframeContent());
+		//window.addEventListener("resize", resizeIframeContent());
+		//	headerDiv = document.getElementsByClassName("headerDiv");	
+		//new ResizeObserver(resizeIframeContent).observe(headerDiv[0]);
+		new ResizeObserver(resizeIframeContent).observe(document.body);
+	//	headerDiv = document.getElementsByClassName("headerDiv");	
+	//	headerDiv[0].addEventListener("resize", resizeIframeContent());
+	}
 }
 
 window.addEventListener("mousedown", function(event)
