@@ -147,7 +147,7 @@ parent.window.onload = function()
 		scrollToElement(window.location.hash.slice(1), true);
 
 	// resize the iframe in the parent window when the page gets resized (if in an iframe)
-	if(window !== window.parent && document.body)
+	if(window !== window.parent)
 	{
 		//switch to resizeObserver??
 		//document.body.addEventListener("resize", resizeIframeContent());
@@ -516,6 +516,8 @@ function resizeIframeContent()
 	// set height to the total scroll length of the lesson window
 	parentIFrames[0].style.height = document.body.scrollHeight + "px";
 
+	// fix firefix bug where mouse would switch between foreground and background
+	parentIFrames[0].dataset.defaultHeight = document.body.scrollHeight;
 }
 
 function joomlaFixes()
